@@ -21,7 +21,7 @@ const CollectionsClient = ({ category }) => {
     if (filters.sizes.length > 0) {
       let hasSize = false;
       if (product.sizes) {
-        if (filters.sizes.includes('crianca') && product.sizes.some(s => s <= 34)) hasSize = true;
+        if (filters.sizes.includes('criança') && product.sizes.some(s => s <= 34)) hasSize = true;
         if (filters.sizes.includes('adulto') && product.sizes.some(s => s >= 35)) hasSize = true;
       }
       if (!hasSize) return false;
