@@ -34,7 +34,7 @@ const HomeClient = () => {
 
   const { bestSellers, newCollection, summerProducts, winterProducts } = useMemo(() => {
     const sorted = [...products];
-    const summer = sorted.filter(p => p.category === 'crianca' || p.category === 'sandalias').slice(0, 3);
+    const summer = sorted.filter(p => (p.category === 'crianca' || p.category === 'sandalias') && p.id !== 1).slice(0, 3);
     const winter = sorted.filter(p => p.category === 'homem' || p.category === 'botas').slice(0, 3);
     while (summer.length < 3) summer.push(sorted[summer.length]);
     while (winter.length < 3) winter.push(sorted[winter.length]);
@@ -250,7 +250,7 @@ const HomeClient = () => {
         {/* WHAT WE OFFER */}
         <section className="what-we-offer-section" style={{ backgroundColor: '#fff', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '900', color: '#333', marginBottom: '1rem', textTransform: 'uppercase' }}>O Que Oferecemos</h2>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '900', color: '#333', marginBottom: '1rem', textTransform: 'uppercase' }}>Porquê a Inpe?</h2>
           </div>
           <div className="offer-grid">
             {offerItems.map((item, idx) => {
