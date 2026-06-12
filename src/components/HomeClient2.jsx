@@ -319,8 +319,8 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   textShadow: '0 4px 12px rgba(0,0,0,0.2)'
                 }}
               >
-                Pezinhos Livres, <br />
-                <span style={{ color: '#F4C466' }}>Mundo Colorido!</span>
+                Pés Livres, <br />
+                <span style={{ color: '#F4C466' }}>e felizes!</span>
               </motion.h1>
 
               <motion.p
