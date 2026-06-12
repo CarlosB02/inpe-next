@@ -1,2 +1,2 @@
-import CollectionsClient from '@/components/CollectionsClient';
-export default function LojaCategoryPage({ params }) { return <CollectionsClient category={params.category} />; }
+import CollectionsClient2 from '@/components/CollectionsClient2';
+export default function LojaCategoryPage({ params }) { return <CollectionsClient2 />; }

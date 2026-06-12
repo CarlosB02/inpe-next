@@ -2,11 +2,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Menu, X, ShoppingBag, Search } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 const Header = () => {
+  const { openCart, cartCount } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobile, setIsMobile] = useState(false);
@@ -24,12 +25,6 @@ const Header = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 20);
-
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
       lastScrollY.current = currentScrollY;
     };
 
@@ -42,14 +37,17 @@ const Header = () => {
       position: 'fixed',
       top: isMobile ? '8px' : '20px',
       left: 0,
-      width: '100%',
+      right: 0,
       zIndex: 100,
       padding: isMobile ? '0 10px' : '0 2rem',
       display: 'flex',
       justifyContent: 'center',
       transition: 'transform 0.3s ease-in-out',
-      transform: isVisible ? 'translateY(0)' : 'translateY(-200%)',
+      transform: 'translateY(0)',
     }}>
+      {/* CSS-only Menu Toggle Checkbox */}
+      <input type="checkbox" id="menu-toggle" style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none', zIndex: -1 }} />
+
       <div style={{
         backgroundColor: 'white',
         borderRadius: '9999px',
@@ -68,10 +66,10 @@ const Header = () => {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="desktop-nav" style={{ display: 'flex', gap: '24px', fontWeight: 'bold', fontSize: '0.9rem', color: '#555', textTransform: 'uppercase' }}>
+        <nav className="desktop-nav" style={{ display: isMobile ? 'none' : 'flex', gap: '24px', fontWeight: 'bold', fontSize: '0.9rem', color: '#555', textTransform: 'uppercase' }}>
           <Link href="/" className="nav-item">Início</Link>
           <Link href="/loja" className="nav-item">Loja</Link>
-          <Link href="/historia" className="nav-item">Nossa História</Link>
+          <Link href="/sobre-nos" className="nav-item">Nossa História</Link>
           <Link href="/contactos" className="nav-item">Contactos</Link>
         </nav>
 
@@ -112,7 +110,12 @@ const Header = () => {
               placeholder="Pesquisar..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Escape') setIsSearchOpen(false); }}
+              onKeyDown={(e) => { 
+                if (e.key === 'Escape') setIsSearchOpen(false); 
+                if (e.key === 'Enter' && searchQuery.trim() !== '') {
+                  window.location.href = `/loja?q=${encodeURIComponent(searchQuery)}`;
+                }
+              }}
               onBlur={() => { if (searchQuery.trim() === '') setIsSearchOpen(false); }}
               style={{
                 width: isSearchOpen ? '150px' : '0px',
@@ -128,57 +131,109 @@ const Header = () => {
             />
           </div>
 
-          <button style={{
-            background: isMobile ? 'none' : 'var(--color-primary)',
-            color: isMobile ? '#555' : 'white',
-            width: isMobile ? 'auto' : '40px',
-            height: isMobile ? 'auto' : '40px',
-            borderRadius: '50%',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            padding: isMobile ? '8px' : '0'
-          }}>
+          <button 
+            onClick={openCart}
+            style={{
+              position: 'relative',
+              background: isMobile ? 'none' : 'var(--color-primary)',
+              color: isMobile ? '#555' : 'white',
+              width: isMobile ? 'auto' : '40px',
+              height: isMobile ? 'auto' : '40px',
+              borderRadius: '50%',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: isMobile ? '8px' : '0'
+            }}
+          >
             <ShoppingBag size={20} />
+            {cartCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: isMobile ? '0px' : '-4px',
+                right: isMobile ? '-4px' : '-4px',
+                backgroundColor: 'var(--color-accent-brown)',
+                color: 'white',
+                fontSize: '0.7rem',
+                fontWeight: 'bold',
+                borderRadius: '50%',
+                width: '18px',
+                height: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '2px solid white'
+              }}>
+                {cartCount}
+              </span>
+            )}
           </button>
 
-          {/* Mobile Toggle */}
-          <button onClick={() => setIsOpen(!isOpen)} className="mobile-toggle" style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer' }}>
-            {isOpen ? <X /> : <Menu />}
-          </button>
+          {/* Mobile Toggle Label (Triggers checkbox natively on tap/click) */}
+          <label 
+            htmlFor="menu-toggle" 
+            className="mobile-toggle" 
+            onClick={() => {}}
+            style={{ 
+              display: isMobile ? 'flex' : 'none', 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer',
+              padding: '12px',
+              marginRight: '-12px',
+              color: '#2C3E50',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 101
+            }}
+          >
+            <span className="menu-icon-open" style={{ display: 'flex', alignItems: 'center' }}><Menu size={24} /></span>
+            <span className="menu-icon-close" style={{ display: 'none', alignItems: 'center' }}><X size={24} /></span>
+          </label>
         </div>
       </div>
 
       {/* Mobile Menu Overlay */}
-      {isOpen && (
-        <div style={{
-          position: 'absolute',
-          top: '80px',
-          left: '2rem',
-          right: '2rem',
-          backgroundColor: 'white',
-          borderRadius: '20px',
-          padding: '2rem',
-          boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-          textAlign: 'center'
-        }}>
-          <Link href="/" onClick={() => setIsOpen(false)}>Início</Link>
-          <Link href="/loja" onClick={() => setIsOpen(false)}>Loja</Link>
-          <Link href="/historia" onClick={() => setIsOpen(false)}>Nossa História</Link>
-          <Link href="/contactos" onClick={() => setIsOpen(false)}>Contactos</Link>
-        </div>
-      )}
+      <div className="mobile-menu-overlay" style={{
+        position: 'fixed',
+        top: '70px',
+        left: '16px',
+        right: '16px',
+        backgroundColor: 'white',
+        borderRadius: '24px',
+        padding: '2rem 1.5rem',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+        display: 'none', // Controlled by CSS checkbox state
+        flexDirection: 'column',
+        gap: '1.2rem',
+        textAlign: 'center',
+        zIndex: 1000,
+        border: '1px solid #f0f0f0'
+      }}>
+        {/* Unchecking toggle when clicking link to close overlay */}
+        <Link href="/" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Início</Link>
+        <Link href="/loja" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Loja</Link>
+        <Link href="/sobre-nos" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Nossa História</Link>
+        <Link href="/contactos" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Contactos</Link>
+      </div>
 
       <style>{`
         .nav-item:hover { color: var(--color-primary); }
-        @media (max-width: 850px) {
-          .desktop-nav { display: none !important; }
-          .mobile-toggle { display: block !important; }
+
+        .mobile-toggle span, .mobile-toggle svg {
+          pointer-events: none !important;
+        }
+
+        #menu-toggle:checked ~ .mobile-menu-overlay {
+          display: flex !important;
+        }
+        #menu-toggle:checked ~ div .mobile-toggle .menu-icon-open {
+          display: none !important;
+        }
+        #menu-toggle:checked ~ div .mobile-toggle .menu-icon-close {
+          display: flex !important;
         }
       `}</style>
     </header>
