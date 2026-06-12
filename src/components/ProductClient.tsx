@@ -708,8 +708,10 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                       opacity: selectedVariant.availableForSale ? 1 : 0.6
                     }}
                   >
-                    <ShoppingBag size={20} />
-                    {adding ? 'A Guardar...' : selectedVariant.availableForSale ? 'Adicionar ao Carrinho' : 'Esgotado'}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
+                      <ShoppingBag size={20} style={{ flexShrink: 0 }} />
+                      {adding ? 'A Guardar...' : selectedVariant.availableForSale ? 'Adicionar ao Carrinho' : 'Esgotado'}
+                    </span>
                   </motion.button>
 
                 </div>

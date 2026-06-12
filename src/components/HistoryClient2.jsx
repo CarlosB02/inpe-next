@@ -383,7 +383,7 @@ const HistoryClient2 = () => {
           </AnimatePresence>
         </section>
         {/* O QUE É BAREFOOT SECTION */}
-        <section style={{
+        <section id="o-que-e-barefoot" style={{
           background: 'linear-gradient(160deg, #FFF8EC 0%, #F0FAF9 100%)',
           padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 4rem)',
           position: 'relative',

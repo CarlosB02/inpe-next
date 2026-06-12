@@ -46,6 +46,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
   const videoRef = useRef(null);
   const bestSellersRef = useRef(null);
   const newCollectionRef = useRef(null);
+  const adventureRef = useRef(null);
 
   const scroll = (ref, direction) => {
     if (ref.current) {
@@ -275,7 +276,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   </motion.div>
                 </Link>
 
-                <Link href="#superpoderes" style={{ textDecoration: 'none' }}>
+                <Link href="/sobre-nos#o-que-e-barefoot" style={{ textDecoration: 'none' }}>
                   <motion.div
                     whileHover={{ scale: 1.08, rotate: 1 }}
                     whileTap={{ scale: 0.95 }}
@@ -800,7 +801,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 <div style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(to top, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0) 100%)',
+                  background: 'linear-gradient(to top, rgba(255,159,28,0.50) 0%, rgba(255,159,28,0.4) 45%, rgba(255,159,28,0) 100%)',
                   zIndex: 1
                 }} />
 
@@ -809,7 +810,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   <h3 style={{
                     fontSize: 'clamp(1.7rem, 3.5vw, 2.2rem)',
                     fontWeight: '900',
-                    color: '#2C3E50',
+                    color: 'white',
                     textTransform: 'uppercase',
                     margin: '0 0 0.6rem',
                     lineHeight: 1.1
@@ -817,7 +818,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                     Sol &amp; Areia
                   </h3>
                   <p style={{
-                    color: '#555',
+                    color: 'rgba(255,255,255,0.85)',
                     fontSize: '1rem',
                     fontWeight: '600',
                     margin: '0 0 1.4rem',
@@ -831,9 +832,9 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '8px',
-                      backgroundColor: 'transparent',
-                      border: '2px solid #2C3E50',
-                      color: '#2C3E50',
+                      backgroundColor: '#2C3E50',
+                      border: 'none',
+                      color: 'white',
                       padding: '10px 22px',
                       borderRadius: '50px',
                       fontWeight: '800',
@@ -983,35 +984,96 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             </div>
           </div>
 
-          {/* Filtered Products Grid */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={adventureFilter}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                gap: '2.5rem'
-              }}
-            >
-              {filteredKidsProducts.map(p => (
-                <div key={p.id} style={{ height: '100%' }}>
-                  <ProductCard title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} compact={isMobile} />
-                </div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Empty state if filtering has no matches */}
-          {filteredKidsProducts.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '4rem 0', color: '#888' }}>
-              <HelpCircle size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
-              <p style={{ fontWeight: 'bold' }}>Nenhum modelo disponível para esta aventura no momento.</p>
+          {/* Filtered Products — Carousel */}
+          <div style={{ position: 'relative' }}>
+            {/* Arrow controls */}
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginBottom: '1.2rem' }}>
+              <button
+                onClick={() => scroll(adventureRef, 'left')}
+                style={{
+                  width: '48px', height: '48px', borderRadius: '50%',
+                  backgroundColor: 'white', border: '2px solid #FFE0B2',
+                  color: '#FF9F1C', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)', transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FF9F1C'; e.currentTarget.style.color = 'white'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#FF9F1C'; }}
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button
+                onClick={() => scroll(adventureRef, 'right')}
+                style={{
+                  width: '48px', height: '48px', borderRadius: '50%',
+                  backgroundColor: 'white', border: '2px solid #FFE0B2',
+                  color: '#FF9F1C', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)', transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#FF9F1C'; e.currentTarget.style.color = 'white'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#FF9F1C'; }}
+              >
+                <ChevronRight size={24} />
+              </button>
             </div>
-          )}
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={adventureFilter}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                style={{ position: 'relative', overflow: 'hidden' }}
+              >
+                <div
+                  ref={adventureRef}
+                  className="hide-scrollbar"
+                  style={{
+                    display: 'flex',
+                    gap: '1.5rem',
+                    overflowX: 'auto',
+                    padding: '10px 0 25px',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    WebkitOverflowScrolling: 'touch',
+                    scrollSnapType: 'x mandatory',
+                  }}
+                >
+                  {filteredKidsProducts.map(p => (
+                    <div
+                      key={p.id}
+                      style={{
+                        flex: isMobile
+                          ? '0 0 calc(85% - 0.375rem)'
+                          : '0 0 calc(25% - 1.125rem)',
+                        minWidth: 0,
+                        scrollSnapAlign: 'start',
+                      }}
+                    >
+                      <ProductCard title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} compact={true} />
+                    </div>
+                  ))}
+                </div>
+                {/* Right fade hinting more content */}
+                <div style={{
+                  position: 'absolute', top: 0, right: 0,
+                  width: '60px', height: '100%',
+                  background: 'linear-gradient(to right, rgba(255,253,249,0) 0%, rgba(255,253,249,0.9) 100%)',
+                  pointerEvents: 'none', zIndex: 2,
+                }} />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Empty state if filtering has no matches */}
+            {filteredKidsProducts.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '4rem 0', color: '#888' }}>
+                <HelpCircle size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+                <p style={{ fontWeight: 'bold' }}>Nenhum modelo disponível para esta aventura no momento.</p>
+              </div>
+            )}
+          </div>
         </section>
 
         {/* PARENTS & MATCHING SECTION */}
@@ -1044,7 +1106,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 Coleção Papás: <span style={{ color: '#007396' }}>Caminha Igual!</span>
               </h2>
               <p style={{ color: '#444', fontSize: '1.1rem', marginTop: '1rem', fontWeight: '500' }}>
-                Os adultos também merecem conforto. Descobre a nossa linha unissexo para caminhar em harmonia com os pequenos.
+                Os adultos também merecem conforto. Descobre as nossas linhas para caminhar em harmonia com os mais pequenos.
               </p>
             </div>
 
@@ -1056,6 +1118,32 @@ const HomeClient2 = ({ initialProducts = [] }) => {
               {parentsProducts.map(p => (
                 <ProductCard key={p.id} title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} compact={isMobile} />
               ))}
+            </div>
+
+            {/* CTA Button */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
+              <Link href="/loja?categoria=homem,mulher" style={{ textDecoration: 'none' }}>
+                <motion.div
+                  whileHover={{ scale: 1.06, y: -3 }}
+                  whileTap={{ scale: 0.96 }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    backgroundColor: '#007396',
+                    color: 'white',
+                    padding: '18px 44px',
+                    borderRadius: '50px',
+                    fontWeight: '900',
+                    fontSize: '1.05rem',
+                    boxShadow: '0 12px 30px rgba(0,115,150,0.30)',
+                    cursor: 'pointer',
+                    letterSpacing: '0.3px'
+                  }}
+                >
+                  Ver Coleção Papás <ArrowRight size={20} />
+                </motion.div>
+              </Link>
             </div>
           </div>
         </section>
@@ -1291,60 +1379,45 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             padding: isMobile ? '3rem 2rem' : '4rem 5%',
             boxShadow: '0 20px 40px rgba(0,0,0,0.02)',
             border: '2px dashed #F4C466',
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr',
-            gap: '3rem',
-            alignItems: 'center'
+            maxWidth: '560px',
+            margin: '0 auto',
+            width: '100%'
           }}>
-            <div>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', marginTop: '1.2rem', lineHeight: 1.1 }}>
-                Qual é o sapato <br />ideal para o teu filho?
-              </h2>
-              <p style={{ color: '#666', marginTop: '1rem', lineHeight: 1.6 }}>
-                Responde a 3 perguntas simples e o nosso algoritmo pediatra dirá qual o modelo mais adequado para as atividades diárias dele.
-              </p>
-            </div>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#FF9F1C', textTransform: 'uppercase' }}>Pergunta 1 de 3:</span>
-                <h4 style={{ margin: 0, color: '#2C3E50', fontSize: '1.1rem', fontWeight: '900' }}>O que é que ele mais gosta de fazer ao ar livre?</h4>
+                <h4 style={{ margin: 0, color: '#2C3E50', fontSize: '1.1rem', fontWeight: '900' }}>O que é que o seu filho mais gosta de fazer ao ar livre?</h4>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {[
-                  { label: '🏃 Correr e escalar parques infantis relvados', key: 'park' },
-                  { label: '💦 Saltar com toda a força nas poças de água', key: 'puddle' },
-                  { label: '🎨 Brincar à vontade e correr nas salas da escola', key: 'school' }
+                  { label: '🏃 Correr e escalar', href: '/loja?subcategoria=sapatilhas' },
+                  { label: '💦 Poças de água', href: '/loja?subcategoria=galochas' },
+                  { label: '🎨 Passear à vontade', href: '/loja?subcategoria=sandalias' }
                 ].map((option, index) => (
-                  <motion.button
-                    key={index}
-                    onClick={() => setAdventureFilter(option.key)}
-                    whileHover={{ scale: 1.02, x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                    style={{
-                      padding: '16px 20px',
-                      borderRadius: '16px',
-                      border: '2px solid #EAEAEA',
-                      backgroundColor: adventureFilter === option.key ? '#FFF9ED' : 'white',
-                      borderColor: adventureFilter === option.key ? '#FF9F1C' : '#EAEAEA',
-                      color: '#2C3E50',
-                      fontWeight: '800',
-                      fontSize: '0.95rem',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <span>{option.label}</span>
-                    {adventureFilter === option.key && <span style={{ color: '#FF9F1C' }}>✨ Selecionado</span>}
-                  </motion.button>
+                  <Link key={index} href={option.href} style={{ textDecoration: 'none' }}>
+                    <motion.div
+                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                      style={{
+                        padding: '16px 20px',
+                        borderRadius: '16px',
+                        border: '2px solid #EAEAEA',
+                        backgroundColor: 'white',
+                        color: '#2C3E50',
+                        fontWeight: '800',
+                        fontSize: '0.95rem',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <span>{option.label}</span>
+                      <ArrowRight size={16} color="#FF9F1C" />
+                    </motion.div>
+                  </Link>
                 ))}
-              </div>
-              <div style={{ color: '#888', fontSize: '0.8rem', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                💡 <em>Dica: Ao selecionares uma opção, a lista de produtos acima irá filtrar automaticamente!</em>
               </div>
             </div>
           </div>
@@ -1353,9 +1426,6 @@ const HomeClient2 = ({ initialProducts = [] }) => {
         {/* SPEECH BUBBLE TESTIMONIALS SECTION */}
         <section style={{ padding: '6rem 10%', backgroundColor: '#FFFDF9', borderTop: '2px solid #F5F5F5' }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <PlayfulBadge color="#E06A55" icon={Smile}>
-              Opinião dos Papás
-            </PlayfulBadge>
             <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', marginTop: '1.2rem' }}>
               Pegadas de Amor: <span style={{ color: '#E06A55' }}>Quem usa, Aprova!</span>
             </h2>

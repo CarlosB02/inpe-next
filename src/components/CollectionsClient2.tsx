@@ -65,6 +65,18 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // Pre-fill category filters from URL param (?categoria=homem,mulher)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const categoriaParam = params.get('categoria');
+    if (categoriaParam) {
+      const cats = categoriaParam.split(',').map(c => c.trim()).filter(Boolean);
+      if (cats.length > 0) {
+        setFilters(prev => ({ ...prev, categories: cats }));
+      }
+    }
+  }, []);
+
   // Map rich Shopify products into filtered items
   const mappedProducts = useMemo(() => {
     return initialProducts.map(p => {
