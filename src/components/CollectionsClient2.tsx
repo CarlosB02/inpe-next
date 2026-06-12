@@ -82,11 +82,18 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     return initialProducts.map(p => {
       const variantsList = p.variants?.edges.map(e => e.node) || [];
 
-      // Parse sizes from variant titles
-      const sizes = variantsList.map(v => {
-        const num = parseInt(v.title);
-        return isNaN(num) ? v.title : num;
+      // Parse sizes from variant options whose name is "Tamanho" or "Tamanho de calçado"
+      const sizesSet = new Set<string | number>();
+      variantsList.forEach(v => {
+        v.selectedOptions.forEach(opt => {
+          const nameLower = opt.name.toLowerCase();
+          if (nameLower === 'tamanho' || nameLower === 'tamanho de calçado') {
+            const num = parseInt(opt.value);
+            sizesSet.add(isNaN(num) ? opt.value : num);
+          }
+        });
       });
+      const sizes = Array.from(sizesSet);
 
       // Parse colors from variant options (options named "Cor" or "Color")
       const colorsSet = new Set<string>();

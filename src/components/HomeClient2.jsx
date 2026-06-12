@@ -229,8 +229,8 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   textShadow: '0 4px 12px rgba(0,0,0,0.2)'
                 }}
               >
-                Pezinhos Livres, <br />
-                <span style={{ color: '#F4C466' }}>Mundo Colorido!</span>
+                Pés livres, <br />
+                <span style={{ color: '#F4C466' }}>e felizes!</span>
               </motion.h1>
 
               <motion.p
@@ -1079,7 +1079,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
         {/* PARENTS & MATCHING SECTION */}
         <section style={{
           position: 'relative',
-          padding: '6rem 10%',
+          padding: isMobile ? '3rem 5%' : '4rem 10%',
           overflow: 'hidden'
         }}>
           {/* Full-width background image */}
@@ -1101,7 +1101,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
           {/* Content */}
           <div style={{ position: 'relative', zIndex: 2 }}>
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '2.5rem' }}>
               <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', marginTop: '1.2rem' }}>
                 Coleção Papás: <span style={{ color: '#007396' }}>Caminha Igual!</span>
               </h2>
@@ -1121,7 +1121,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             </div>
 
             {/* CTA Button */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: isMobile ? '1.5rem' : '2rem' }}>
               <Link href="/loja?categoria=homem,mulher" style={{ textDecoration: 'none' }}>
                 <motion.div
                   whileHover={{ scale: 1.06, y: -3 }}

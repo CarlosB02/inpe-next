@@ -570,7 +570,7 @@ const HistoryClient2 = () => {
           </div>
         </section>
         {/* FAQ SECTION */}
-        <section style={{
+        <section id="faq" style={{
           backgroundColor: '#FFFDF9',
           padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem)',
         }}>
