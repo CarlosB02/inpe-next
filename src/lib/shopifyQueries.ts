@@ -8,6 +8,7 @@ export const PRODUCT_FRAGMENT = `
     descriptionHtml
     availableForSale
     tags
+    updatedAt
     priceRange {
       minVariantPrice {
         amount

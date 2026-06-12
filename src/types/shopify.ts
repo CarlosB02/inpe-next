@@ -45,6 +45,7 @@ export interface Product {
   descriptionHtml?: string;
   availableForSale: boolean;
   tags: string[];
+  updatedAt?: string;
   priceRange: {
     minVariantPrice: MoneyV2;
     maxVariantPrice: MoneyV2;
