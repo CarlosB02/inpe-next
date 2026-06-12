@@ -38,6 +38,8 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
   const [bottomTab, setBottomTab] = useState<'reviews' | 'faq'>('reviews');
   const [adding, setAdding] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // Diagnostic states for foot-measuring tool
   const [footLength, setFootLength] = useState<string>('');
@@ -377,15 +379,49 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
               {/* Desktop View */}
               <div className="desktop-gallery-view">
                 <div className="gallery-thumbnails">
-                  {displayImages.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img.url}
-                      alt={img.altText || `Thumbnail ${idx}`}
-                      className={`gallery-thumbnail ${selectedImage === img.url ? 'active' : ''}`}
-                      onClick={() => setSelectedImage(img.url)}
-                    />
-                  ))}
+                  {displayImages.slice(0, Math.min(5, displayImages.length)).map((img, idx) => {
+                    const isLast = idx === 4 && displayImages.length > 5;
+                    const remaining = displayImages.length - 5;
+                    return (
+                      <div
+                        key={idx}
+                        style={{ position: 'relative', cursor: 'pointer', flexShrink: 0 }}
+                        onClick={() => {
+                          if (isLast) {
+                            setLightboxIndex(idx);
+                            setLightboxOpen(true);
+                          } else {
+                            setSelectedImage(img.url);
+                          }
+                        }}
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.altText || `Thumbnail ${idx}`}
+                          className={`gallery-thumbnail ${selectedImage === img.url ? 'active' : ''}`}
+                          style={{ display: 'block' }}
+                        />
+                        {isLast && (
+                          <div style={{
+                            position: 'absolute',
+                            inset: 0,
+                            borderRadius: 'inherit',
+                            background: 'linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.82) 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: '900',
+                            fontSize: '1.25rem',
+                            color: '#2C3E50',
+                            letterSpacing: '-0.5px',
+                            pointerEvents: 'none'
+                          }}>
+                            +{remaining}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
                 <div className="gallery-main-image">
                   <img src={selectedImage} alt={product.title} />
@@ -818,7 +854,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                   gap: '6px'
                 }}>
                   <Truck size={22} color="#007396" />
-                  <span style={{ fontWeight: '800', fontSize: '0.85rem', color: '#2C3E50' }}>Entrega Grátis Expressa</span>
+                  <span style={{ fontWeight: '800', fontSize: '0.85rem', color: '#2C3E50' }}>Entrega GRÁTIS</span>
                   <span style={{ fontSize: '0.75rem', color: '#666' }}>2 a 5 dias para Portugal e Espanha</span>
                 </div>
                 <div style={{
@@ -830,7 +866,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                   gap: '6px'
                 }}>
                   <RotateCcw size={22} color="#E06A55" />
-                  <span style={{ fontWeight: '800', fontSize: '0.85rem', color: '#2C3E50' }}>30 Dias de Experiência</span>
+                  <span style={{ fontWeight: '800', fontSize: '0.85rem', color: '#2C3E50' }}>30 Dias para devolução</span>
                   <span style={{ fontSize: '0.75rem', color: '#666' }}>Devolução simplificada e grátis</span>
                 </div>
               </div>
@@ -1757,7 +1793,165 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
 
         </div>
       </div>
+      {/* Desktop-only Lightbox Modal */}
+      <AnimatePresence>
+        {lightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="lightbox-overlay"
+            onClick={() => setLightboxOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9999,
+              backgroundColor: 'rgba(0,0,0,0.88)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '40px'
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setLightboxOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '24px',
+                background: 'rgba(255,255,255,0.12)',
+                border: 'none',
+                color: 'white',
+                borderRadius: '50%',
+                width: '44px',
+                height: '44px',
+                fontSize: '1.4rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backdropFilter: 'blur(6px)',
+                lineHeight: 1
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Prev button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => Math.max(0, i - 1)); }}
+              style={{
+                position: 'absolute',
+                left: '20px',
+                background: 'rgba(255,255,255,0.12)',
+                border: 'none',
+                color: 'white',
+                borderRadius: '50%',
+                width: '50px',
+                height: '50px',
+                cursor: lightboxIndex === 0 ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: lightboxIndex === 0 ? 0.3 : 1,
+                backdropFilter: 'blur(6px)'
+              }}
+            >
+              <ChevronLeft size={26} />
+            </button>
+
+            {/* Main image */}
+            <motion.div
+              key={lightboxIndex}
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={{ duration: 0.18 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '20px',
+                maxWidth: '700px',
+                width: '100%'
+              }}
+            >
+              <img
+                src={displayImages[lightboxIndex]?.url}
+                alt={displayImages[lightboxIndex]?.altText || `Image ${lightboxIndex + 1}`}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '70vh',
+                  objectFit: 'contain',
+                  borderRadius: '16px',
+                  boxShadow: '0 24px 60px rgba(0,0,0,0.4)'
+                }}
+              />
+
+              {/* Thumbnail strip */}
+              <div style={{
+                display: 'flex',
+                gap: '10px',
+                flexWrap: 'wrap',
+                justifyContent: 'center'
+              }}>
+                {displayImages.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img.url}
+                    alt={img.altText || `Thumb ${i + 1}`}
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex(i); }}
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      objectFit: 'cover',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      border: lightboxIndex === i ? '3px solid #FF9F1C' : '2px solid rgba(255,255,255,0.2)',
+                      opacity: lightboxIndex === i ? 1 : 0.65,
+                      transition: 'all 0.15s',
+                      flexShrink: 0
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Counter */}
+              <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', fontWeight: '700' }}>
+                {lightboxIndex + 1} / {displayImages.length}
+              </span>
+            </motion.div>
+
+            {/* Next button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => Math.min(displayImages.length - 1, i + 1)); }}
+              style={{
+                position: 'absolute',
+                right: '20px',
+                background: 'rgba(255,255,255,0.12)',
+                border: 'none',
+                color: 'white',
+                borderRadius: '50%',
+                width: '50px',
+                height: '50px',
+                cursor: lightboxIndex === displayImages.length - 1 ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: lightboxIndex === displayImages.length - 1 ? 0.3 : 1,
+                backdropFilter: 'blur(6px)'
+              }}
+            >
+              <ChevronRight size={26} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Layout>
+
   );
 };
 

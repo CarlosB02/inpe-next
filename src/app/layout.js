@@ -1,6 +1,7 @@
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import CartDrawer from '@/components/CartDrawer';
+import Script from 'next/script';
 
 export const metadata = {
   title: 'Inpe – Barefoot Shoes',
@@ -23,6 +24,19 @@ export default function RootLayout({ children }) {
           <CartDrawer />
         </CartProvider>
       </body>
+      {/* Google Analytics */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-LTB0CDNR8T"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LTB0CDNR8T');
+        `}
+      </Script>
     </html>
   );
 }

@@ -1172,3 +1172,20 @@ img {
     padding: 0;
   }
 }
+
+/* ===== LIGHTBOX (desktop only) ===== */
+.lightbox-overlay {
+  display: flex !important;
+}
+
+@media (max-width: 768px) {
+  .lightbox-overlay {
+    display: none !important;
+  }
+}
+
+/* Thumbnail wrapper for the +N card inherits the thumbnail border-radius */
+.gallery-thumbnails > div {
+  border-radius: 12px;
+  overflow: hidden;
+}

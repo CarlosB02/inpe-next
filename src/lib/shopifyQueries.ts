@@ -18,7 +18,7 @@ export const PRODUCT_FRAGMENT = `
         currencyCode
       }
     }
-    images(first: 10) {
+    images(first: 15) {
       edges {
         cursor
         node {

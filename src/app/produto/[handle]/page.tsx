@@ -73,5 +73,33 @@ export default async function ProdutoPage({ params }: Props) {
 
   const finalRelated = filteredRelated.slice(0, 4);
 
-  return <ProductClient product={product} relatedProducts={finalRelated} />;
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://inpe-barefoot.com';
+  const images = product.images?.edges?.map(edge => edge.node.url) || [];
+  const minPrice = product.priceRange?.minVariantPrice;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    'name': product.title,
+    'image': images,
+    'description': product.description,
+    'sku': product.id,
+    'offers': {
+      '@type': 'Offer',
+      'price': minPrice?.amount || '0.00',
+      'priceCurrency': minPrice?.currencyCode || 'EUR',
+      'availability': product.availableForSale ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      'url': `${BASE_URL}/produto/${product.handle}`,
+    },
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductClient product={product} relatedProducts={finalRelated} />
+    </>
+  );
 }
