@@ -1,18 +1,18 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Menu, X, ShoppingBag, Search } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ShoppingBag, Search } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
 const Header = () => {
   const { openCart, cartCount } = useCart();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const searchInputRef = useRef(null);
-  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 850);
@@ -23,68 +23,108 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setScrolled(currentScrollY > 20);
-      lastScrollY.current = currentScrollY;
+      setScrolled(window.scrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isActiveRoute = (href) => {
+    if (href === '/') return pathname === '/';
+    return pathname === href || pathname?.startsWith(href);
+  };
+
+  const navItems = [
+    { name: 'Início', href: '/' },
+    { name: 'Loja', href: '/loja' },
+    { name: 'Nossa História', href: '/sobre-nos' },
+    { name: 'Contactos', href: '/contactos' },
+  ];
+
   return (
     <header style={{
       position: 'fixed',
-      top: isMobile ? '8px' : '20px',
+      top: isMobile ? '10px' : (scrolled ? '12px' : '20px'),
       left: 0,
       right: 0,
-      zIndex: 100,
-      padding: isMobile ? '0 10px' : '0 2rem',
+      zIndex: 1000,
+      padding: isMobile ? '0 12px' : '0 2rem',
       display: 'flex',
       justifyContent: 'center',
-      transition: 'transform 0.3s ease-in-out',
-      transform: 'translateY(0)',
+      transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
     }}>
       {/* CSS-only Menu Toggle Checkbox */}
-      <input type="checkbox" id="menu-toggle" style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none', zIndex: -1 }} />
+      <input 
+        type="checkbox" 
+        id="menu-toggle" 
+        style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none', zIndex: -1 }} 
+      />
 
-      <div style={{
-        backgroundColor: 'white',
-        borderRadius: '9999px',
-        padding: isMobile ? '6px 16px' : '12px 32px',
-        width: '100%',
-        maxWidth: '1100px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.05)' : 'none',
-        transition: 'all 0.3s ease'
-      }}>
+      <div 
+        className="header-bar"
+        style={{
+          backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.88)' : 'rgba(255, 255, 255, 0.75)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderRadius: '9999px',
+          padding: isMobile ? '8px 16px' : (scrolled ? '10px 28px' : '16px 36px'),
+          width: '100%',
+          maxWidth: '1200px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          boxShadow: scrolled 
+            ? '0 10px 30px -10px rgba(133, 73, 49, 0.12), 0 1px 3px rgba(0, 0, 0, 0.02)' 
+            : '0 4px 20px -5px rgba(0, 0, 0, 0.05)',
+          border: scrolled 
+            ? '1px solid rgba(133, 73, 49, 0.08)' 
+            : '1px solid rgba(255, 255, 255, 0.6)',
+          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+      >
         {/* Logo */}
-        <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/logo.png" alt="Inpe Logo" style={{ height: isMobile ? '32px' : '45px', width: 'auto' }} />
+        <Link href="/" className="logo-link" style={{ display: 'flex', alignItems: 'center', transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+          <img 
+            src="/logo.png" 
+            alt="Inpe Logo" 
+            style={{ 
+              height: isMobile ? '32px' : (scrolled ? '38px' : '45px'), 
+              width: 'auto',
+              transition: 'height 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+            }} 
+          />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="desktop-nav" style={{ display: isMobile ? 'none' : 'flex', gap: '24px', fontWeight: 'bold', fontSize: '0.9rem', color: '#555', textTransform: 'uppercase' }}>
-          <Link href="/" className="nav-item">Início</Link>
-          <Link href="/loja" className="nav-item">Loja</Link>
-          <Link href="/sobre-nos" className="nav-item">Nossa História</Link>
-          <Link href="/contactos" className="nav-item">Contactos</Link>
+        <nav className="desktop-nav" style={{ display: isMobile ? 'none' : 'flex', gap: '8px', alignItems: 'center' }}>
+          {navItems.map((item) => (
+            <Link 
+              key={item.href}
+              href={item.href} 
+              className={`nav-item ${isActiveRoute(item.href) ? 'active' : ''}`}
+            >
+              {item.name}
+            </Link>
+          ))}
         </nav>
 
         {/* Action Icons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: isSearchOpen ? 'var(--color-background)' : 'transparent',
-            borderRadius: '50px',
-            padding: isSearchOpen ? '4px 8px' : '0',
-            transition: 'all 0.3s ease',
-            border: isSearchOpen ? '1px solid #eee' : '1px solid transparent'
-          }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem' }}>
+          {/* Search container */}
+          <div 
+            className="search-container"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: isSearchOpen ? 'rgba(255, 255, 255, 0.9)' : 'transparent',
+              border: isSearchOpen ? '1px solid rgba(244, 196, 102, 0.5)' : '1px solid transparent',
+              boxShadow: isSearchOpen ? '0 0 10px rgba(244, 196, 102, 0.15)' : 'none',
+              borderRadius: '50px',
+              padding: isSearchOpen ? '2px 8px' : '0',
+              transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+            }}
+          >
             <button
               onClick={() => {
                 setIsSearchOpen(!isSearchOpen);
@@ -93,14 +133,16 @@ const Header = () => {
               style={{
                 background: 'none',
                 border: 'none',
-                color: isSearchOpen ? 'var(--color-primary)' : '#555',
+                color: isSearchOpen ? 'var(--color-accent-brown)' : 'var(--color-text)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 padding: '8px',
-                borderRadius: '50%'
+                borderRadius: '50%',
+                transition: 'color 0.2s ease',
               }}
+              aria-label="Pesquisar"
             >
               <Search size={20} />
             </button>
@@ -117,55 +159,46 @@ const Header = () => {
                 }
               }}
               onBlur={() => { if (searchQuery.trim() === '') setIsSearchOpen(false); }}
+              className="search-input"
               style={{
-                width: isSearchOpen ? '150px' : '0px',
+                width: isSearchOpen ? (isMobile ? '110px' : '160px') : '0px',
                 opacity: isSearchOpen ? 1 : 0,
+                padding: isSearchOpen ? '0 8px 0 4px' : '0',
                 border: 'none',
                 background: 'transparent',
                 outline: 'none',
-                padding: isSearchOpen ? '0 8px 0 4px' : '0',
-                transition: 'width 0.3s, opacity 0.2s, padding 0.3s',
                 color: 'var(--color-text)',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                fontFamily: 'var(--font-main)',
+                transition: 'width 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s, padding 0.3s',
               }}
             />
           </div>
 
+          {/* Cart Icon */}
           <button 
             onClick={openCart}
+            className="cart-btn"
             style={{
               position: 'relative',
-              background: isMobile ? 'none' : 'var(--color-primary)',
-              color: isMobile ? '#555' : 'white',
-              width: isMobile ? 'auto' : '40px',
-              height: isMobile ? 'auto' : '40px',
+              background: isMobile ? 'none' : 'rgba(244, 196, 102, 0.08)',
+              color: 'var(--color-text)',
+              width: isMobile ? 'auto' : '42px',
+              height: isMobile ? 'auto' : '42px',
               borderRadius: '50%',
-              border: 'none',
+              border: isMobile ? 'none' : '1.5px solid rgba(244, 196, 102, 0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              padding: isMobile ? '8px' : '0'
+              padding: isMobile ? '8px' : '0',
+              transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)'
             }}
+            aria-label="Carrinho"
           >
             <ShoppingBag size={20} />
             {cartCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: isMobile ? '0px' : '-4px',
-                right: isMobile ? '-4px' : '-4px',
-                backgroundColor: 'var(--color-accent-brown)',
-                color: 'white',
-                fontSize: '0.7rem',
-                fontWeight: 'bold',
-                borderRadius: '50%',
-                width: '18px',
-                height: '18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid white'
-              }}>
+              <span className="cart-badge">
                 {cartCount}
               </span>
             )}
@@ -174,66 +207,222 @@ const Header = () => {
           {/* Mobile Toggle Label (Triggers checkbox natively on tap/click) */}
           <label 
             htmlFor="menu-toggle" 
-            className="mobile-toggle" 
-            onClick={() => {}}
+            className="mobile-toggle-label" 
             style={{ 
               display: isMobile ? 'flex' : 'none', 
               background: 'none', 
               border: 'none', 
               cursor: 'pointer',
               padding: '12px',
-              marginRight: '-12px',
-              color: '#2C3E50',
+              marginRight: '-8px',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 101
+              zIndex: 1002
             }}
           >
-            <span className="menu-icon-open" style={{ display: 'flex', alignItems: 'center' }}><Menu size={24} /></span>
-            <span className="menu-icon-close" style={{ display: 'none', alignItems: 'center' }}><X size={24} /></span>
+            <div className="hamburger-toggle">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
           </label>
         </div>
       </div>
 
       {/* Mobile Menu Overlay */}
-      <div className="mobile-menu-overlay" style={{
-        position: 'fixed',
-        top: '70px',
-        left: '16px',
-        right: '16px',
-        backgroundColor: 'white',
-        borderRadius: '24px',
-        padding: '2rem 1.5rem',
-        boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
-        display: 'none', // Controlled by CSS checkbox state
-        flexDirection: 'column',
-        gap: '1.2rem',
-        textAlign: 'center',
-        zIndex: 1000,
-        border: '1px solid #f0f0f0'
-      }}>
-        {/* Unchecking toggle when clicking link to close overlay */}
-        <Link href="/" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Início</Link>
-        <Link href="/loja" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Loja</Link>
-        <Link href="/sobre-nos" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Nossa História</Link>
-        <Link href="/contactos" onClick={() => { if (typeof document !== 'undefined') { const el = document.getElementById('menu-toggle'); if (el) el.checked = false; } }} style={{ padding: '8px', fontWeight: '800', color: '#2C3E50', fontSize: '1.1rem' }}>Contactos</Link>
+      <div className="mobile-menu-overlay">
+        {navItems.map((item) => (
+          <Link 
+            key={item.href}
+            href={item.href} 
+            onClick={() => { 
+              if (typeof document !== 'undefined') { 
+                const el = document.getElementById('menu-toggle'); 
+                if (el) el.checked = false; 
+              } 
+            }} 
+            className={`mobile-nav-item ${isActiveRoute(item.href) ? 'active' : ''}`}
+          >
+            {item.name}
+          </Link>
+        ))}
       </div>
 
       <style>{`
-        .nav-item:hover { color: var(--color-primary); }
+        /* Desktop navigation links styles */
+        .nav-item {
+          position: relative;
+          color: var(--color-text-light);
+          font-weight: 600;
+          font-size: 0.92rem;
+          letter-spacing: 0.03em;
+          text-transform: uppercase;
+          transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+          padding: 8px 16px;
+          border-radius: 20px;
+          display: inline-block;
+        }
 
-        .mobile-toggle span, .mobile-toggle svg {
-          pointer-events: none !important;
+        .nav-item:hover {
+          color: var(--color-text);
+          background-color: rgba(244, 196, 102, 0.08);
+        }
+
+        .nav-item.active {
+          color: var(--color-accent-brown);
+          font-weight: 700;
+          background-color: rgba(133, 73, 49, 0.05);
+        }
+
+        .nav-item::after {
+          content: '';
+          position: absolute;
+          bottom: 4px;
+          left: 50%;
+          width: 0;
+          height: 2px;
+          background-color: var(--color-accent-brown);
+          border-radius: 999px;
+          transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), left 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .nav-item.active::after {
+          width: 14px;
+          left: calc(50% - 7px);
+        }
+
+        .nav-item:hover::after {
+          width: 20px;
+          left: calc(50% - 10px);
+        }
+
+        .logo-link:hover {
+          transform: scale(1.04);
+        }
+
+        /* Cart Button Micro-interactions */
+        .cart-btn:hover {
+          background-color: var(--color-primary) !important;
+          border-color: var(--color-primary) !important;
+          color: var(--color-text) !important;
+          transform: translateY(-2px);
+        }
+
+        .cart-btn:hover svg {
+          transform: scale(1.1) rotate(-8deg);
+        }
+
+        .cart-btn:active {
+          transform: translateY(0);
+        }
+
+        /* Cart Badge Pulse keyframes */
+        .cart-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          background: linear-gradient(135deg, var(--color-accent-brown) 0%, #a66247 100%);
+          color: white;
+          font-size: 0.7rem;
+          font-weight: bold;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid white;
+          box-shadow: 0 2px 5px rgba(133, 73, 49, 0.25);
+          animation: cart-badge-pulse 2.5s infinite;
+        }
+
+        @keyframes cart-badge-pulse {
+          0% { box-shadow: 0 0 0 0 rgba(133, 73, 49, 0.5); }
+          70% { box-shadow: 0 0 0 6px rgba(133, 73, 49, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(133, 73, 49, 0); }
+        }
+
+        /* Mobile Hamburger icon styles */
+        .hamburger-toggle {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          width: 22px;
+          height: 15px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          transition: transform 0.3s ease;
+        }
+
+        .hamburger-toggle span {
+          display: block;
+          width: 100%;
+          height: 2px;
+          background-color: var(--color-text);
+          border-radius: 2px;
+          transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease, background-color 0.3s ease;
+        }
+
+        #menu-toggle:checked ~ div .hamburger-toggle span:nth-child(1) {
+          transform: translateY(6px) rotate(45deg);
+          background-color: var(--color-accent-brown);
+        }
+
+        #menu-toggle:checked ~ div .hamburger-toggle span:nth-child(2) {
+          opacity: 0;
+          transform: translateX(-10px);
+        }
+
+        #menu-toggle:checked ~ div .hamburger-toggle span:nth-child(3) {
+          transform: translateY(-7px) rotate(-45deg);
+          background-color: var(--color-accent-brown);
+        }
+
+        /* Mobile menu slide down fade in transition */
+        .mobile-menu-overlay {
+          position: fixed;
+          top: 72px;
+          left: 12px;
+          right: 12px;
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 24px;
+          padding: 2rem 1.5rem;
+          box-shadow: 0 15px 35px rgba(133, 73, 49, 0.12), 0 1px 3px rgba(0,0,0,0.02);
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+          z-index: 999;
+          border: 1px solid rgba(255, 255, 255, 0.5);
+          transform: translateY(-20px) scale(0.95);
+          opacity: 0;
+          pointer-events: none;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
         }
 
         #menu-toggle:checked ~ .mobile-menu-overlay {
-          display: flex !important;
+          transform: translateY(0) scale(1);
+          opacity: 1;
+          pointer-events: auto;
         }
-        #menu-toggle:checked ~ div .mobile-toggle .menu-icon-open {
-          display: none !important;
+
+        .mobile-nav-item {
+          padding: 12px;
+          font-weight: 700;
+          font-size: 1.15rem;
+          color: var(--color-text);
+          border-radius: 12px;
+          transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        #menu-toggle:checked ~ div .mobile-toggle .menu-icon-close {
-          display: flex !important;
+
+        .mobile-nav-item:hover, .mobile-nav-item.active {
+          background-color: rgba(244, 196, 102, 0.12);
+          color: var(--color-accent-brown);
+          transform: scale(1.02);
         }
       `}</style>
     </header>

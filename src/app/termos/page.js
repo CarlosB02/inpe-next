@@ -1,5 +1,10 @@
-import Layout from '@/components/Layout';
-export const metadata = { title: 'Termos – Inpe' };
+import TermsClient from '@/components/TermsClient';
+
+export const metadata = {
+  title: 'Termos e Condições | Inpe Barefoot',
+  description: 'Consulta os Termos e Condições de utilização da loja online Inpe Barefoot. Conheça as nossas políticas de envio, pagamento, trocas e garantias.',
+};
+
 export default function TermosPage() {
-  return <Layout><div style={{ padding: '4rem', textAlign: 'center', minHeight: '60vh' }}><h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>Termos & Condições</h2><p style={{ color: 'var(--color-secondary)' }}>Esta página está em construção.</p></div></Layout>;
+  return <TermsClient />;
 }

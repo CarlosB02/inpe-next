@@ -245,7 +245,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   textShadow: '0 2px 4px rgba(0,0,0,0.3)'
                 }}
               >
-                Descubra o conforto natural.
+                Descubre o conforto natural.
               </motion.p>
 
               <motion.div
@@ -1385,7 +1385,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
-                <h4 style={{ margin: 0, color: '#2C3E50', fontSize: '1.1rem', fontWeight: '900' }}>O que é que o seu filho mais gosta de fazer ao ar livre?</h4>
+                <h4 style={{ margin: 0, color: '#2C3E50', fontSize: '1.1rem', fontWeight: '900' }}>O que é que o teu filho mais gosta de fazer ao ar livre?</h4>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
