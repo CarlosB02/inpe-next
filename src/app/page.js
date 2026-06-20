@@ -2,8 +2,8 @@ import HomeClient2 from '@/components/HomeClient2';
 import { getProducts } from '@/lib/shopify';
 
 export const metadata = {
-  title: 'Inpe – Pegadas Felizes (Barefoot Natural)',
-  description: 'Um novo design divertido e saudável para os pezinhos das crianças!',
+  title: 'Inpe – Pés livres, e felizes!',
+  description: 'Sapatos barefoot que acompanham cada passo, permitindo que os pés das crianças cresçam e explorem o mundo com liberdade e conforto.',
 };
 
 export default async function HomePage() {

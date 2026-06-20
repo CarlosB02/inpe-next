@@ -117,6 +117,20 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         return l === 'sapatilhas' || l === 'botas' || l === 'sandálias' || l === 'sandalias' || l === 'desportivo' || l === 'lonas';
       }) || 'Sapatilhas';
 
+      // Map color names to their variant images for interactive preview
+      const colorImages: Record<string, string> = {};
+      variantsList.forEach(v => {
+        const colorOpt = v.selectedOptions.find(opt => {
+          const nameLower = opt.name.toLowerCase();
+          return nameLower === 'cor' || nameLower === 'color' || nameLower === 'colour';
+        });
+        if (colorOpt && v.image?.url) {
+          colorImages[colorOpt.value] = v.image.url;
+        }
+      });
+
+      const images = p.images.edges.map(e => e.node.url).filter(Boolean);
+
       return {
         id: p.handle,
         name: p.title,
@@ -125,7 +139,10 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         category,
         subcategory,
         sizes,
-        colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466']
+        colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466'],
+        colorImages,
+        images,
+        isNew: tagsLower.includes('new') || tagsLower.includes('novo')
       };
     });
   }, [initialProducts]);
@@ -736,6 +753,10 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                         image={product.image}
                         category={product.subcategory || product.category}
                         id={product.id}
+                        colors={product.colors}
+                        colorImages={product.colorImages}
+                        images={product.images}
+                        isNew={product.isNew}
                       />
                     </motion.div>
                   ))}

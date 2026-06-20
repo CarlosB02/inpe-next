@@ -1185,7 +1185,7 @@ img {
 }
 
 /* Thumbnail wrapper for the +N card inherits the thumbnail border-radius */
-.gallery-thumbnails > div {
+.gallery-thumbnails>div {
   border-radius: 12px;
   overflow: hidden;
 }

@@ -83,6 +83,32 @@ const HomeClient2 = ({ initialProducts = [] }) => {
         return l === 'sapatilhas' || l === 'botas' || l === 'sandálias' || l === 'sandalias';
       }) || 'Sapatilhas';
 
+      const colorsSet = new Set();
+      variantsList.forEach(v => {
+        v.selectedOptions.forEach(opt => {
+          if (
+            opt.name.toLowerCase() === 'cor' ||
+            opt.name.toLowerCase() === 'color' ||
+            opt.name.toLowerCase() === 'colour'
+          ) {
+            colorsSet.add(opt.value);
+          }
+        });
+      });
+
+      const colorImages = {};
+      variantsList.forEach(v => {
+        const colorOpt = v.selectedOptions.find(opt => {
+          const nameLower = opt.name.toLowerCase();
+          return nameLower === 'cor' || nameLower === 'color' || nameLower === 'colour';
+        });
+        if (colorOpt && v.image?.url) {
+          colorImages[colorOpt.value] = v.image.url;
+        }
+      });
+
+      const images = p.images.edges.map(e => e.node.url).filter(Boolean);
+
       return {
         id: p.handle,
         name: p.title,
@@ -90,7 +116,10 @@ const HomeClient2 = ({ initialProducts = [] }) => {
         image: p.images.edges[0]?.node.url || '',
         category,
         subcategory,
-        isNew: tagsLower.includes('new') || tagsLower.includes('novo')
+        isNew: tagsLower.includes('new') || tagsLower.includes('novo'),
+        colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466'],
+        colorImages,
+        images
       };
     });
   }, [initialProducts]);
@@ -501,6 +530,10 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                       image={p.image}
                       category={p.subcategory || p.category}
                       id={p.id}
+                      colors={p.colors}
+                      colorImages={p.colorImages}
+                      images={p.images || p.gallery || [p.image]}
+                      isNew={p.isNew}
                       compact={true}
                     />
                   </div>
@@ -628,6 +661,10 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                       image={p.image}
                       category={p.subcategory || p.category}
                       id={p.id}
+                      colors={p.colors}
+                      colorImages={p.colorImages}
+                      images={p.images || p.gallery || [p.image]}
+                      isNew={p.isNew}
                       compact={true}
                     />
                   </div>
@@ -1052,7 +1089,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                         scrollSnapAlign: 'start',
                       }}
                     >
-                      <ProductCard title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} compact={true} />
+                      <ProductCard title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} colors={p.colors} colorImages={p.colorImages} images={p.images || p.gallery || [p.image]} isNew={p.isNew} compact={true} />
                     </div>
                   ))}
                 </div>
@@ -1116,7 +1153,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
               gap: '2.5rem'
             }}>
               {parentsProducts.map(p => (
-                <ProductCard key={p.id} title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} compact={isMobile} />
+                <ProductCard key={p.id} title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} colors={p.colors} colorImages={p.colorImages} images={p.images || p.gallery || [p.image]} isNew={p.isNew} compact={isMobile} />
               ))}
             </div>
 

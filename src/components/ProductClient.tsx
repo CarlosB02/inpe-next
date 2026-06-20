@@ -6,7 +6,8 @@ import Link from 'next/link';
 import {
   Star, Truck, RotateCcw, Headphones, ChevronDown, ChevronUp,
   Clock, ShieldCheck, Check, ShoppingBag, Ruler, Heart,
-  Sparkles, Smile, Footprints, Info, ChevronLeft, ChevronRight
+  Sparkles, Smile, Footprints, Info, ChevronLeft, ChevronRight,
+  ArrowRight, Sprout, Maximize, Activity, Zap, Feather
 } from 'lucide-react';
 import { Product, ProductVariant } from '../types/shopify';
 import { useCart } from '../context/CartContext';
@@ -40,6 +41,15 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Diagnostic states for foot-measuring tool
   const [footLength, setFootLength] = useState<string>('');
@@ -1765,27 +1775,180 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
             )}
 
             {bottomTab === 'faq' && (
-              <div className="faq-container">
-                <div className="faq-grid">
+              <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 0' }}>
+                <div
+                  className={isMobile ? "mobile-gallery-scroll" : ""}
+                  style={{
+                    display: isMobile ? 'flex' : 'grid',
+                    gridTemplateColumns: isMobile ? 'unset' : 'repeat(4, 1fr)',
+                    gridTemplateRows: isMobile ? 'unset' : 'auto auto',
+                    gap: '1.25rem',
+                    paddingBottom: isMobile ? '1rem' : '0',
+                  }}
+                >
                   {[
-                    { q: 'Como escolher o tamanho correto?', a: 'Recomendamos medir o seu pé em cm e consultar a nossa tabela de tamanhos. Deixe sempre 0.5cm a 1.2cm de folga.' },
-                    { q: 'Posso usar sem meias?', a: 'Sim! Os nossos sapatos são feitos com materiais respiráveis ideais para usar com ou sem meias.' },
-                    { q: 'São laváveis na máquina?', a: 'Recomendamos lavagem à mão com água fria para preservar a durabilidade dos materiais.' },
-                    { q: 'Quanto tempo demora a entrega?', a: 'Para Portugal e Espanha, o envio é expresso e demora entre 2 a 5 dias úteis.' },
-                    { q: 'Têm garantia?', a: 'Sim, todos os nossos produtos têm garantia.' },
-                    { q: 'Como funciona a devolução?', a: 'Tem 30 dias para devolver ou trocar, desde que o produto não tenha sido usado na rua.' }
+                    {
+                      q: 'O que é calçado barefoot?',
+                      a: 'Calçado que imita a sensação de andar descalço — sola plana, flexível e com espaço para os dedos se moverem livremente.',
+                      color: '#FF9F1C', bg: '#FFF3E0', icon: <Footprints size={22} />
+                    },
+                    {
+                      q: 'A partir de que idade?',
+                      a: 'Os nossos modelos estão disponíveis desde os primeiros passos. Consulta o nosso guia de tamanhos para encontrares o par certo.',
+                      color: '#007396', bg: '#E0F2F1', icon: <Sprout size={22} />
+                    },
+                    {
+                      q: 'Como medir o pé do meu filho?',
+                      a: 'Coloca o pé numa folha, traça o contorno e mede do calcanhar à ponta do dedo mais comprido. Adiciona 1 cm para folga de crescimento.',
+                      color: '#4CAF50', bg: '#E8F5E9', icon: <Maximize size={22} />
+                    },
+                    {
+                      q: 'Qual a diferença para um sapato normal?',
+                      a: 'Sola zero-drop, ponteira, contraforte macio e materiais leves. Tudo pensado para não interferir no desenvolvimento natural do pé.',
+                      color: '#E06A55', bg: '#FFEBEE', icon: <Activity size={22} />
+                    },
+                    {
+                      q: 'São indicados para uso diário?',
+                      a: 'Sim! São desenvolvidos para uso intenso — escola, parque, praia. Leves, respiráveis e fáceis de calçar.',
+                      color: '#7B5EA7', bg: '#F3E5F5', icon: <Zap size={22} />
+                    },
+                    {
+                      q: 'Os materiais são seguros e ecológicos?',
+                      a: 'Usamos materiais certificados, livres de substâncias nocivas. Produção consciente a pensar nas crianças e no planeta.',
+                      color: '#F4C466', bg: '#FFFDE7', icon: <Feather size={22} />
+                    },
                   ].map((item, i) => (
-                    <div key={i} className="faq-item">
-                      <h4>{item.q}</h4>
-                      <p>{item.a}</p>
-                    </div>
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.05 * i }}
+                      whileHover={{ y: -4, boxShadow: '0 16px 36px rgba(0,0,0,0.06)' }}
+                      style={{
+                        minWidth: isMobile ? '85vw' : 'unset',
+                        scrollSnapAlign: isMobile ? 'center' : 'none',
+                        backgroundColor: 'white',
+                        borderRadius: '24px',
+                        padding: '2rem 1.75rem',
+                        border: '1px solid rgba(0,0,0,0.04)',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.85rem',
+                        transition: 'all 0.3s ease',
+                        cursor: 'default',
+                      }}
+                    >
+                      <div style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '14px',
+                        backgroundColor: item.bg,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: item.color,
+                        flexShrink: 0,
+                      }}>
+                        {item.icon}
+                      </div>
+                      <h3 style={{
+                        fontSize: '1rem',
+                        fontWeight: '800',
+                        color: '#2C3E50',
+                        margin: 0,
+                        lineHeight: 1.35,
+                      }}>
+                        {item.q}
+                      </h3>
+                      <p style={{
+                        fontSize: '0.9rem',
+                        color: '#777',
+                        lineHeight: 1.7,
+                        margin: 0,
+                      }}>
+                        {item.a}
+                      </p>
+                    </motion.div>
                   ))}
-                </div>
-                <div className="support-card">
-                  <Headphones className="support-icon" size={48} />
-                  <h3>Tem mais alguma questão?</h3>
-                  <p>A nossa equipa está disponível para ajudar a encontrar o par perfeito.</p>
-                  <Link href="/contactos"><button className="contact-btn">Contacta a equipa de apoio</button></Link>
+
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    style={{
+                      minWidth: isMobile ? '85vw' : 'unset',
+                      scrollSnapAlign: isMobile ? 'center' : 'none',
+                      gridColumn: isMobile ? 'unset' : '4',
+                      gridRow: isMobile ? 'unset' : '1 / span 2',
+                      background: 'linear-gradient(160deg, #FF9F1C 0%, #F4C466 100%)',
+                      borderRadius: '28px',
+                      padding: '3rem 2rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textAlign: 'center',
+                      gap: '1.5rem',
+                      boxShadow: '0 16px 40px rgba(255,159,28,0.25)',
+                      minHeight: isMobile ? '240px' : 'unset',
+                    }}
+                  >
+                    <div style={{
+                      width: '64px',
+                      height: '64px',
+                      backgroundColor: 'rgba(255,255,255,0.25)',
+                      borderRadius: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                    }}>
+                      <Sparkles size={30} />
+                    </div>
+                    <div>
+                      <h3 style={{
+                        fontSize: '1.4rem',
+                        fontWeight: '900',
+                        color: 'white',
+                        margin: '0 0 0.6rem',
+                        lineHeight: 1.25,
+                      }}>
+                        Tens mais alguma questão?
+                      </h3>
+                      <p style={{
+                        color: 'rgba(255,255,255,0.85)',
+                        fontSize: '0.92rem',
+                        lineHeight: 1.65,
+                        margin: 0,
+                      }}>
+                        A nossa equipa está sempre disponível para te ajudar a escolher o par perfeito.
+                      </p>
+                    </div>
+                    <Link href="/contactos" style={{ textDecoration: 'none', width: '100%' }}>
+                      <motion.div
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.97 }}
+                        style={{
+                          backgroundColor: 'white',
+                          color: '#FF9F1C',
+                          fontWeight: '800',
+                          fontSize: '0.95rem',
+                          padding: '14px 28px',
+                          borderRadius: '50px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                        }}
+                      >
+                        Falar Connosco <ArrowRight size={16} />
+                      </motion.div>
+                    </Link>
+                  </motion.div>
                 </div>
               </div>
             )}

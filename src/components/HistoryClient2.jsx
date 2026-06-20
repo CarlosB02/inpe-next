@@ -598,12 +598,15 @@ const HistoryClient2 = () => {
               </p>
             </motion.div>
 
-            {/* Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
-              gridTemplateRows: isMobile ? 'auto' : 'auto auto',
+            {/* Grid / Mobile Carousel */}
+            <div
+              className={isMobile ? "mobile-gallery-scroll" : ""}
+              style={{
+              display: isMobile ? 'flex' : 'grid',
+              gridTemplateColumns: isMobile ? 'unset' : 'repeat(4, 1fr)',
+              gridTemplateRows: isMobile ? 'unset' : 'auto auto',
               gap: '1.25rem',
+              paddingBottom: isMobile ? '1rem' : '0',
             }}>
 
               {/* FAQ cards — col 1-3, rows 1-2 (6 cards) */}
@@ -625,7 +628,7 @@ const HistoryClient2 = () => {
                 },
                 {
                   q: 'Qual a diferença para um sapato normal?',
-                  a: 'Sola zero-drop, bico largo, contraforte macio e materiais leves. Tudo pensado para não interferir no desenvolvimento natural do pé.',
+                  a: 'Sola zero-drop, ponteira, contraforte macio e materiais leves. Tudo pensado para não interferir no desenvolvimento natural do pé.',
                   color: '#E06A55', bg: '#FFEBEE', icon: <Activity size={22} />
                 },
                 {
@@ -647,6 +650,8 @@ const HistoryClient2 = () => {
                   transition={{ duration: 0.4, delay: 0.05 * i }}
                   whileHover={{ y: -4, boxShadow: '0 16px 36px rgba(0,0,0,0.06)' }}
                   style={{
+                    minWidth: isMobile ? '85vw' : 'unset',
+                    scrollSnapAlign: isMobile ? 'center' : 'none',
                     backgroundColor: 'white',
                     borderRadius: '24px',
                     padding: '2rem 1.75rem',
@@ -699,8 +704,10 @@ const HistoryClient2 = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 style={{
-                  gridColumn: isMobile ? '1' : '4',
-                  gridRow: isMobile ? 'auto' : '1 / span 2',
+                  minWidth: isMobile ? '85vw' : 'unset',
+                  scrollSnapAlign: isMobile ? 'center' : 'none',
+                  gridColumn: isMobile ? 'unset' : '4',
+                  gridRow: isMobile ? 'unset' : '1 / span 2',
                   background: 'linear-gradient(160deg, #FF9F1C 0%, #F4C466 100%)',
                   borderRadius: '28px',
                   padding: '3rem 2rem',

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getProducts } from '@/lib/shopify';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://inpe-barefoot.com'; // Fallback URL if env is not defined
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://inpe.pt'; // Fallback URL if env is not defined
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 1. Define static routes

@@ -73,7 +73,7 @@ export default async function ProdutoPage({ params }: Props) {
 
   const finalRelated = filteredRelated.slice(0, 4);
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://inpe-barefoot.com';
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://inpe.pt';
   const images = product.images?.edges?.map(edge => edge.node.url) || [];
   const minPrice = product.priceRange?.minVariantPrice;
 
