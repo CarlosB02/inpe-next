@@ -12,6 +12,150 @@ import {
 import { Product, ProductVariant } from '../types/shopify';
 import { useCart } from '../context/CartContext';
 import Layout from './Layout';
+import ProductCard from './ProductCard';
+
+// Brand & Model specific size tables matching size guide
+const tablesData = [
+  {
+    id: 'igor-galochas',
+    brand: 'Igor',
+    model: 'Galochas',
+    data: [
+      { size: '20', length: '12,9', width: '5,8' },
+      { size: '21', length: '13,5', width: '6,0' },
+      { size: '22', length: '14,2', width: '6,2' },
+      { size: '23', length: '14,9', width: '6,3' },
+      { size: '24', length: '15,5', width: '6,4' },
+      { size: '25', length: '16,1', width: '6,5' },
+      { size: '26', length: '16,8', width: '6,7' },
+      { size: '27', length: '17,5', width: '6,9' },
+      { size: '28', length: '18,1', width: '7,0' },
+      { size: '29', length: '18,8', width: '7,2' },
+      { size: '30', length: '19,5', width: '7,4' },
+      { size: '31', length: '20,1', width: '7,5' },
+      { size: '32', length: '20,7', width: '7,6' },
+      { size: '33', length: '21,3', width: '8,1' },
+      { size: '34', length: '22,0', width: '8,3' },
+      { size: '35', length: '22,6', width: '8,4' },
+    ]
+  },
+  {
+    id: 'igor-lonas',
+    brand: 'Igor',
+    model: 'Lonas',
+    data: [
+      { size: '20', length: '13,1', width: '6,0' },
+      { size: '21', length: '13,8', width: '6,1' },
+      { size: '22', length: '14,4', width: '6,2' },
+      { size: '23', length: '15,0', width: '6,4' },
+      { size: '24', length: '15,7', width: '6,5' },
+      { size: '25', length: '16,4', width: '6,7' },
+      { size: '26', length: '17,0', width: '6,9' },
+      { size: '27', length: '17,5', width: '7,2' },
+      { size: '28', length: '18,1', width: '7,3' },
+      { size: '29', length: '18,8', width: '7,4' },
+      { size: '30', length: '19,4', width: '7,6' },
+    ]
+  },
+  {
+    id: 'igor-nemo',
+    brand: 'Igor',
+    model: 'Nemo',
+    data: [
+      { size: '20', length: '12,5', width: '5,9' },
+      { size: '21', length: '13,1', width: '6,0' },
+      { size: '22', length: '13,7', width: '6,1' },
+      { size: '23', length: '14,3', width: '6,2' },
+      { size: '24', length: '15,0', width: '6,3' },
+      { size: '25', length: '15,7', width: '6,4' },
+      { size: '26', length: '16,3', width: '6,6' },
+      { size: '27', length: '16,9', width: '6,8' },
+      { size: '28', length: '17,6', width: '6,9' },
+      { size: '29', length: '18,2', width: '7,0' },
+      { size: '30', length: '18,9', width: '7,1' },
+      { size: '31', length: '19,6', width: '7,2' },
+      { size: '32', length: '20,2', width: '7,4' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-1',
+    brand: 'Blanditos',
+    model: 'Vénus, Crono, Ares',
+    data: [
+      { size: '24', length: '15,8', width: '6,7' },
+      { size: '25', length: '16,5', width: '6,8' },
+      { size: '26', length: '17,2', width: '6,9' },
+      { size: '27', length: '17,8', width: '7,1' },
+      { size: '28', length: '18,5', width: '7,3' },
+      { size: '29', length: '19,1', width: '7,4' },
+      { size: '30', length: '19,8', width: '7,6' },
+      { size: '31', length: '20,5', width: '7,8' },
+      { size: '32', length: '21,1', width: '8,0' },
+      { size: '33', length: '21,8', width: '8,1' },
+      { size: '34', length: '22,5', width: '8,2' },
+      { size: '35', length: '23,3', width: '8,5' },
+      { size: '36', length: '23,9', width: '8,6' },
+      { size: '37', length: '24,6', width: '8,8' },
+      { size: '38', length: '25,0', width: '8,8' },
+      { size: '39', length: '25,9', width: '9,0' },
+      { size: '40', length: '26,5', width: '9,2' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-2',
+    brand: 'Blanditos',
+    model: 'Londres, Milán, Módena',
+    data: [
+      { size: '19', length: '12,1', width: '5,7' },
+      { size: '20', length: '12,7', width: '5,8' },
+      { size: '21', length: '13,3', width: '5,9' },
+      { size: '22', length: '14,0', width: '6,1' },
+      { size: '23', length: '14,6', width: '6,2' },
+      { size: '24', length: '15,3', width: '6,4' },
+      { size: '25', length: '16,0', width: '6,5' },
+      { size: '26', length: '16,5', width: '6,7' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-3',
+    brand: 'Blanditos',
+    model: 'Rio, Marea, Berlim',
+    data: [
+      { size: '26', length: '16,7', width: '6,8' },
+      { size: '27', length: '17,3', width: '6,9' },
+      { size: '28', length: '17,9', width: '7,1' },
+      { size: '29', length: '18,7', width: '7,3' },
+      { size: '30', length: '19,3', width: '7,5' },
+      { size: '31', length: '20,0', width: '7,6' },
+      { size: '32', length: '20,7', width: '7,8' },
+      { size: '33', length: '21,5', width: '8,0' },
+      { size: '34', length: '22,1', width: '8,1' },
+      { size: '35', length: '22,8', width: '8,2' },
+      { size: '36', length: '23,4', width: '8,5' },
+      { size: '37', length: '24,0', width: '8,6' },
+      { size: '38', length: '24,6', width: '8,8' },
+      { size: '39', length: '25,2', width: '8,9' },
+      { size: '40', length: '25,9', width: '9,1' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-4',
+    brand: 'Blanditos',
+    model: 'Coco, Sandía, Fresa, Guinda, Mango',
+    data: [
+      { size: '20', length: '13,1', width: '5,8' },
+      { size: '21', length: '13,7', width: '6,0' },
+      { size: '22', length: '14,5', width: '6,1' },
+      { size: '23', length: '15,0', width: '6,2' },
+      { size: '24', length: '15,8', width: '6,4' },
+      { size: '25', length: '16,3', width: '6,5' },
+      { size: '26', length: '17,0', width: '6,7' },
+      { size: '27', length: '17,6', width: '6,8' },
+      { size: '28', length: '18,2', width: '7,0' },
+      { size: '29', length: '18,9', width: '7,2' },
+    ]
+  }
+];
 
 interface ProductClientProps {
   product: Product;
@@ -288,6 +432,41 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     }
   };
 
+  // Match product tags to a size table
+  const matchedTableId = useMemo(() => {
+    if (!product || !product.tags) return null;
+    const normalizedTags = product.tags.map(t => t.toLowerCase().trim().replace(/\s+/g, '-'));
+    
+    if (normalizedTags.includes('igor-galochas') || normalizedTags.includes('igor-galocha')) {
+      return 'igor-galochas';
+    }
+    if (normalizedTags.includes('igor-lonas') || normalizedTags.includes('igor-lona')) {
+      return 'igor-lonas';
+    }
+    if (normalizedTags.includes('igor-nemo')) {
+      return 'igor-nemo';
+    }
+    if (normalizedTags.includes('blanditos-modelo-1') || normalizedTags.includes('venus') || normalizedTags.includes('crono') || normalizedTags.includes('ares') || normalizedTags.includes('blanditos-venus-crono-ares')) {
+      return 'blanditos-modelo-1';
+    }
+    if (normalizedTags.includes('blanditos-modelo-2') || normalizedTags.includes('londres') || normalizedTags.includes('milan') || normalizedTags.includes('modena') || normalizedTags.includes('blanditos-londres-milan-modena')) {
+      return 'blanditos-modelo-2';
+    }
+    if (normalizedTags.includes('blanditos-modelo-3') || normalizedTags.includes('rio') || normalizedTags.includes('marea') || normalizedTags.includes('berlim') || normalizedTags.includes('blanditos-rio-marea-berlim')) {
+      return 'blanditos-modelo-3';
+    }
+    if (normalizedTags.includes('blanditos-modelo-4') || normalizedTags.includes('coco') || normalizedTags.includes('sandia') || normalizedTags.includes('fresa') || normalizedTags.includes('guinda') || normalizedTags.includes('mango') || normalizedTags.includes('blanditos-coco-sandia-fresa-guinda-mango')) {
+      return 'blanditos-modelo-4';
+    }
+    
+    return null;
+  }, [product]);
+
+  const matchedTable = useMemo(() => {
+    if (!matchedTableId) return null;
+    return tablesData.find(t => t.id === matchedTableId) || null;
+  }, [matchedTableId]);
+
   // Diagnostic foot calculator
   const calculateSize = (val: string) => {
     setFootLength(val);
@@ -297,29 +476,102 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       return;
     }
 
-    const targetLength = num + 1.0;
-    let size = '';
+    if (matchedTable) {
+      // Parse lengths to float
+      const parsedData = matchedTable.data.map(item => ({
+        size: item.size,
+        length: parseFloat(item.length.replace(',', '.')),
+        width: parseFloat(item.width.replace(',', '.'))
+      }));
 
-    if (targetLength < 11.5) size = 'Tamanho 18 (Pezinho de Bebé)';
-    else if (targetLength < 12.0) size = 'Tamanho 19';
-    else if (targetLength < 12.7) size = 'Tamanho 20';
-    else if (targetLength < 13.4) size = 'Tamanho 21';
-    else if (targetLength < 14.1) size = 'Tamanho 22';
-    else if (targetLength < 14.7) size = 'Tamanho 23';
-    else if (targetLength < 15.4) size = 'Tamanho 24';
-    else if (targetLength < 16.0) size = 'Tamanho 25';
-    else if (targetLength < 16.7) size = 'Tamanho 26';
-    else if (targetLength < 17.4) size = 'Tamanho 27';
-    else if (targetLength < 18.0) size = 'Tamanho 28';
-    else if (targetLength < 18.7) size = 'Tamanho 29';
-    else if (targetLength < 19.4) size = 'Tamanho 30';
-    else if (targetLength < 20.0) size = 'Tamanho 31';
-    else if (targetLength < 20.7) size = 'Tamanho 32';
-    else if (targetLength < 21.4) size = 'Tamanho 33';
-    else if (targetLength < 22.0) size = 'Tamanho 34';
-    else size = 'Tamanho 35+ (Consultar Guia Principal)';
+      // Find candidates where wiggle room is at least 0.5 cm
+      const candidates = parsedData.filter(d => d.length - num >= 0.5);
 
-    setDiagnosticResult(`Recomendamos o **${size}** (Medida: ${num}cm + 1cm de folga saudável = ${targetLength.toFixed(1)}cm)`);
+      if (candidates.length === 0) {
+        setDiagnosticResult(`Todos os tamanhos para **${matchedTable.brand} ${matchedTable.model.split(',')[0]}** são pequenos para a medida de ${num}cm.`);
+        return;
+      }
+
+      // 1. Try to find if any size has wiggle room between 0.8 and 1.2 cm (ideal)
+      let selected = null;
+      const idealCandidates = candidates.filter(c => {
+        const wiggle = c.length - num;
+        return wiggle >= 0.8 && wiggle <= 1.2;
+      });
+
+      if (idealCandidates.length > 0) {
+        // Pick the one closest to 1.0 cm wiggle
+        selected = idealCandidates[0];
+        let bestDiff = Math.abs((selected.length - num) - 1.0);
+        for (let i = 1; i < idealCandidates.length; i++) {
+          const diff = Math.abs((idealCandidates[i].length - num) - 1.0);
+          if (diff < bestDiff) {
+            selected = idealCandidates[i];
+            bestDiff = diff;
+          }
+        }
+      } else {
+        // 2. Try to find if any size has wiggle room between 0.6 and 1.4 cm
+        const goodCandidates = candidates.filter(c => {
+          const wiggle = c.length - num;
+          return wiggle >= 0.6 && wiggle <= 1.4;
+        });
+
+        if (goodCandidates.length > 0) {
+          selected = goodCandidates[0];
+          let bestDiff = Math.abs((selected.length - num) - 1.0);
+          for (let i = 1; i < goodCandidates.length; i++) {
+            const diff = Math.abs((goodCandidates[i].length - num) - 1.0);
+            if (diff < bestDiff) {
+              selected = goodCandidates[i];
+              bestDiff = diff;
+            }
+          }
+        } else {
+          // 3. Just pick the candidate with the smallest absolute difference from 1.0 cm wiggle
+          selected = candidates[0];
+          let bestDiff = Math.abs((selected.length - num) - 1.0);
+          for (let i = 1; i < candidates.length; i++) {
+            const diff = Math.abs((candidates[i].length - num) - 1.0);
+            if (diff < bestDiff) {
+              selected = candidates[i];
+              bestDiff = diff;
+            }
+          }
+        }
+      }
+
+      if (selected) {
+        const wiggle = selected.length - num;
+        let recommendationText = `Recomendamos o **Tamanho ${selected.size}** para o modelo **${matchedTable.brand} ${matchedTable.model.split(',')[0]}**`;
+        recommendationText += ` (Medida do pé: ${num}cm | Palmilha: ${selected.length.toFixed(1)}cm | Folga: +${wiggle.toFixed(1)}cm)`;
+        setDiagnosticResult(recommendationText);
+      }
+    } else {
+      const targetLength = num + 1.0;
+      let size = '';
+
+      if (targetLength < 11.5) size = 'Tamanho 18 (Pezinho de Bebé)';
+      else if (targetLength < 12.0) size = 'Tamanho 19';
+      else if (targetLength < 12.7) size = 'Tamanho 20';
+      else if (targetLength < 13.4) size = 'Tamanho 21';
+      else if (targetLength < 14.1) size = 'Tamanho 22';
+      else if (targetLength < 14.7) size = 'Tamanho 23';
+      else if (targetLength < 15.4) size = 'Tamanho 24';
+      else if (targetLength < 16.0) size = 'Tamanho 25';
+      else if (targetLength < 16.7) size = 'Tamanho 26';
+      else if (targetLength < 17.4) size = 'Tamanho 27';
+      else if (targetLength < 18.0) size = 'Tamanho 28';
+      else if (targetLength < 18.7) size = 'Tamanho 29';
+      else if (targetLength < 19.4) size = 'Tamanho 30';
+      else if (targetLength < 20.0) size = 'Tamanho 31';
+      else if (targetLength < 20.7) size = 'Tamanho 32';
+      else if (targetLength < 21.4) size = 'Tamanho 33';
+      else if (targetLength < 22.0) size = 'Tamanho 34';
+      else size = 'Tamanho 35+ (Consultar Guia Principal)';
+
+      setDiagnosticResult(`Recomendamos o **${size}** (Medida: ${num}cm + 1cm de folga saudável = ${targetLength.toFixed(1)}cm)`);
+    }
   };
 
   const tabs = [
@@ -360,8 +612,8 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       title: '🛡️ Garantia Inpe', content: (
         <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#FFF9ED', borderRadius: '20px', border: '2px dashed #F4C466' }}>
           <ShieldCheck size={44} color="#FF9F1C" style={{ margin: '0 auto 10px' }} />
-          <p style={{ color: '#2C3E50', fontWeight: '800', fontSize: '1rem' }}>Ajuste Ergonómico Garantido</p>
-          <p style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px' }}>Se não servir ou não gostarem, a devolução é super simples até 30 dias!</p>
+          <p style={{ color: '#2C3E50', fontWeight: '800', fontSize: '1rem' }}>Trocas e Devoluções Simplificadas</p>
+          <p style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px' }}>Queremos que escolha com tranquilidade. Se necessário, pode trocar ou devolver até 30 dias.</p>
         </div>
       )
     }
@@ -378,7 +630,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
 
   return (
     <Layout>
-      <div style={{ backgroundColor: '#FFFDF9', minHeight: '100vh', padding: '3rem 0' }}>
+      <div style={{ backgroundColor: 'transparent', minHeight: '100vh', padding: '3rem 0' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
 
           {/* Main Content Grid (styled like Design 2) */}
@@ -804,7 +1056,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Ruler size={20} color="#FF9F1C" />
                   <span style={{ fontWeight: '900', color: 'var(--color-text)', fontSize: '1rem' }}>
-                    Calculadora de Tamanho Rápida
+                    Calculadora de Tamanho Rápida {matchedTable ? `(${matchedTable.brand} ${matchedTable.model.split(',')[0]})` : ''}
                   </span>
                 </div>
                 <p style={{ fontSize: '0.85rem', color: '#666', margin: 0, lineHeight: 1.4 }}>
@@ -1618,7 +1870,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
             <div style={{ borderTop: '2px solid rgba(0,0,0,0.05)', paddingTop: '4rem', marginBottom: '6rem' }}>
               <div style={{ textAlign: 'left', marginBottom: '3rem' }}>
                 <h2 style={{
-                  fontSize: '2.2rem',
+                  fontSize: isMobile ? '1.6rem' : '2.2rem',
                   fontWeight: '900',
                   color: '#2C3E50',
                   marginTop: '1rem',
@@ -1629,104 +1881,70 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
               </div>
 
               {/* Related list grid */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                gap: '2.5rem'
-              }}>
+              <div
+                className={isMobile ? "mobile-gallery-scroll" : ""}
+                style={{
+                  display: isMobile ? 'flex' : 'grid',
+                  gridTemplateColumns: isMobile ? 'unset' : 'repeat(auto-fill, minmax(250px, 1fr))',
+                  gap: '2.5rem',
+                  overflowX: isMobile ? 'auto' : 'visible',
+                  scrollSnapType: isMobile ? 'x mandatory' : 'none',
+                  WebkitOverflowScrolling: 'touch',
+                  margin: isMobile ? '0 -1.5rem' : '0',
+                  padding: isMobile ? '0 1.5rem 1rem 1.5rem' : '0',
+                  scrollbarWidth: 'none', /* Hide scrollbar for Firefox */
+                  msOverflowStyle: 'none', /* Hide scrollbar for IE/Edge */
+                }}
+              >
+                {isMobile && (
+                  <style>{`
+                    .mobile-gallery-scroll::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}</style>
+                )}
                 {relatedProducts.map((p, idx) => {
                   const firstVar = p.variants.edges[0]?.node;
                   const price = firstVar?.price.amount || '0.00';
                   const image = p.images.edges[0]?.node.url || '';
                   const cardRotation = idx % 2 === 0 ? -1 : 1.5;
 
+                  const colorSet = new Set<string>();
+                  const colorImages: Record<string, string> = {};
+                  p.variants.edges.forEach(e => {
+                    const v = e.node;
+                    const cOpt = v.selectedOptions.find(o => o.name.toLowerCase().includes('cor') || o.name.toLowerCase().includes('col'));
+                    if (cOpt) {
+                      colorSet.add(cOpt.value);
+                      if (v.image?.url && !colorImages[cOpt.value]) {
+                        colorImages[cOpt.value] = v.image.url;
+                      }
+                    }
+                  });
+                  const colors = Array.from(colorSet);
+
                   return (
-                    <Link
+                    <div
                       key={p.id}
-                      href={`/produto/${p.handle}`}
-                      style={{ textDecoration: 'none', color: 'inherit' }}
+                      style={{
+                        flex: isMobile ? '0 0 calc(80% - 0.375rem)' : 'unset',
+                        minWidth: 0,
+                        scrollSnapAlign: isMobile ? 'center' : 'none',
+                        transform: `rotate(${cardRotation}deg)`,
+                        transition: 'transform 0.3s ease'
+                      }}
                     >
-                      <motion.div
-                        whileHover={{ y: -8, rotate: cardRotation * 0.5 }}
-                        style={{
-                          backgroundColor: 'white',
-                          borderRadius: '28px',
-                          padding: '16px',
-                          border: '2px solid #EAEAEA',
-                          boxShadow: '0 8px 24px rgba(0,0,0,0.02)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          height: '100%',
-                          transform: `rotate(${cardRotation}deg)`
-                        }}
-                      >
-                        <div style={{
-                          height: '200px',
-                          backgroundColor: '#FDF6E9',
-                          borderRadius: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          overflow: 'hidden',
-                          marginBottom: '15px'
-                        }}>
-                          <img
-                            src={image}
-                            alt={p.title}
-                            style={{
-                              maxWidth: '80%',
-                              maxHeight: '80%',
-                              objectFit: 'contain',
-                              filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.05))'
-                            }}
-                          />
-                        </div>
-
-                        <h3 style={{
-                          fontSize: '1.15rem',
-                          fontWeight: '900',
-                          color: '#2C3E50',
-                          margin: '0 0 6px',
-                          lineHeight: '1.2'
-                        }}>
-                          {p.title}
-                        </h3>
-
-                        <span style={{
-                          fontSize: '0.8rem',
-                          fontWeight: '800',
-                          color: '#8097a5',
-                          textTransform: 'uppercase',
-                          marginBottom: '15px'
-                        }}>
-                          {p.tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos'}
-                        </span>
-
-                        <div style={{
-                          marginTop: 'auto',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center'
-                        }}>
-                          <span style={{ fontSize: '1.4rem', fontWeight: '900', color: '#E06A55' }}>
-                            {price}€
-                          </span>
-
-                          <div style={{
-                            width: '42px',
-                            height: '42px',
-                            borderRadius: '14px',
-                            backgroundColor: '#007396',
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <ShoppingBag size={18} />
-                          </div>
-                        </div>
-                      </motion.div>
-                    </Link>
+                      <ProductCard
+                        id={p.handle}
+                        title={p.title}
+                        price={price}
+                        image={image}
+                        category={p.tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos'}
+                        images={p.images.edges.map(e => e.node.url)}
+                        colors={colors}
+                        colorImages={colorImages}
+                      />
+                    </div>
                   );
                 })}
               </div>
@@ -1783,13 +2001,26 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                     gridTemplateColumns: isMobile ? 'unset' : 'repeat(4, 1fr)',
                     gridTemplateRows: isMobile ? 'unset' : 'auto auto',
                     gap: '1.25rem',
-                    paddingBottom: isMobile ? '1rem' : '0',
+                    overflowX: isMobile ? 'auto' : 'visible',
+                    scrollSnapType: isMobile ? 'x mandatory' : 'none',
+                    WebkitOverflowScrolling: 'touch',
+                    margin: isMobile ? '0 -1.5rem' : '0',
+                    padding: isMobile ? '0 1.5rem 1rem 1.5rem' : '0',
+                    scrollbarWidth: 'none', /* Hide scrollbar for Firefox */
+                    msOverflowStyle: 'none', /* Hide scrollbar for IE/Edge */
                   }}
                 >
+                  {isMobile && (
+                    <style>{`
+                      .mobile-gallery-scroll::-webkit-scrollbar {
+                        display: none;
+                      }
+                    `}</style>
+                  )}
                   {[
                     {
                       q: 'O que é calçado barefoot?',
-                      a: 'Calçado que imita a sensação de andar descalço — sola plana, flexível e com espaço para os dedos se moverem livremente.',
+                      a: 'Calçado que imita a sensação de andar descalço, sola plana, flexível e com espaço para os dedos se moverem livremente.',
                       color: '#FF9F1C', bg: '#FFF3E0', icon: <Footprints size={22} />
                     },
                     {
@@ -1804,17 +2035,17 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                     },
                     {
                       q: 'Qual a diferença para um sapato normal?',
-                      a: 'Sola zero-drop, ponteira, contraforte macio e materiais leves. Tudo pensado para não interferir no desenvolvimento natural do pé.',
+                      a: 'O calçado barefoot oferece mais liberdade, ausência de estruturas rígidas, mais flexibilidade, elevado conforto e um movimento natural.',
                       color: '#E06A55', bg: '#FFEBEE', icon: <Activity size={22} />
                     },
                     {
                       q: 'São indicados para uso diário?',
-                      a: 'Sim! São desenvolvidos para uso intenso — escola, parque, praia. Leves, respiráveis e fáceis de calçar.',
+                      a: 'Sim! São desenvolvidos para uso intenso, escola, parque, praia. Leves, respiráveis e fáceis de calçar.',
                       color: '#7B5EA7', bg: '#F3E5F5', icon: <Zap size={22} />
                     },
                     {
-                      q: 'Os materiais são seguros e ecológicos?',
-                      a: 'Usamos materiais certificados, livres de substâncias nocivas. Produção consciente a pensar nas crianças e no planeta.',
+                      q: 'E se o tamanho não servir?',
+                      a: 'Podes efetuar a troca ou devolução dentro de 30 dias. Queremos que escolhas com total confiança.',
                       color: '#F4C466', bg: '#FFFDE7', icon: <Feather size={22} />
                     },
                   ].map((item, i) => (
@@ -1826,7 +2057,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                       transition={{ duration: 0.4, delay: 0.05 * i }}
                       whileHover={{ y: -4, boxShadow: '0 16px 36px rgba(0,0,0,0.06)' }}
                       style={{
-                        minWidth: isMobile ? '85vw' : 'unset',
+                        minWidth: isMobile ? '78vw' : 'unset',
                         scrollSnapAlign: isMobile ? 'center' : 'none',
                         backgroundColor: 'white',
                         borderRadius: '24px',
@@ -1879,7 +2110,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                     style={{
-                      minWidth: isMobile ? '85vw' : 'unset',
+                      minWidth: isMobile ? '78vw' : 'unset',
                       scrollSnapAlign: isMobile ? 'center' : 'none',
                       gridColumn: isMobile ? 'unset' : '4',
                       gridRow: isMobile ? 'unset' : '1 / span 2',

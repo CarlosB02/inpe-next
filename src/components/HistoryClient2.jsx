@@ -602,18 +602,31 @@ const HistoryClient2 = () => {
             <div
               className={isMobile ? "mobile-gallery-scroll" : ""}
               style={{
-              display: isMobile ? 'flex' : 'grid',
-              gridTemplateColumns: isMobile ? 'unset' : 'repeat(4, 1fr)',
-              gridTemplateRows: isMobile ? 'unset' : 'auto auto',
-              gap: '1.25rem',
-              paddingBottom: isMobile ? '1rem' : '0',
-            }}>
+                display: isMobile ? 'flex' : 'grid',
+                gridTemplateColumns: isMobile ? 'unset' : 'repeat(4, 1fr)',
+                gridTemplateRows: isMobile ? 'unset' : 'auto auto',
+                gap: '1.25rem',
+                overflowX: isMobile ? 'auto' : 'visible',
+                scrollSnapType: isMobile ? 'x mandatory' : 'none',
+                WebkitOverflowScrolling: 'touch',
+                margin: isMobile ? '0 -1.5rem' : '0',
+                padding: isMobile ? '0 1.5rem 1rem 1.5rem' : '0',
+                scrollbarWidth: 'none', /* Hide scrollbar for Firefox */
+                msOverflowStyle: 'none', /* Hide scrollbar for IE/Edge */
+              }}>
+              {isMobile && (
+                <style>{`
+                  .mobile-gallery-scroll::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
+              )}
 
               {/* FAQ cards — col 1-3, rows 1-2 (6 cards) */}
               {[
                 {
                   q: 'O que é calçado barefoot?',
-                  a: 'Calçado que imita a sensação de andar descalço — sola plana, flexível e com espaço para os dedos se moverem livremente.',
+                  a: 'Calçado que imita a sensação de andar descalço, sola plana, flexível e com espaço para os dedos se moverem livremente.',
                   color: '#FF9F1C', bg: '#FFF3E0', icon: <Footprints size={22} />
                 },
                 {
@@ -628,17 +641,17 @@ const HistoryClient2 = () => {
                 },
                 {
                   q: 'Qual a diferença para um sapato normal?',
-                  a: 'Sola zero-drop, ponteira, contraforte macio e materiais leves. Tudo pensado para não interferir no desenvolvimento natural do pé.',
+                  a: 'O calçado barefoot oferece mais liberdade, ausência de estruturas rígidas, mais flexibilidade, elevado conforto e um movimento natural.',
                   color: '#E06A55', bg: '#FFEBEE', icon: <Activity size={22} />
                 },
                 {
                   q: 'São indicados para uso diário?',
-                  a: 'Sim! São desenvolvidos para uso intenso — escola, parque, praia. Leves, respiráveis e fáceis de calçar.',
+                  a: 'Sim! São desenvolvidos para uso intenso, escola, parque, praia. Leves, respiráveis e fáceis de calçar.',
                   color: '#7B5EA7', bg: '#F3E5F5', icon: <Zap size={22} />
                 },
                 {
-                  q: 'Os materiais são seguros e ecológicos?',
-                  a: 'Usamos materiais certificados, livres de substâncias nocivas. Produção consciente a pensar nas crianças e no planeta.',
+                  q: 'E se o tamanho não servir?',
+                  a: 'Podes efetuar a troca ou devolução dentro de 30 dias. Queremos que escolhas com total confiança.',
                   color: '#F4C466', bg: '#FFFDE7', icon: <Feather size={22} />
                 },
               ].map((item, i) => (
@@ -650,7 +663,7 @@ const HistoryClient2 = () => {
                   transition={{ duration: 0.4, delay: 0.05 * i }}
                   whileHover={{ y: -4, boxShadow: '0 16px 36px rgba(0,0,0,0.06)' }}
                   style={{
-                    minWidth: isMobile ? '85vw' : 'unset',
+                    minWidth: isMobile ? '78vw' : 'unset',
                     scrollSnapAlign: isMobile ? 'center' : 'none',
                     backgroundColor: 'white',
                     borderRadius: '24px',
@@ -704,7 +717,7 @@ const HistoryClient2 = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 style={{
-                  minWidth: isMobile ? '85vw' : 'unset',
+                  minWidth: isMobile ? '78vw' : 'unset',
                   scrollSnapAlign: isMobile ? 'center' : 'none',
                   gridColumn: isMobile ? 'unset' : '4',
                   gridRow: isMobile ? 'unset' : '1 / span 2',

@@ -93,7 +93,7 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
-          minHeight: '390px',
+          minHeight: '330px',
           overflow: 'hidden',
           border: '1px solid rgba(0,0,0,0.03)',
           transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
@@ -105,7 +105,7 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
           position: 'relative',
           width: '100%',
           height: '230px',
-          backgroundColor: isHovered ? '#EEF6F5' : '#F7F7F5',
+          backgroundColor: 'transparent',
           borderRadius: '20px',
           display: 'flex',
           alignItems: 'center',
@@ -141,12 +141,12 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
             initial={{ opacity: 0.6, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.25 }}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.08 }}
             src={activeImage}
             alt={title}
             style={{
-              width: '85%',
-              height: '85%',
+              width: '100%',
+              height: '100%',
               objectFit: 'contain',
               zIndex: 1,
             }}
@@ -211,53 +211,48 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
         </div>
 
         {/* Product Details Section */}
-        <div style={{ padding: '0 8px 8px', display: 'flex', flexDirection: 'column', flex: '1 0 auto', justifyContent: 'space-between' }}>
+        <div style={{ padding: '0 8px 8px', display: 'flex', flexDirection: 'column', flex: '1 0 auto' }}>
           
-          <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
             {/* Title */}
             <h3 style={{
-              fontSize: '1.05rem',
+              fontSize: '1.02rem',
               fontWeight: '800',
               color: '#2C3E50',
-              margin: '0 0 4px 0',
+              margin: '0',
               lineHeight: '1.3',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
+              flex: 1
             }}>
               {title}
             </h3>
 
-            {/* Subtitle / Category */}
-            <p style={{
-              fontSize: '0.8rem',
-              color: '#8097a5',
-              margin: '0',
-              lineHeight: '1.4',
-              fontWeight: '600',
-              textTransform: 'capitalize'
-            }}>
-              {category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Barefoot'}
-            </p>
-          </div>
-
-          {/* Price */}
-          <div style={{
-            marginTop: '12px',
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: '4px'
-          }}>
+            {/* Price */}
             <span style={{
-              fontSize: '1.25rem',
+              fontSize: '1.15rem',
               fontWeight: '900',
               color: '#2C3E50',
-              letterSpacing: '-0.3px'
+              letterSpacing: '-0.3px',
+              whiteSpace: 'nowrap'
             }}>
               {formattedPrice}
             </span>
           </div>
+
+          {/* Subtitle / Category */}
+          <p style={{
+            fontSize: '0.8rem',
+            color: '#8097a5',
+            margin: '4px 0 0 0',
+            lineHeight: '1.4',
+            fontWeight: '600',
+            textTransform: 'capitalize'
+          }}>
+            {category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Barefoot'}
+          </p>
 
         </div>
 

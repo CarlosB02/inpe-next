@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Footprints, Shield, Heart, HelpCircle, ArrowRight,
   ShoppingBag, Eye, RefreshCw, Smile, Search, SlidersHorizontal,
-  X, Check, DollarSign, Compass
+  X, Check, DollarSign, Compass, ArrowUpDown
 } from 'lucide-react';
 import { Product } from '../types/shopify';
 import ProductCard from './ProductCard';
@@ -42,6 +42,40 @@ const PlayfulBadge = ({ children, color = '#FF9F1C', icon: Icon }: any) => (
   </motion.div>
 );
 
+const getColorHex = (colorName: string) => {
+  if (!colorName) return '#ddd';
+  if (colorName.startsWith('#')) return colorName;
+  
+  const colorMap: Record<string, string> = {
+    "preto": "#1c1c1c",
+    "branco": "#f9f9f9",
+    "azul": "#1a73e8",
+    "vermelho": "#d93025",
+    "verde": "#188038",
+    "amarelo": "#f9ab00",
+    "rosa": "#f06292",
+    "roxo": "#9c27b0",
+    "castanho": "#795548",
+    "cinzento": "#9e9e9e",
+    "cinza": "#9e9e9e",
+    "laranja": "#f57c00",
+    "bege": "#f5f5dc",
+    "prateado": "#c0c0c0",
+    "dourado": "#ffd700",
+    "marinho": "#000080",
+    "azul escuro": "#00008b",
+    "verde seco": "#556b2f"
+  };
+
+  const lowerVal = colorName.toLowerCase();
+  for (const [key, color] of Object.entries(colorMap)) {
+    if (lowerVal.includes(key)) {
+      return color;
+    }
+  }
+  return colorName;
+};
+
 export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   initialProducts = [],
   searchQuery = ''
@@ -57,6 +91,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     colors: [] as string[],
     price: { min: 0, max: 200 }
   });
+  const [sortBy, setSortBy] = useState('mais-vendidos');
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 900);
@@ -142,7 +177,8 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466'],
         colorImages,
         images,
-        isNew: tagsLower.includes('new') || tagsLower.includes('novo')
+        isNew: tagsLower.includes('new') || tagsLower.includes('novo'),
+        updatedAt: p.updatedAt
       };
     });
   }, [initialProducts]);
@@ -183,7 +219,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
   // Filter products based on search query and sidebar filters
   const filteredProducts = useMemo(() => {
-    return mappedProducts.filter(product => {
+    const result = mappedProducts.filter(product => {
       // Local search input filter
       if (localSearch) {
         const query = localSearch.toLowerCase();
@@ -222,7 +258,29 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
       return true;
     });
-  }, [mappedProducts, filters, localSearch]);
+
+    // Apply sorting
+    if (sortBy === 'preco-asc') {
+      result.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (sortBy === 'preco-desc') {
+      result.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (sortBy === 'novidades') {
+      result.sort((a, b) => {
+        if (a.isNew && !b.isNew) return -1;
+        if (!a.isNew && b.isNew) return 1;
+        if (a.updatedAt && b.updatedAt) {
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        }
+        return 0;
+      });
+    } else {
+      // Default order: original index in initialProducts/mappedProducts (corresponds to default / best seller)
+      const indexMap = new Map(mappedProducts.map((p, i) => [p.id, i]));
+      result.sort((a, b) => (indexMap.get(a.id) || 0) - (indexMap.get(b.id) || 0));
+    }
+
+    return result;
+  }, [mappedProducts, filters, localSearch, sortBy]);
 
   const handleClearFilters = () => {
     setFilters({
@@ -233,6 +291,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       price: { min: 0, max: 200 }
     });
     setLocalSearch('');
+    setSortBy('mais-vendidos');
   };
 
   const toggleCategory = (category: string) => {
@@ -339,6 +398,50 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         </div>
       )}
 
+      {/* Sort Filter */}
+      <div>
+        <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <ArrowUpDown size={18} color="#FF9F1C" /> Ordenar
+        </h4>
+        <div style={{ position: 'relative' }}>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              border: '2px solid #eee',
+              fontSize: '0.95rem',
+              fontWeight: '700',
+              outline: 'none',
+              backgroundColor: '#fdfdfd',
+              color: '#2c3e50',
+              appearance: 'none',
+              cursor: 'pointer',
+              backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232C3E50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'right 16px center',
+              backgroundSize: '16px',
+              transition: 'border-color 0.2s, box-shadow 0.2s'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#FF9F1C';
+              e.target.style.boxShadow = '0 0 0 3px rgba(255, 159, 28, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#eee';
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            <option value="mais-vendidos">Mais vendidos</option>
+            <option value="preco-asc">Preço: ascendente</option>
+            <option value="preco-desc">Preço: descendente</option>
+            <option value="novidades">Últimas novidades</option>
+          </select>
+        </div>
+      </div>
+
       {/* Category / Gender segment */}
       <div>
         <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -368,7 +471,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                   transition: 'background-color 0.2s, border-color 0.2s'
                 }}
               >
-                <span style={{ fontSize: '1.5rem' }}>{styles.emoji}</span>
+                <span style={{ fontSize: '1rem' }}>{styles.emoji}</span>
                 <span style={{ fontSize: '0.95rem', fontWeight: '800', color: styles.color, textTransform: 'capitalize', flex: 1 }}>
                   {cat === 'crianca' ? 'Criança' : cat}
                 </span>
@@ -463,7 +566,8 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {availableColors.map(color => {
               const isActive = filters.colors.includes(color);
-              const isWhite = color.toLowerCase() === '#ffffff' || color.toLowerCase() === 'white';
+              const hex = getColorHex(color);
+              const isWhite = hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === 'white' || hex.toLowerCase() === '#f9f9f9';
               return (
                 <motion.button
                   key={color}
@@ -474,7 +578,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
-                    backgroundColor: color,
+                    backgroundColor: hex,
                     border: isActive ? '3px solid #2C3E50' : isWhite ? '2px solid #ddd' : '1px solid rgba(0,0,0,0.1)',
                     cursor: 'pointer',
                     display: 'flex',
@@ -594,63 +698,82 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           <div style={{ maxWidth: '800px', width: '100%', margin: '0 auto', position: 'relative', zIndex: 2 }}>
 
             {/* Central Playful Search Bar (instant search) */}
-            <div style={{ position: 'relative', maxWidth: '620px', margin: '0 auto', padding: '0 10px' }}>
+            <div style={{
+              position: 'relative',
+              maxWidth: isMobile ? '420px' : '620px',
+              width: '100%',
+              margin: '0 auto',
+              padding: isMobile ? '0 16px' : '0 10px'
+            }}>
               <div style={{
                 display: 'flex',
+                gap: isMobile ? '12px' : '0px',
                 alignItems: 'center',
-                backgroundColor: 'white',
-                borderRadius: '35px',
-                padding: '4px 8px 4px 20px',
-                boxShadow: '0 12px 35px rgba(0,0,0,0.06)',
-                border: '3px solid white',
-                transition: 'border-color 0.3s'
-              }}
-                className="search-container-focus"
-              >
-                <Search size={22} color="#8097a5" style={{ marginRight: '12px', flexShrink: 0 }} />
-                <input
-                  type="text"
-                  placeholder="Procura sapatilhas, botas, sandálias..."
-                  value={localSearch}
-                  onChange={(e) => setLocalSearch(e.target.value)}
-                  style={{
-                    flex: 1,
-                    border: 'none',
-                    outline: 'none',
-                    fontSize: '1.05rem',
-                    fontWeight: '700',
-                    color: '#2C3E50',
-                    height: '50px',
-                    backgroundColor: 'transparent'
-                  }}
-                />
-                {localSearch && (
-                  <button
-                    onClick={() => setLocalSearch('')}
-                    style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', padding: '10px', marginRight: '5px' }}
-                  >
-                    <X size={20} />
-                  </button>
-                )}
+                justifyContent: 'center',
+                width: '100%'
+              }}>
+                <div style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  backgroundColor: 'white',
+                  borderRadius: '35px',
+                  padding: '4px 8px 4px 20px',
+                  boxShadow: '0 12px 35px rgba(0,0,0,0.06)',
+                  border: '3px solid white',
+                  transition: 'border-color 0.3s'
+                }}
+                  className="search-container-focus"
+                >
+                  <Search size={22} color="#8097a5" style={{ marginRight: '12px', flexShrink: 0 }} />
+                  <input
+                    type="text"
+                    placeholder={isMobile ? "Procurar..." : "Procura sapatilhas, botas, sandálias..."}
+                    value={localSearch}
+                    onChange={(e) => setLocalSearch(e.target.value)}
+                    style={{
+                      flex: 1,
+                      border: 'none',
+                      outline: 'none',
+                      fontSize: '1.05rem',
+                      fontWeight: '700',
+                      color: '#2C3E50',
+                      height: '50px',
+                      backgroundColor: 'transparent',
+                      minWidth: 0
+                    }}
+                  />
+                  {localSearch && (
+                    <button
+                      onClick={() => setLocalSearch('')}
+                      style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', padding: '10px', marginRight: '5px' }}
+                    >
+                      <X size={20} />
+                    </button>
+                  )}
+                </div>
                 {isMobile && (
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setMobileFiltersOpen(true)}
                     style={{
                       backgroundColor: 'var(--color-teal)',
                       border: 'none',
                       borderRadius: '50%',
-                      width: '46px',
-                      height: '46px',
+                      width: '56px',
+                      height: '56px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: 'white',
                       cursor: 'pointer',
-                      flexShrink: 0
+                      flexShrink: 0,
+                      boxShadow: '0 12px 35px rgba(0,0,0,0.06)'
                     }}
                   >
-                    <SlidersHorizontal size={18} />
-                  </button>
+                    <SlidersHorizontal size={20} />
+                  </motion.button>
                 )}
               </div>
             </div>
@@ -689,7 +812,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                     </span>
                   )}
                 </div>
-                <SidebarContent />
+                {SidebarContent()}
               </div>
             )}
 
@@ -722,7 +845,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
                 {filters.colors.map(color => (
                   <div key={color} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#E8F5E9', color: '#2C3E50', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: color }} /> Cor <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleColor(color)} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getColorHex(color) }} /> Cor <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleColor(color)} />
                   </div>
                 ))}
               </div>
@@ -861,7 +984,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                     <X size={24} />
                   </button>
                 </div>
-                <SidebarContent />
+                {SidebarContent()}
 
                 <motion.button
                   whileTap={{ scale: 0.95 }}

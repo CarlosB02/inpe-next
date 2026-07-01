@@ -40,7 +40,7 @@ const PlayfulBadge = ({ children, color = '#FF9F1C', icon: Icon }) => (
 
 const HomeClient2 = ({ initialProducts = [] }) => {
   const [isMobile, setIsMobile] = useState(false);
-  const [adventureFilter, setAdventureFilter] = useState('all'); // all, park, school, puddle
+  const [adventureFilter, setAdventureFilter] = useState('school'); // school, park, puddle
   const [selectedShoeColor, setSelectedShoeColor] = useState('#F4C466');
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const videoRef = useRef(null);
@@ -168,7 +168,6 @@ const HomeClient2 = ({ initialProducts = [] }) => {
   }, [kidsProducts, adventureFilter]);
 
   const adventures = [
-    { id: 'all', label: 'Tudo', icon: Compass, color: '#007396' },
     { id: 'school', label: 'Recrutas da Escola', icon: School, color: '#FF9F1C' },
     { id: 'park', label: 'Exploradores da Relva', icon: Trees, color: '#4CAF50' },
     { id: 'puddle', label: 'Saltadores de Poças', icon: CloudRain, color: '#E06A55' }
@@ -465,7 +464,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
               </h3>
 
               {/* Arrow controls */}
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: isMobile ? 'flex' : 'none', gap: '10px' }}>
                 <button
                   onClick={() => scroll(bestSellersRef, 'left')}
                   style={{
@@ -540,12 +539,14 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 ))}
               </div>
               {/* Right fade hinting more content */}
-              <div style={{
-                position: 'absolute', top: 0, right: 0,
-                width: '60px', height: '100%',
-                background: 'linear-gradient(to right, rgba(244,251,247,0) 0%, rgba(244,251,247,0.9) 100%)',
-                pointerEvents: 'none', zIndex: 2,
-              }} />
+              {isMobile && (
+                <div style={{
+                  position: 'absolute', top: 0, right: 0,
+                  width: '60px', height: '100%',
+                  background: 'linear-gradient(to right, rgba(244,251,247,0) 0%, rgba(244,251,247,0.9) 100%)',
+                  pointerEvents: 'none', zIndex: 2,
+                }} />
+              )}
             </div>
           </div>
 
@@ -970,10 +971,10 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
         {/* DYNAMIC PRODUCTS SHELF WITH ADVENTURE FILTERING */}
         <section style={{ padding: '6rem 10%' }}>
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'center' : 'flex-end', gap: '2rem', marginBottom: '3.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '2rem', marginBottom: '2.5rem' }}>
             <div style={{ textAlign: isMobile ? 'center' : 'left', maxWidth: '500px' }}>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', marginTop: '1.2rem', lineHeight: 1.1 }}>
-                Modelos para a <br /><span style={{ color: '#FF9F1C' }}>Tua Próxima Aventura</span>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', margin: 0, lineHeight: 1.15 }}>
+                Modelos para a Tua<br /><span style={{ color: '#FF9F1C' }}>Próxima Aventura</span>
               </h2>
             </div>
 
@@ -1024,7 +1025,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
           {/* Filtered Products — Carousel */}
           <div style={{ position: 'relative' }}>
             {/* Arrow controls */}
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginBottom: '1.2rem' }}>
+            <div style={{ display: isMobile ? 'flex' : 'none', gap: '10px', justifyContent: 'flex-end', marginBottom: '1.2rem' }}>
               <button
                 onClick={() => scroll(adventureRef, 'left')}
                 style={{
@@ -1094,12 +1095,14 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   ))}
                 </div>
                 {/* Right fade hinting more content */}
-                <div style={{
-                  position: 'absolute', top: 0, right: 0,
-                  width: '60px', height: '100%',
-                  background: 'linear-gradient(to right, rgba(255,253,249,0) 0%, rgba(255,253,249,0.9) 100%)',
-                  pointerEvents: 'none', zIndex: 2,
-                }} />
+                {isMobile && (
+                  <div style={{
+                    position: 'absolute', top: 0, right: 0,
+                    width: '60px', height: '100%',
+                    background: 'linear-gradient(to right, rgba(255,253,249,0) 0%, rgba(255,253,249,0.9) 100%)',
+                    pointerEvents: 'none', zIndex: 2,
+                  }} />
+                )}
               </motion.div>
             </AnimatePresence>
 
@@ -1200,7 +1203,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
               margin: '0 0 0.6rem',
               lineHeight: 1.1
             }}>
-              Modelos em <span style={{ color: '#007396' }}>Destaque</span>
+              Modelos em <span style={{ color: '#FF9F1C' }}>Destaque</span>
             </h2>
             <p style={{ color: '#666', fontSize: '1rem', fontWeight: '500', maxWidth: '480px', margin: '0.8rem auto 0' }}>
               Escolhidos a dedo para te inspirar, conforto e estilo para cada aventura.
@@ -1427,7 +1430,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {[
-                  { label: '🏃 Correr e escalar', href: '/loja?subcategoria=sapatilhas' },
+                  { label: '🏃 Correr e caminhadas', href: '/loja?subcategoria=sapatilhas' },
                   { label: '💦 Poças de água', href: '/loja?subcategoria=galochas' },
                   { label: '🎨 Passear à vontade', href: '/loja?subcategoria=sandalias' }
                 ].map((option, index) => (
