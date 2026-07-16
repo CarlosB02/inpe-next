@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Footprints, Shield, Heart, HelpCircle, ArrowRight,
@@ -100,17 +100,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Pre-fill category filters from URL param (?categoria=homem,mulher)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const categoriaParam = params.get('categoria');
-    if (categoriaParam) {
-      const cats = categoriaParam.split(',').map(c => c.trim()).filter(Boolean);
-      if (cats.length > 0) {
-        setFilters(prev => ({ ...prev, categories: cats }));
-      }
-    }
-  }, []);
+
 
   // Map rich Shopify products into filtered items
   const mappedProducts = useMemo(() => {
@@ -147,7 +137,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       // Map tags to categories/subcategories
       const tagsLower = p.tags.map(t => t.toLowerCase());
       const category = tagsLower.find(t => t === 'crianca' || t === 'mulher' || t === 'homem') || 'crianca';
-      const subcategory = p.tags.find(t => {
+      const subcategory = p.productType || p.tags.find(t => {
         const l = t.toLowerCase();
         return l === 'sapatilhas' || l === 'botas' || l === 'sandálias' || l === 'sandalias' || l === 'desportivo' || l === 'lonas';
       }) || 'Sapatilhas';
@@ -164,12 +154,13 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         }
       });
 
-      const images = p.images.edges.map(e => e.node.url).filter(Boolean);
+      const images = p.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText || '' })).filter(img => img.url);
 
       return {
         id: p.handle,
         name: p.title,
         price: p.priceRange.minVariantPrice.amount,
+        originalPrice: p.compareAtPriceRange?.minVariantPrice?.amount || '0.00',
         image: p.images.edges[0]?.node.url || '',
         category,
         subcategory,
@@ -216,6 +207,73 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     });
     return Array.from(all);
   }, [mappedProducts]);
+
+  const isInitializedRef = useRef(false);
+
+  // Pre-fill category & subcategory filters from URL parameters
+  useEffect(() => {
+    if (isInitializedRef.current || availableSubcategories.length === 0) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const categoriaParam = params.get('categoria') || params.get('categoria[]');
+    const subcategoriaParam = params.get('subcategoria') || params.get('subcategoria[]') || params.get('subcategory') || params.get('subcategorias');
+
+    let updatedCats = [] as string[];
+    let updatedSubs = [] as string[];
+
+    if (categoriaParam) {
+      updatedCats = categoriaParam.split(',').map(c => c.trim().toLowerCase()).filter(Boolean);
+    }
+
+    if (subcategoriaParam) {
+      const subParams = subcategoriaParam.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+
+      const normalizeString = (str: string) => {
+        let val = str
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, ""); // remove accents
+
+        // Apply synonyms
+        const synonymMap: Record<string, string> = {
+          'galocha': 'botas',
+          'galochas': 'botas',
+          'bota': 'botas',
+          'sandalia': 'sandalias',
+          'sapatilha': 'sapatilhas',
+          'sapatilhas': 'sapatilhas',
+        };
+
+        if (synonymMap[val]) {
+          val = synonymMap[val];
+        }
+
+        return val.replace(/s$/, ""); // singularize
+      };
+
+      const normalizedAvailable = availableSubcategories.map(sub => ({
+        original: sub,
+        normalized: normalizeString(sub)
+      }));
+
+      subParams.forEach(paramVal => {
+        const normParam = normalizeString(paramVal);
+        const matched = normalizedAvailable.find(av => av.normalized === normParam);
+        if (matched) {
+          updatedSubs.push(matched.original);
+        }
+      });
+    }
+
+    if (updatedCats.length > 0 || updatedSubs.length > 0) {
+      setFilters(prev => ({
+        ...prev,
+        categories: updatedCats.length > 0 ? updatedCats : prev.categories,
+        subcategories: updatedSubs.length > 0 ? updatedSubs : prev.subcategories
+      }));
+    }
+    isInitializedRef.current = true;
+  }, [availableSubcategories]);
 
   // Filter products based on search query and sidebar filters
   const filteredProducts = useMemo(() => {
@@ -873,6 +931,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                       <ProductCard
                         title={product.name}
                         price={product.price}
+                        originalPrice={product.originalPrice}
                         image={product.image}
                         category={product.subcategory || product.category}
                         id={product.id}

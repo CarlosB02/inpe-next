@@ -2,6 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { getProduct, getCollectionProducts, getProducts } from '@/lib/shopify';
 import ProductClient from '@/components/ProductClient';
+import { getAutomaticDiscounts, applyAutomaticDiscounts } from '@/lib/discounts';
 
 interface Props {
   params: Promise<{
@@ -27,11 +28,15 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ProdutoPage({ params }: Props) {
   const { handle } = await params;
-  const product = await getProduct(handle);
+  let product = await getProduct(handle);
 
   if (!product) {
     notFound();
   }
+
+  const discounts = await getAutomaticDiscounts();
+  const discounted = applyAutomaticDiscounts([product], discounts);
+  product = discounted[0];
 
   // Fetch related products from collection or fall back to general listing
   const collectionHandle = product.collections.edges[0]?.node.handle;
@@ -53,6 +58,9 @@ export default async function ProdutoPage({ params }: Props) {
       console.error('Error fetching fallback products:', err);
     }
   }
+
+  // Apply automatic discounts to related/recommended products
+  relatedProducts = applyAutomaticDiscounts(relatedProducts, discounts);
 
   // Exclude current product
   let filteredRelated = relatedProducts.filter(p => p.id !== product.id);

@@ -47,18 +47,70 @@ const getColorHex = (colorName) => {
  * @param {boolean} [props.isNew]
  * @param {string[]} [props.colors]
  * @param {Record<string, string>} [props.colorImages]
- * @param {string[]} [props.images]
+ * @param {string|number} [props.originalPrice]
+ * @param {({url: string, altText?: string}[]|string[])} [props.images]
  * @param {boolean} [props.compact]
+ * @param {React.ReactNode} [props.children]
  */
-const ProductCard = ({ title, price, image, category, id, isNew, colors, colorImages, images, compact }) => {
+const ProductCard = ({ title, price, originalPrice, image, category, id, isNew, colors, colorImages, images, compact, children }) => {
   const [hoveredColorImage, setHoveredColorImage] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   
   const colorsList = colors || [];
   const imagesMap = colorImages || {};
-  const imagesList = images || [];
+  const rawImages = images || [];
   
-  const activeImage = hoveredColorImage || (isHovered && imagesList.length > 1 ? imagesList[imagesList.length - 1] : image);
+  const imagesList = useMemo(() => {
+    return rawImages.map(img => {
+      if (typeof img === 'string') {
+        return { url: img, altText: '' };
+      }
+      return { url: img?.url || '', altText: img?.altText || '' };
+    });
+  }, [rawImages]);
+
+  const hoverImage = useMemo(() => {
+    if (imagesList.length <= 1) return image;
+    
+    // Find the default image object to inspect its alt text
+    const defaultImageObj = imagesList.find(img => img.url === image);
+    const defaultAlt = defaultImageObj ? defaultImageObj.altText.toLowerCase() : '';
+    
+    // Check if the alt text contains any of our colors
+    const activeColor = colorsList.find(color => 
+      defaultAlt.includes(color.toLowerCase())
+    );
+    
+    if (activeColor) {
+      const colorLower = activeColor.toLowerCase();
+      // Filter images that match the active color
+      const colorFiltered = imagesList.filter(img => 
+        img.altText && img.altText.toLowerCase().includes(colorLower)
+      );
+      if (colorFiltered.length > 1) {
+        return colorFiltered[colorFiltered.length - 1].url;
+      }
+    }
+    
+    // Fallback to the last image of the entire list
+    return imagesList[imagesList.length - 1].url;
+  }, [imagesList, image, colorsList]);
+
+  const activeImage = hoveredColorImage || (isHovered ? hoverImage : image);
+
+  const hasDiscount = useMemo(() => {
+    if (!originalPrice) return false;
+    const pVal = typeof price === 'number' ? price : parseFloat(price);
+    const oVal = typeof originalPrice === 'number' ? originalPrice : parseFloat(originalPrice);
+    return !isNaN(pVal) && !isNaN(oVal) && oVal > pVal;
+  }, [price, originalPrice]);
+
+  const discountPercentage = useMemo(() => {
+    if (!hasDiscount) return 0;
+    const pVal = typeof price === 'number' ? price : parseFloat(price);
+    const oVal = typeof originalPrice === 'number' ? originalPrice : parseFloat(originalPrice);
+    return Math.round(((oVal - pVal) / oVal) * 100);
+  }, [price, originalPrice, hasDiscount]);
 
   // Format price to Portuguese layout, e.g. "59,90€" instead of "€59.90"
   const formattedPrice = useMemo(() => {
@@ -74,6 +126,21 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
     }
     return price;
   }, [price]);
+
+  const formattedOriginalPrice = useMemo(() => {
+    if (!originalPrice) return '';
+    if (typeof originalPrice === 'number') {
+      return originalPrice.toFixed(2).replace('.', ',') + '€';
+    }
+    if (typeof originalPrice === 'string') {
+      const parsed = parseFloat(originalPrice);
+      if (!isNaN(parsed)) {
+        return parsed.toFixed(2).replace('.', ',') + '€';
+      }
+      return originalPrice;
+    }
+    return originalPrice;
+  }, [originalPrice]);
 
   return (
     <Link href={`/produto/${id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
@@ -135,6 +202,26 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
             </span>
           )}
 
+          {/* Discount/Sale Tag */}
+          {hasDiscount && (
+            <span style={{
+              position: 'absolute',
+              top: '12px',
+              left: isNew ? '72px' : '12px',
+              zIndex: 2,
+              backgroundColor: '#FCE8E6',
+              color: '#D93025',
+              fontSize: '0.7rem',
+              fontWeight: '800',
+              padding: '4px 10px',
+              borderRadius: '8px',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase',
+            }}>
+              -{discountPercentage}%
+            </span>
+          )}
+
           {/* Product Image with elegant scale and fade */}
           <motion.img
             key={activeImage}
@@ -142,7 +229,7 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.25 }}
             whileHover={{ scale: 1.08 }}
-            src={activeImage}
+            src={activeImage || null}
             alt={title}
             style={{
               width: '100%',
@@ -231,15 +318,29 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
             </h3>
 
             {/* Price */}
-            <span style={{
-              fontSize: '1.15rem',
-              fontWeight: '900',
-              color: '#2C3E50',
-              letterSpacing: '-0.3px',
-              whiteSpace: 'nowrap'
-            }}>
-              {formattedPrice}
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              {hasDiscount && (
+                <span style={{
+                  fontSize: '0.85rem',
+                  fontWeight: '700',
+                  color: '#8097a5',
+                  textDecoration: 'line-through',
+                  lineHeight: '1',
+                  marginBottom: '2px'
+                }}>
+                  {formattedOriginalPrice}
+                </span>
+              )}
+              <span style={{
+                fontSize: '1.15rem',
+                fontWeight: '900',
+                color: hasDiscount ? '#D93025' : '#2C3E50',
+                letterSpacing: '-0.3px',
+                whiteSpace: 'nowrap'
+              }}>
+                {formattedPrice}
+              </span>
+            </div>
           </div>
 
           {/* Subtitle / Category */}
@@ -253,6 +354,15 @@ const ProductCard = ({ title, price, image, category, id, isNew, colors, colorIm
           }}>
             {category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Barefoot'}
           </p>
+
+          {children && (
+            <div 
+              style={{ marginTop: 'auto', paddingTop: '12px' }}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            >
+              {children}
+            </div>
+          )}
 
         </div>
 

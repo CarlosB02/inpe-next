@@ -34,12 +34,15 @@ export interface ProductVariant {
   availableForSale: boolean;
   selectedOptions: SelectedOption[];
   price: MoneyV2;
+  compareAtPrice?: MoneyV2 | null;
   image?: ShopifyImage;
 }
 
 export interface Product {
   id: string;
   title: string;
+  vendor: string;
+  productType: string;
   handle: string;
   description: string;
   descriptionHtml?: string;
@@ -50,6 +53,10 @@ export interface Product {
     minVariantPrice: MoneyV2;
     maxVariantPrice: MoneyV2;
   };
+  compareAtPriceRange?: {
+    minVariantPrice: MoneyV2;
+    maxVariantPrice: MoneyV2;
+  } | null;
   images: Connection<ShopifyImage>;
   variants: Connection<ProductVariant>;
   collections: Connection<{

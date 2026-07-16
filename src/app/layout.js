@@ -4,8 +4,60 @@ import CartDrawer from '@/components/CartDrawer';
 import CookieConsent from '@/components/CookieConsent';
 
 export const metadata = {
-  title: 'Inpe – Barefoot Shoes',
-  description: 'Descubra o conforto natural para toda a família.',
+  metadataBase: new URL("https://inpe.pt"),
+
+  title: {
+    default: "Inpe | Calçado Barefoot Infantil",
+    template: "%s | Inpe",
+  },
+
+  description:
+    "Descubra uma seleção de calçado barefoot infantil pensado para acompanhar o desenvolvimento natural dos pés das crianças.",
+
+  keywords: [
+    "calçado barefoot",
+    "sapatos barefoot",
+    "calçado barefoot infantil",
+    "primeiros passos",
+    "sapatos criança",
+    "barefoot portugal",
+  ],
+
+  authors: [{ name: "Inpe" }],
+  creator: "Inpe",
+  publisher: "Inpe",
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+
+  alternates: {
+    canonical: "/",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "pt_PT",
+    url: "https://inpe.pt",
+    siteName: "Inpe",
+    title: "Inpe | Calçado Barefoot Infantil",
+    description:
+      "Descubra uma seleção de calçado barefoot infantil pensado para acompanhar o desenvolvimento natural dos pés das crianças.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Inpe",
+      },
+    ],
+  },
+
 };
 
 export const viewport = {

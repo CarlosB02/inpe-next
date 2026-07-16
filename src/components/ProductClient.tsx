@@ -220,6 +220,27 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     }
   }, [relatedProducts]);
 
+  const getProductColorInfo = (p?: Product) => {
+    if (!p) return { colors: [], colorImages: {} };
+    const colorSet = new Set<string>();
+    const colorImages: Record<string, string> = {};
+    p.variants.edges.forEach(e => {
+      const v = e.node;
+      const cOpt = v.selectedOptions.find(o => o.name.toLowerCase().includes('cor') || o.name.toLowerCase().includes('col'));
+      if (cOpt) {
+        colorSet.add(cOpt.value);
+        if (v.image?.url && !colorImages[cOpt.value]) {
+          colorImages[cOpt.value] = v.image.url;
+        }
+      }
+    });
+    return { colors: Array.from(colorSet), colorImages };
+  };
+
+  const mainColorInfo = useMemo(() => getProductColorInfo(product), [product]);
+  const rel1ColorInfo = useMemo(() => getProductColorInfo(relatedProducts?.[0]), [relatedProducts]);
+  const rel2ColorInfo = useMemo(() => getProductColorInfo(relatedProducts?.[1]), [relatedProducts]);
+
   const getProductSizes = (p: Product) => {
     const vars = p.variants.edges.map(e => e.node);
     const sizeOptions = new Set<string>();
@@ -620,6 +641,9 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
   ];
 
   const priceVal = parseFloat(selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount);
+  const compareAtPriceVal = parseFloat(selectedVariant?.compareAtPrice?.amount || product.compareAtPriceRange?.minVariantPrice?.amount || '0.00');
+  const hasDiscount = compareAtPriceVal > priceVal;
+  const discountPercentage = hasDiscount ? Math.round(((compareAtPriceVal - priceVal) / compareAtPriceVal) * 100) : 0;
   const currencySymbol = selectedVariant?.price.currencyCode === 'EUR' ? '€' : selectedVariant?.price.currencyCode;
 
   // Render thumbnail style with alternate rotations
@@ -709,11 +733,24 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
               <div>
+                {product.vendor && (
+                  <span style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '800',
+                    color: '#FF9F1C',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    display: 'block',
+                    marginBottom: '0.2rem'
+                  }}>
+                    {product.vendor}
+                  </span>
+                )}
                 <h1 style={{
                   fontSize: 'clamp(2.2rem, 5vw, 3rem)',
                   fontWeight: '900',
                   color: '#2C3E50',
-                  marginTop: '1rem',
+                  marginTop: product.vendor ? '0' : '1rem',
                   lineHeight: '1.1',
                   textTransform: 'uppercase'
                 }}>
@@ -732,36 +769,68 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
               </div>
 
               {/* Price Sticker and Free Shipping */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                <motion.div
-                  whileHover={{ scale: 1.05, rotate: -2 }}
-                  style={{
-                    backgroundColor: '#FF9F1C',
-                    color: 'white',
-                    padding: '12px 28px',
-                    borderRadius: '20px 4px 20px 20px',
-                    fontSize: '2.2rem',
-                    fontWeight: '900',
-                    boxShadow: '0 8px 20px rgba(255, 159, 28, 0.3)',
-                    display: 'inline-flex',
-                    alignItems: 'baseline',
-                    lineHeight: '1'
-                  }}
-                >
-                  {priceVal.toFixed(2)}
-                  <span style={{ fontSize: '1.2rem', marginLeft: '4px', fontWeight: '800' }}>{currencySymbol}</span>
-                </motion.div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  {hasDiscount && (
+                    <div style={{
+                      color: '#8097a5',
+                      fontSize: '1.5rem',
+                      fontWeight: '800',
+                      textDecoration: 'line-through',
+                      marginRight: '5px'
+                    }}>
+                      {compareAtPriceVal.toFixed(2)}{currencySymbol}
+                    </div>
+                  )}
 
-                <div style={{
-                  backgroundColor: '#E8F5E9',
-                  color: '#4CAF50',
-                  padding: '6px 12px',
-                  borderRadius: '30px',
-                  fontSize: '0.85rem',
-                  fontWeight: '800',
-                  textTransform: 'uppercase'
-                }}>
-                  Envio Grátis
+                  <motion.div
+                    whileHover={{ scale: 1.05, rotate: -2 }}
+                    style={{
+                      backgroundColor: hasDiscount ? '#D93025' : '#FF9F1C',
+                      color: 'white',
+                      padding: '12px 28px',
+                      borderRadius: '20px 4px 20px 20px',
+                      fontSize: '2.2rem',
+                      fontWeight: '900',
+                      boxShadow: hasDiscount 
+                        ? '0 8px 20px rgba(217, 48, 37, 0.3)' 
+                        : '0 8px 20px rgba(255, 159, 28, 0.3)',
+                      display: 'inline-flex',
+                      alignItems: 'baseline',
+                      lineHeight: '1'
+                    }}
+                  >
+                    {priceVal.toFixed(2)}
+                    <span style={{ fontSize: '1.2rem', marginLeft: '4px', fontWeight: '800' }}>{currencySymbol}</span>
+                  </motion.div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  {hasDiscount && (
+                    <div style={{
+                      backgroundColor: '#FCE8E6',
+                      color: '#D93025',
+                      padding: '6px 12px',
+                      borderRadius: '30px',
+                      fontSize: '0.85rem',
+                      fontWeight: '800',
+                      textTransform: 'uppercase'
+                    }}>
+                      Poupe {discountPercentage}%
+                    </div>
+                  )}
+
+                  <div style={{
+                    backgroundColor: '#E8F5E9',
+                    color: '#4CAF50',
+                    padding: '6px 12px',
+                    borderRadius: '30px',
+                    fontSize: '0.85rem',
+                    fontWeight: '800',
+                    textTransform: 'uppercase'
+                  }}>
+                    Envio Grátis
+                  </div>
                 </div>
               </div>
 
@@ -1212,7 +1281,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                   <div className="bundle-cards">
 
                     {/* Card 1: Main Product */}
-                    <div className={`bundle-card-wrapper ${!bundleSelections[0] ? 'deselected' : ''}`}>
+                    <div className={`bundle-card-wrapper ${!bundleSelections[0] ? 'deselected' : ''}`} style={{ transform: 'rotate(-1deg)', transition: 'transform 0.3s ease' }}>
                       <div
                         className={`bundle-checkbox ${bundleSelections[0] ? 'selected' : ''}`}
                         onClick={() => setBundleSelections(prev => [!prev[0], prev[1], prev[2]])}
@@ -1226,72 +1295,27 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                         {bundleSelections[0] && <Check size={14} strokeWidth={3} />}
                       </div>
 
-                      <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: '28px',
-                        padding: '16px',
-                        border: '2px solid #EAEAEA',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.02)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        height: '100%',
-                        transform: 'rotate(-1deg)'
-                      }}>
-                        <div style={{
-                          height: '160px',
-                          backgroundColor: '#FDF6E9',
-                          borderRadius: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          overflow: 'hidden',
-                          marginBottom: '15px'
-                        }}>
-                          <img
-                            src={selectedImage}
-                            alt={product.title}
-                            style={{
-                              maxWidth: '80%',
-                              maxHeight: '80%',
-                              objectFit: 'contain',
-                              filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.05))'
-                            }}
-                          />
-                        </div>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#2C3E50', margin: '0 0 6px', lineHeight: '1.2' }}>
-                          {product.title}
-                        </h3>
-
-                        {/* Size info for main product */}
-                        <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#666', marginTop: 'auto', marginBottom: '8px' }}>
+                      <ProductCard
+                        id={product.handle}
+                        title={product.title}
+                        price={selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount}
+                        originalPrice={selectedVariant?.compareAtPrice?.amount || product.compareAtPriceRange?.minVariantPrice?.amount}
+                        image={selectedImage}
+                        category={product.productType || (product.tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos')}
+                        images={product.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText }))}
+                        colors={mainColorInfo.colors}
+                        colorImages={mainColorInfo.colorImages}
+                      >
+                        <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#666' }}>
                           Tamanho: {selectedOptionsMap[Object.keys(selectedOptionsMap).find(k => k.toLowerCase().includes('tamanho') || k.toLowerCase().includes('size')) || ''] || 'Padrão'}
                         </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: '1.3rem', fontWeight: '900', color: '#E06A55' }}>
-                            {selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount}€
-                          </span>
-                          <div style={{
-                            width: '38px',
-                            height: '38px',
-                            borderRadius: '12px',
-                            backgroundColor: '#F4C466',
-                            color: '#2C3E50',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer'
-                          }} onClick={() => setBundleSelections(prev => [!prev[0], prev[1], prev[2]])}>
-                            <ShoppingBag size={16} />
-                          </div>
-                        </div>
-                      </div>
+                      </ProductCard>
                     </div>
 
                     <div className="plus-sign">+</div>
 
                     {/* Card 2: Related Product 1 */}
-                    <div className={`bundle-card-wrapper ${!bundleSelections[1] ? 'deselected' : ''}`}>
+                    <div className={`bundle-card-wrapper ${!bundleSelections[1] ? 'deselected' : ''}`} style={{ transform: 'rotate(1.5deg)', transition: 'transform 0.3s ease' }}>
                       <div
                         className={`bundle-checkbox ${bundleSelections[1] ? 'selected' : ''}`}
                         onClick={() => setBundleSelections(prev => [prev[0], !prev[1], prev[2]])}
@@ -1305,44 +1329,18 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                         {bundleSelections[1] && <Check size={14} strokeWidth={3} />}
                       </div>
 
-                      <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: '28px',
-                        padding: '16px',
-                        border: '2px solid #EAEAEA',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.02)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        height: '100%',
-                        transform: 'rotate(1.5deg)'
-                      }}>
-                        <div style={{
-                          height: '160px',
-                          backgroundColor: '#FDF6E9',
-                          borderRadius: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          overflow: 'hidden',
-                          marginBottom: '15px'
-                        }}>
-                          <img
-                            src={relatedVariant1?.image?.url || relatedProducts[0].images.edges[0]?.node.url}
-                            alt={relatedProducts[0].title}
-                            style={{
-                              maxWidth: '80%',
-                              maxHeight: '80%',
-                              objectFit: 'contain',
-                              filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.05))'
-                            }}
-                          />
-                        </div>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#2C3E50', margin: '0 0 6px', lineHeight: '1.2' }}>
-                          {relatedProducts[0].title}
-                        </h3>
-
-                        {/* Size selector dropdown */}
-                        <div style={{ marginTop: 'auto', marginBottom: '12px' }}>
+                      <ProductCard
+                        id={relatedProducts[0].handle}
+                        title={relatedProducts[0].title}
+                        price={relatedVariant1?.price.amount || relatedProducts[0].priceRange.minVariantPrice.amount}
+                        originalPrice={relatedVariant1?.compareAtPrice?.amount || relatedProducts[0].compareAtPriceRange?.minVariantPrice?.amount}
+                        image={relatedVariant1?.image?.url || relatedProducts[0].images.edges[0]?.node.url}
+                        category={relatedProducts[0].productType || (relatedProducts[0].tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos')}
+                        images={relatedProducts[0].images.edges.map(e => ({ url: e.node.url, altText: e.node.altText }))}
+                        colors={rel1ColorInfo.colors}
+                        colorImages={rel1ColorInfo.colorImages}
+                      >
+                        <div>
                           <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#666', display: 'block', marginBottom: '4px' }}>Tamanho:</span>
                           <select
                             value={relatedVariant1?.selectedOptions.find(opt => opt.name.toLowerCase().includes('tamanho') || opt.name.toLowerCase().includes('size'))?.value || ''}
@@ -1365,32 +1363,13 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                             ))}
                           </select>
                         </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: '1.3rem', fontWeight: '900', color: '#E06A55' }}>
-                            {relatedVariant1?.price.amount || relatedProducts[0].priceRange.minVariantPrice.amount}€
-                          </span>
-                          <div style={{
-                            width: '38px',
-                            height: '38px',
-                            borderRadius: '12px',
-                            backgroundColor: '#F4C466',
-                            color: '#2C3E50',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer'
-                          }} onClick={() => setBundleSelections(prev => [prev[0], !prev[1], prev[2]])}>
-                            <ShoppingBag size={16} />
-                          </div>
-                        </div>
-                      </div>
+                      </ProductCard>
                     </div>
 
                     <div className="plus-sign">+</div>
 
                     {/* Card 3: Related Product 2 */}
-                    <div className={`bundle-card-wrapper ${!bundleSelections[2] ? 'deselected' : ''}`}>
+                    <div className={`bundle-card-wrapper ${!bundleSelections[2] ? 'deselected' : ''}`} style={{ transform: 'rotate(-0.5deg)', transition: 'transform 0.3s ease' }}>
                       <div
                         className={`bundle-checkbox ${bundleSelections[2] ? 'selected' : ''}`}
                         onClick={() => setBundleSelections(prev => [prev[0], prev[1], !prev[2]])}
@@ -1404,44 +1383,18 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                         {bundleSelections[2] && <Check size={14} strokeWidth={3} />}
                       </div>
 
-                      <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: '28px',
-                        padding: '16px',
-                        border: '2px solid #EAEAEA',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.02)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        height: '100%',
-                        transform: 'rotate(-0.5deg)'
-                      }}>
-                        <div style={{
-                          height: '160px',
-                          backgroundColor: '#FDF6E9',
-                          borderRadius: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          overflow: 'hidden',
-                          marginBottom: '15px'
-                        }}>
-                          <img
-                            src={relatedVariant2?.image?.url || relatedProducts[1].images.edges[0]?.node.url}
-                            alt={relatedProducts[1].title}
-                            style={{
-                              maxWidth: '80%',
-                              maxHeight: '80%',
-                              objectFit: 'contain',
-                              filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.05))'
-                            }}
-                          />
-                        </div>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#2C3E50', margin: '0 0 6px', lineHeight: '1.2' }}>
-                          {relatedProducts[1].title}
-                        </h3>
-
-                        {/* Size selector dropdown */}
-                        <div style={{ marginTop: 'auto', marginBottom: '12px' }}>
+                      <ProductCard
+                        id={relatedProducts[1].handle}
+                        title={relatedProducts[1].title}
+                        price={relatedVariant2?.price.amount || relatedProducts[1].priceRange.minVariantPrice.amount}
+                        originalPrice={relatedVariant2?.compareAtPrice?.amount || relatedProducts[1].compareAtPriceRange?.minVariantPrice?.amount}
+                        image={relatedVariant2?.image?.url || relatedProducts[1].images.edges[0]?.node.url}
+                        category={relatedProducts[1].productType || (relatedProducts[1].tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos')}
+                        images={relatedProducts[1].images.edges.map(e => ({ url: e.node.url, altText: e.node.altText }))}
+                        colors={rel2ColorInfo.colors}
+                        colorImages={rel2ColorInfo.colorImages}
+                      >
+                        <div>
                           <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#666', display: 'block', marginBottom: '4px' }}>Tamanho:</span>
                           <select
                             value={relatedVariant2?.selectedOptions.find(opt => opt.name.toLowerCase().includes('tamanho') || opt.name.toLowerCase().includes('size'))?.value || ''}
@@ -1464,26 +1417,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                             ))}
                           </select>
                         </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: '1.3rem', fontWeight: '900', color: '#E06A55' }}>
-                            {relatedVariant2?.price.amount || relatedProducts[1].priceRange.minVariantPrice.amount}€
-                          </span>
-                          <div style={{
-                            width: '38px',
-                            height: '38px',
-                            borderRadius: '12px',
-                            backgroundColor: '#F4C466',
-                            color: '#2C3E50',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer'
-                          }} onClick={() => setBundleSelections(prev => [prev[0], prev[1], !prev[2]])}>
-                            <ShoppingBag size={16} />
-                          </div>
-                        </div>
-                      </div>
+                      </ProductCard>
                     </div>
 
                   </div>
@@ -1582,50 +1516,26 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                       {bundleSelections[0] && <Check size={14} strokeWidth={3} />}
                     </div>
 
-                    <div style={{
-                      backgroundColor: 'white',
-                      borderRadius: '24px',
-                      padding: '12px',
-                      border: '2px solid #EAEAEA',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      height: '100%'
-                    }}>
-                      <div style={{
-                        height: '130px',
-                        backgroundColor: '#FDF6E9',
-                        borderRadius: '16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        marginBottom: '10px'
-                      }}>
-                        <img
-                          src={selectedImage}
-                          alt={product.title}
-                          style={{
-                            maxWidth: '75%',
-                            maxHeight: '75%',
-                            objectFit: 'contain'
-                          }}
-                        />
-                      </div>
-                      <h3 style={{ fontSize: '0.95rem', fontWeight: '900', color: '#2C3E50', margin: '0 0 4px', lineHeight: '1.2' }}>
-                        {product.title}
-                      </h3>
-                      <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#8097a5', textTransform: 'uppercase', marginBottom: '4px' }}>
-                        Este produto ({selectedOptionsMap[Object.keys(selectedOptionsMap).find(k => k.toLowerCase().includes('cor') || k.toLowerCase().includes('col')) || ''] || ''})
-                      </span>
-                      <div style={{ fontSize: '0.8rem', fontWeight: '700', color: '#666', marginBottom: '8px' }}>
-                        Tamanho: {selectedOptionsMap[Object.keys(selectedOptionsMap).find(k => k.toLowerCase().includes('tamanho') || k.toLowerCase().includes('size')) || ''] || 'Padrão'}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                        <span style={{ fontSize: '1.15rem', fontWeight: '900', color: '#E06A55' }}>
-                          {selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount}€
+                    <ProductCard
+                      id={product.handle}
+                      title={product.title}
+                      price={selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount}
+                      originalPrice={selectedVariant?.compareAtPrice?.amount || product.compareAtPriceRange?.minVariantPrice?.amount}
+                      image={selectedImage}
+                      category={product.productType || (product.tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos')}
+                      images={product.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText }))}
+                      colors={mainColorInfo.colors}
+                      colorImages={mainColorInfo.colorImages}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#8097a5', textTransform: 'uppercase' }}>
+                          Este produto ({selectedOptionsMap[Object.keys(selectedOptionsMap).find(k => k.toLowerCase().includes('cor') || k.toLowerCase().includes('col')) || ''] || ''})
                         </span>
+                        <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#666' }}>
+                          Tamanho: {selectedOptionsMap[Object.keys(selectedOptionsMap).find(k => k.toLowerCase().includes('tamanho') || k.toLowerCase().includes('size')) || ''] || 'Padrão'}
+                        </div>
                       </div>
-                    </div>
+                    </ProductCard>
                   </div>
 
                   {/* Card 2: Related Product 1 */}
@@ -1643,41 +1553,18 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                       {bundleSelections[1] && <Check size={14} strokeWidth={3} />}
                     </div>
 
-                    <div style={{
-                      backgroundColor: 'white',
-                      borderRadius: '24px',
-                      padding: '12px',
-                      border: '2px solid #EAEAEA',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      height: '100%'
-                    }}>
-                      <div style={{
-                        height: '120px',
-                        backgroundColor: '#FDF6E9',
-                        borderRadius: '16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        marginBottom: '10px'
-                      }}>
-                        <img
-                          src={relatedVariant1?.image?.url || relatedProducts[0].images.edges[0]?.node.url}
-                          alt={relatedProducts[0].title}
-                          style={{
-                            maxWidth: '75%',
-                            maxHeight: '75%',
-                            objectFit: 'contain'
-                          }}
-                        />
-                      </div>
-                      <h3 style={{ fontSize: '0.9rem', fontWeight: '900', color: '#2C3E50', margin: '0 0 4px', lineHeight: '1.2' }}>
-                        {relatedProducts[0].title}
-                      </h3>
-
-                      {/* Size selector dropdown */}
-                      <div style={{ marginBottom: '8px' }}>
+                    <ProductCard
+                      id={relatedProducts[0].handle}
+                      title={relatedProducts[0].title}
+                      price={relatedVariant1?.price.amount || relatedProducts[0].priceRange.minVariantPrice.amount}
+                      originalPrice={relatedVariant1?.compareAtPrice?.amount || relatedProducts[0].compareAtPriceRange?.minVariantPrice?.amount}
+                      image={relatedVariant1?.image?.url || relatedProducts[0].images.edges[0]?.node.url}
+                      category={relatedProducts[0].productType || (relatedProducts[0].tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos')}
+                      images={relatedProducts[0].images.edges.map(e => ({ url: e.node.url, altText: e.node.altText }))}
+                      colors={rel1ColorInfo.colors}
+                      colorImages={rel1ColorInfo.colorImages}
+                    >
+                      <div>
                         <select
                           value={relatedVariant1?.selectedOptions.find(opt => opt.name.toLowerCase().includes('tamanho') || opt.name.toLowerCase().includes('size'))?.value || ''}
                           onChange={(e) => handleRelatedSizeChange(1, e.target.value)}
@@ -1699,13 +1586,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                           ))}
                         </select>
                       </div>
-
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                        <span style={{ fontSize: '1.1rem', fontWeight: '900', color: '#E06A55' }}>
-                          {relatedVariant1?.price.amount || relatedProducts[0].priceRange.minVariantPrice.amount}€
-                        </span>
-                      </div>
-                    </div>
+                    </ProductCard>
                   </div>
 
                   {/* Card 3: Related Product 2 */}
@@ -1723,41 +1604,18 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                       {bundleSelections[2] && <Check size={14} strokeWidth={3} />}
                     </div>
 
-                    <div style={{
-                      backgroundColor: 'white',
-                      borderRadius: '24px',
-                      padding: '12px',
-                      border: '2px solid #EAEAEA',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      height: '100%'
-                    }}>
-                      <div style={{
-                        height: '120px',
-                        backgroundColor: '#FDF6E9',
-                        borderRadius: '16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        marginBottom: '10px'
-                      }}>
-                        <img
-                          src={relatedVariant2?.image?.url || relatedProducts[1].images.edges[0]?.node.url}
-                          alt={relatedProducts[1].title}
-                          style={{
-                            maxWidth: '75%',
-                            maxHeight: '75%',
-                            objectFit: 'contain'
-                          }}
-                        />
-                      </div>
-                      <h3 style={{ fontSize: '0.9rem', fontWeight: '900', color: '#2C3E50', margin: '0 0 4px', lineHeight: '1.2' }}>
-                        {relatedProducts[1].title}
-                      </h3>
-
-                      {/* Size selector dropdown */}
-                      <div style={{ marginBottom: '8px' }}>
+                    <ProductCard
+                      id={relatedProducts[1].handle}
+                      title={relatedProducts[1].title}
+                      price={relatedVariant2?.price.amount || relatedProducts[1].priceRange.minVariantPrice.amount}
+                      originalPrice={relatedVariant2?.compareAtPrice?.amount || relatedProducts[1].compareAtPriceRange?.minVariantPrice?.amount}
+                      image={relatedVariant2?.image?.url || relatedProducts[1].images.edges[0]?.node.url}
+                      category={relatedProducts[1].productType || (relatedProducts[1].tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos')}
+                      images={relatedProducts[1].images.edges.map(e => ({ url: e.node.url, altText: e.node.altText }))}
+                      colors={rel2ColorInfo.colors}
+                      colorImages={rel2ColorInfo.colorImages}
+                    >
+                      <div>
                         <select
                           value={relatedVariant2?.selectedOptions.find(opt => opt.name.toLowerCase().includes('tamanho') || opt.name.toLowerCase().includes('size'))?.value || ''}
                           onChange={(e) => handleRelatedSizeChange(2, e.target.value)}
@@ -1779,13 +1637,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                           ))}
                         </select>
                       </div>
-
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                        <span style={{ fontSize: '1.1rem', fontWeight: '900', color: '#E06A55' }}>
-                          {relatedVariant2?.price.amount || relatedProducts[1].priceRange.minVariantPrice.amount}€
-                        </span>
-                      </div>
-                    </div>
+                    </ProductCard>
                   </div>
 
                 </div>
@@ -1938,9 +1790,10 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                         id={p.handle}
                         title={p.title}
                         price={price}
+                        originalPrice={p.compareAtPriceRange?.minVariantPrice?.amount || '0.00'}
                         image={image}
-                        category={p.tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos'}
-                        images={p.images.edges.map(e => e.node.url)}
+                        category={p.productType || (p.tags.find(t => t.toLowerCase() === 'crianca') ? 'Crianças' : 'Sapatinhos')}
+                        images={p.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText }))}
                         colors={colors}
                         colorImages={colorImages}
                       />

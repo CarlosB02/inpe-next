@@ -3,6 +3,8 @@ export const PRODUCT_FRAGMENT = `
   fragment productFields on Product {
     id
     title
+    vendor
+    productType
     handle
     description
     descriptionHtml
@@ -10,6 +12,16 @@ export const PRODUCT_FRAGMENT = `
     tags
     updatedAt
     priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange {
       minVariantPrice {
         amount
         currencyCode
@@ -46,6 +58,10 @@ export const PRODUCT_FRAGMENT = `
             value
           }
           price {
+            amount
+            currencyCode
+          }
+          compareAtPrice {
             amount
             currencyCode
           }

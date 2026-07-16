@@ -1,6 +1,7 @@
 import React from 'react';
 import CollectionsClient2 from '@/components/CollectionsClient2';
 import { getProducts, searchProducts } from '@/lib/shopify';
+import { getAutomaticDiscounts, applyAutomaticDiscounts } from '@/lib/discounts';
 
 export const metadata = { 
   title: 'Loja – Inpe Barefoot', 
@@ -26,6 +27,8 @@ export default async function LojaPage({ searchParams }: Props) {
       // Default products listing
       products = await getProducts({ first: 100 });
     }
+    const discounts = await getAutomaticDiscounts();
+    products = applyAutomaticDiscounts(products, discounts);
   } catch (err) {
     console.error('Failed to load Shopify products on page load:', err);
   }

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Footprints, Shield, Heart, HelpCircle, ArrowRight,
   ChevronLeft, ChevronRight, ShoppingBag, Eye, RefreshCw, Smile,
-  CloudRain, Trees, School, Compass, Zap
+  CloudRain, Trees, School, Compass, Zap, Feather
 } from 'lucide-react';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
@@ -78,7 +78,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
       const variantsList = p.variants?.edges.map(e => e.node) || [];
       const tagsLower = p.tags.map(t => t.toLowerCase());
       const category = tagsLower.find(t => t === 'crianca' || t === 'mulher' || t === 'homem') || 'crianca';
-      const subcategory = p.tags.find(t => {
+      const subcategory = p.productType || p.tags.find(t => {
         const l = t.toLowerCase();
         return l === 'sapatilhas' || l === 'botas' || l === 'sandálias' || l === 'sandalias';
       }) || 'Sapatilhas';
@@ -107,12 +107,13 @@ const HomeClient2 = ({ initialProducts = [] }) => {
         }
       });
 
-      const images = p.images.edges.map(e => e.node.url).filter(Boolean);
+      const images = p.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText || '' })).filter(img => img.url);
 
       return {
         id: p.handle,
         name: p.title,
         price: p.priceRange.minVariantPrice.amount,
+        originalPrice: p.compareAtPriceRange?.minVariantPrice?.amount || '0.00',
         image: p.images.edges[0]?.node.url || '',
         category,
         subcategory,
@@ -242,7 +243,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
           {/* Desktop layout — centered, two buttons */}
           {!isMobile && (
-            <div style={{ zIndex: 10, maxWidth: '900px', padding: '0 24px', marginTop: '-120px' }}>
+            <div style={{ zIndex: 10, maxWidth: '900px', padding: '0 24px', marginTop: '100px' }}>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -526,6 +527,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                     <ProductCard
                       title={p.name}
                       price={p.price}
+                      originalPrice={p.originalPrice}
                       image={p.image}
                       category={p.subcategory || p.category}
                       id={p.id}
@@ -659,6 +661,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                     <ProductCard
                       title={p.name}
                       price={p.price}
+                      originalPrice={p.originalPrice}
                       image={p.image}
                       category={p.subcategory || p.category}
                       id={p.id}
@@ -807,7 +810,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
           }}>
 
             {/* Card 1 — Sol & Areia */}
-            <Link href="/loja" style={{ textDecoration: 'none' }}>
+            <Link href="/loja?subcategoria=sandalias" style={{ textDecoration: 'none' }}>
               <motion.div
                 whileHover={{ scale: 1.02, y: -4 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
@@ -887,7 +890,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             </Link>
 
             {/* Card 2 — Chuva & Lama */}
-            <Link href="/loja" style={{ textDecoration: 'none' }}>
+            <Link href="/loja?subcategoria=botas" style={{ textDecoration: 'none' }}>
               <motion.div
                 whileHover={{ scale: 1.02, y: -4 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
@@ -966,6 +969,179 @@ const HomeClient2 = ({ initialProducts = [] }) => {
               </motion.div>
             </Link>
 
+          </div>
+        </section>
+
+        {/* NEW SECTION: COLEÇÃO LONAS */}
+        <section style={{
+          backgroundColor: '#FAF5ED',
+          borderRadius: isMobile ? '0' : '64px',
+          margin: isMobile ? '0 0 4rem' : '0 4% 6rem',
+          padding: isMobile ? '4rem 5%' : '6rem 8%',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Subtle linen texture details / background accent circles */}
+          <div style={{
+            position: 'absolute',
+            top: '-10%',
+            right: '-5%',
+            width: '30vw',
+            height: '30vw',
+            background: 'radial-gradient(circle, rgba(230, 161, 92, 0.1) 0%, rgba(255,255,255,0) 70%)',
+            borderRadius: '50%',
+            pointerEvents: 'none'
+          }} />
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1.1fr 1fr',
+            gap: isMobile ? '3rem' : '5rem',
+            alignItems: 'center'
+          }}>
+            {/* Left Column: Text & Features */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', textAlign: isMobile ? 'center' : 'left' }}>
+              <div>
+                <h2 style={{
+                  fontSize: 'clamp(2rem, 5vw, 2.8rem)',
+                  fontWeight: '900',
+                  color: '#2C3E50',
+                  textTransform: 'uppercase',
+                  marginTop: '0.8rem',
+                  lineHeight: 1.1
+                }}>
+                  Lonas:<br />
+                  <span style={{ color: '#E6A15C' }}>Liberdade &amp; Frescura!</span>
+                </h2>
+                <p style={{ color: '#555', fontSize: '1.1rem', marginTop: '1.2rem', lineHeight: 1.6 }}>
+                  Leves, respiráveis e flexíveis, perfeitas para acompanhar todas as aventuras de verão.
+                </p>
+              </div>
+
+              {/* Lonas highlights */}
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '24px',
+                padding: '1.8rem',
+                boxShadow: '0 10px 30px rgba(230,161,92,0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                textAlign: 'left'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{ backgroundColor: '#FCF5EB', padding: '10px', borderRadius: '50%', color: '#E6A15C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Feather size={20} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px', color: '#2C3E50', fontWeight: '800' }}>Super Leves e Maleáveis</h4>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#666', lineHeight: 1.4 }}>Perfeitas para brincar, correr e explorar com total liberdade.</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{ backgroundColor: '#FCF5EB', padding: '10px', borderRadius: '50%', color: '#E6A15C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Smile size={20} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px', color: '#2C3E50', fontWeight: '800' }}>100% Algodão Respirável</h4>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#666', lineHeight: 1.4 }}>Mantém os pezinhos frescos e confortáveis mesmo nos dias de maior calor.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+                <Link href="/loja?subcategoria=lonas" style={{ textDecoration: 'none' }}>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{
+                      backgroundColor: '#E6A15C',
+                      color: 'white',
+                      padding: '16px 36px',
+                      borderRadius: '50px',
+                      fontWeight: '800',
+                      boxShadow: '0 8px 20px rgba(230, 161, 92, 0.3)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    Ver Coleção Lonas <ArrowRight size={18} />
+                  </motion.div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Beautiful Image Container */}
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <motion.div
+                whileHover={{ scale: 1.02, rotate: 1 }}
+                style={{
+                  width: '100%',
+                  maxWidth: '480px',
+                  aspectRatio: '4 / 5',
+                  backgroundColor: 'white',
+                  borderRadius: '32px',
+                  boxShadow: '0 20px 45px rgba(230, 161, 92, 0.08)',
+                  border: '3px dashed #E6A15C',
+                  padding: '12px',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {/* Visual placeholder or real image container */}
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '24px',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  backgroundColor: '#FAF7F2'
+                }}>
+                  <img
+                    src="/colecao-lonas.png"
+                    alt="Coleção Lonas Barefoot"
+                    onError={(e) => {
+                      // Fallback visual display in case image isn't uploaded yet
+                      e.currentTarget.style.display = 'none';
+                      const parent = e.currentTarget.parentNode;
+                      if (parent) {
+                        const fallback = parent.querySelector('.fallback-design');
+                        if (fallback) fallback.style.display = 'flex';
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                  <div
+                    className="fallback-design"
+                    style={{
+                      display: 'none',
+                      width: '100%',
+                      height: '100%',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '2rem',
+                      textAlign: 'center',
+                      color: '#E6A15C'
+                    }}
+                  >
+                    <Footprints size={64} style={{ marginBottom: '1rem', opacity: 0.8 }} />
+                    <h3 style={{ margin: '0 0 10px', fontWeight: '900', fontSize: '1.2rem', textTransform: 'uppercase' }}>Espaço para Foto</h3>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#888', fontWeight: '600' }}>Ficheiro recomendado: <br /><code>/colecao-lonas.jpg</code></p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
@@ -1090,7 +1266,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                         scrollSnapAlign: 'start',
                       }}
                     >
-                      <ProductCard title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} colors={p.colors} colorImages={p.colorImages} images={p.images || p.gallery || [p.image]} isNew={p.isNew} compact={true} />
+                      <ProductCard title={p.name} price={p.price} originalPrice={p.originalPrice} image={p.image} category={p.subcategory || p.category} id={p.id} colors={p.colors} colorImages={p.colorImages} images={p.images || p.gallery || [p.image]} isNew={p.isNew} compact={true} />
                     </div>
                   ))}
                 </div>
@@ -1156,7 +1332,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
               gap: '2.5rem'
             }}>
               {parentsProducts.map(p => (
-                <ProductCard key={p.id} title={p.name} price={p.price} image={p.image} category={p.subcategory || p.category} id={p.id} colors={p.colors} colorImages={p.colorImages} images={p.images || p.gallery || [p.image]} isNew={p.isNew} compact={isMobile} />
+                <ProductCard key={p.id} title={p.name} price={p.price} originalPrice={p.originalPrice} image={p.image} category={p.subcategory || p.category} id={p.id} colors={p.colors} colorImages={p.colorImages} images={p.images || p.gallery || [p.image]} isNew={p.isNew} compact={isMobile} />
               ))}
             </div>
 
@@ -1219,7 +1395,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
           }}>
 
             {/* Card 1 — Modelo Terra & Trilho */}
-            <Link href="/loja" style={{ textDecoration: 'none' }}>
+            <Link href="/produto/igor-yogi" style={{ textDecoration: 'none' }}>
               <motion.div
                 whileHover={{ scale: 1.02, y: -4 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
@@ -1314,7 +1490,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             </Link>
 
             {/* Card 2 — Modelo Escola & Cidade */}
-            <Link href="/loja" style={{ textDecoration: 'none' }}>
+            <Link href="/loja?subcategoria=sapatilhas" style={{ textDecoration: 'none' }}>
               <motion.div
                 whileHover={{ scale: 1.02, y: -4 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
