@@ -19,7 +19,7 @@ export async function getAutomaticDiscounts(): Promise<ActiveDiscount[]> {
     return [];
   }
 
-  const endpoint = `https://${domain}/admin/api/2025-01/graphql.json`;
+  const endpoint = `https://${domain}/admin/api/2026-07/graphql.json`;
 
   const query = `
     query {
@@ -84,7 +84,7 @@ export async function getAutomaticDiscounts(): Promise<ActiveDiscount[]> {
         'X-Shopify-Access-Token': adminToken,
       },
       body: JSON.stringify({ query }),
-      cache: 'no-store', // FORÇA o Next.js a ignorar a cache e bater na Shopify sempre
+      next: { revalidate: 60 }, // Cache for 60 seconds
     });
 
     const body = await res.json();
@@ -183,7 +183,7 @@ export function applyAutomaticDiscounts(products: Product[], discounts: ActiveDi
     if (!matchingDiscount) return product;
 
     // Only apply if the product doesn't already have a manual discount (compareAtPrice > price)
-    const hasManualDiscount = product.compareAtPriceRange && 
+    const hasManualDiscount = product.compareAtPriceRange &&
       product.compareAtPriceRange.minVariantPrice &&
       parseFloat(product.compareAtPriceRange.minVariantPrice.amount) > parseFloat(product.priceRange.minVariantPrice.amount);
 
