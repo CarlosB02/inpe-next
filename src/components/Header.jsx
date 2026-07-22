@@ -1,13 +1,14 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ShoppingBag, Search } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
 const Header = () => {
   const { openCart, cartCount } = useCart();
   const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -155,7 +156,7 @@ const Header = () => {
               onKeyDown={(e) => { 
                 if (e.key === 'Escape') setIsSearchOpen(false); 
                 if (e.key === 'Enter' && searchQuery.trim() !== '') {
-                  window.location.href = `/loja?q=${encodeURIComponent(searchQuery)}`;
+                  router.push(`/loja?q=${encodeURIComponent(searchQuery)}`);
                 }
               }}
               onBlur={() => { if (searchQuery.trim() === '') setIsSearchOpen(false); }}

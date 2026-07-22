@@ -10,6 +10,7 @@ import {
 import { Product } from '../types/shopify';
 import ProductCard from './ProductCard';
 import Layout from './Layout';
+import { useRouter } from 'next/navigation';
 
 interface CollectionsClientProps {
   initialProducts: Product[];
@@ -80,7 +81,8 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   initialProducts = [],
   searchQuery = ''
 }) => {
-  const [localSearch, setLocalSearch] = useState('');
+  const router = useRouter();
+  const [localSearch, setLocalSearch] = useState(searchQuery || '');
   const [isMobile, setIsMobile] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -92,6 +94,23 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     price: { min: 0, max: 200 }
   });
   const [sortBy, setSortBy] = useState('mais-vendidos');
+
+  const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
+  if (searchQuery !== prevSearchQuery) {
+    setPrevSearchQuery(searchQuery);
+    setLocalSearch(searchQuery || '');
+  }
+
+  // If localSearch is cleared and there was a searchQuery in the URL, clear it from the URL as well
+  useEffect(() => {
+    if (localSearch === '' && searchQuery) {
+      router.replace('/loja', { scroll: false });
+    }
+  }, [localSearch, searchQuery, router]);
+
+  const handleClearSearch = () => {
+    setLocalSearch('');
+  };
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 900);
@@ -882,6 +901,12 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                 <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#8097a5' }}>
                   Mostrando <strong style={{ color: '#2C3E50' }}>{filteredProducts.length}</strong> modelos
                 </span>
+
+                {localSearch && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#E1F5FE', color: '#0288D1', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px' }}>
+                    {`Pesquisa: "${localSearch}"`} <X size={12} style={{ cursor: 'pointer' }} onClick={handleClearSearch} />
+                  </div>
+                )}
 
                 {filters.categories.map(cat => (
                   <div key={cat} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#E0F2F1', color: '#007396', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px', textTransform: 'capitalize' }}>
