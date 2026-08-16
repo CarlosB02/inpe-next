@@ -1,0 +1,716 @@
+{% assign delivery_method_types = delivery_agreements | map: 'delivery_method_type' | uniq %}
+{% assign has_split_cart = false %}
+{% assign non_none_count = 0 %}
+{% for type in delivery_method_types %}
+  {% unless type == 'none' %}
+    {% assign non_none_count = non_none_count | plus: 1 %}
+  {% endunless %}
+{% endfor %}
+{% if non_none_count > 1 %}
+  {% assign has_split_cart = true %}
+{% endif %}
+
+{% assign non_none_agreements_count = 0 %}
+{% for agreement in delivery_agreements %}
+  {% unless agreement.delivery_method_type == 'none' %}
+    {% assign non_none_agreements_count = non_none_agreements_count | plus: 1 %}
+  {% endunless %}
+{% endfor %}
+
+{% capture email_title %}
+  Agradecemos a sua encomenda!
+{% endcapture %}
+{% capture email_body %}
+  {% if has_pending_payment %}
+    {% if buyer_action_required %}
+      Receberá um e-mail de confirmação após a conclusão do seu pagamento.
+    {% else %}
+      O seu pagamento está a ser processado. Receberá um e-mail quando a sua encomenda for confirmada.
+    {% endif %}
+  {% elsif payment_charged_on_fulfillment %}
+    Olá {{ customer.first_name }}, recebemos a encomenda. O método de pagamento será cobrado quando a encomenda estiver pronta para ser processada. Avisaremos quando estiver a caminho.
+  {% else %}
+    {% if requires_shipping %}
+      {% if has_split_cart %}
+        {% case split_cart_delivery_method %}
+          {% when 'pick-up' %}
+            Irá receber um e-mail quando a recolha da sua encomenda estiver pronta.
+          {% when 'local' %}
+            Olá, {{ customer.first_name }}! Estamos a preparar a sua encomenda para a entrega.
+          {% when 'shipping' %}
+            Estamos a preparar a sua encomenda para a enviar. Enviaremos uma notificação quando for enviada.
+          {% else %}
+            Estamos a preparar a sua encomenda para a enviar. Enviaremos uma notificação quando for enviada.
+        {% endcase %}
+      {% else %}
+        {% case delivery_method %}
+          {% when 'pick-up' %}
+            Irá receber um e-mail quando a recolha da sua encomenda estiver pronta.
+          {% when 'local' %}
+            Olá, {{ customer.first_name }}! Estamos a preparar a sua encomenda para a entrega.
+          {% else %}
+            Estamos a preparar a sua encomenda para a enviar. Enviaremos uma notificação quando for enviada.
+        {% endcase %}
+      {% endif %}
+        {% if delivery_instructions != blank  %}
+          <p style="margin: 10px 0 0 0; font-size: 15px; color: #854931;"><b>Informações de entrega:</b> {{ delivery_instructions }}</p>
+        {% endif %}
+      {% unless delivery_method_types.size > 1 %}
+        {% if consolidated_estimated_delivery_time %}
+          {% if non_none_agreements_count > 1 %}
+            <h3 style="margin: 15px 0 5px 0; font-size: 16px; color: #854931; font-weight: 700;">Entrega estimada</h3>
+            <p style="margin: 0; font-size: 15px; color: #2c3e50;">{{ consolidated_estimated_delivery_time }}</p>
+          {% else %}
+            <p style="margin: 15px 0 0 0; font-size: 15px; color: #2c3e50;">
+              Entrega estimada: <b>{{ consolidated_estimated_delivery_time }}</b>
+            </p>
+          {% endif %}
+        {% endif %}
+      {% endunless %}
+    {% endif %}
+  {% endif %}
+  {% assign gift_card_line_items = line_items | where: "gift_card" %}
+  {% assign found_gift_card_with_recipient_email = false %}
+  {% for line_item in gift_card_line_items %}
+    {% if line_item.properties["__shopify_send_gift_card_to_recipient"] and line_item.properties["Recipient email"] %}
+      {% assign found_gift_card_with_recipient_email = true %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+  {% if found_gift_card_with_recipient_email %}
+    <p style="margin: 15px 0 0 0; font-size: 15px; color: #2c3e50;">O destinatário do seu cartão de oferta vai receber um e-mail com o código do respetivo cartão de oferta.</p>
+  {% elsif gift_card_line_items.first %}
+    <p style="margin: 15px 0 0 0; font-size: 15px; color: #2c3e50;">Irá receber e-mails separados para quaisquer cartões de oferta.</p>
+  {% endif %}
+{% endcapture %}
+
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <title>{{ email_title }}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset & Global */
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #FDF6E9;
+      color: #2c3e50;
+      margin: 0;
+      padding: 0;
+      width: 100% !important;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    table {
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+    img {
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+    }
+    
+    /* Layout */
+    .wrapper {
+      width: 100%;
+      background-color: #FDF6E9;
+      padding: 30px 15px;
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      border: 1px solid rgba(133, 73, 49, 0.08);
+      box-shadow: 0 8px 24px rgba(133, 73, 49, 0.04);
+      overflow: hidden;
+    }
+    
+    /* Content Blocks */
+    .header {
+      padding: 32px 32px 20px 32px;
+      border-bottom: 1px solid #FDF6E9;
+    }
+    .content-body {
+      padding: 32px;
+    }
+    .section-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #854931;
+      margin: 0 0 16px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Buttons */
+    .button-container {
+      margin: 24px 0;
+    }
+    .btn-primary {
+      background-color: #F4C466;
+      color: #2c3e50 !important;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 9999px;
+      display: inline-block;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(244, 196, 102, 0.3);
+      transition: all 0.3s ease;
+      border: 1.5px solid rgba(244, 196, 102, 0.25);
+    }
+    .btn-secondary {
+      color: #854931 !important;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: underline;
+      margin-left: 15px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    /* Product List */
+    .product-table {
+      width: 100%;
+      margin-bottom: 24px;
+    }
+    .product-row {
+      border-bottom: 1px solid #FDF6E9;
+    }
+    .product-row:last-child {
+      border-bottom: none;
+    }
+    .product-img-cell {
+      padding: 16px 12px 16px 0;
+      width: 70px;
+    }
+    .product-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid rgba(133, 73, 49, 0.08);
+      background-color: #FDF6E9;
+    }
+    .product-info-cell {
+      padding: 16px 0;
+      vertical-align: top;
+    }
+    .product-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #2c3e50;
+      margin: 0;
+    }
+    .product-variant {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      color: #666;
+      margin: 2px 0 0 0;
+    }
+    .product-price-cell {
+      padding: 16px 0;
+      text-align: right;
+      vertical-align: top;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #2c3e50;
+    }
+    
+    /* Totals block */
+    .totals-table {
+      width: 100%;
+      border-top: 2px solid #FDF6E9;
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    .total-row td {
+      padding: 6px 0;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      color: #666;
+    }
+    .total-row.grand-total td {
+      padding: 16px 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: #854931;
+      border-top: 1px dashed #854931;
+      margin-top: 8px;
+    }
+
+    /* Customer details */
+    .details-box {
+      background-color: #FDF6E9;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .details-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #854931;
+      margin: 0 0 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .details-content {
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #2c3e50;
+      margin: 0;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 32px 16px;
+      background-color: #FDF6E9;
+      border-top: 1px solid rgba(133, 73, 49, 0.05);
+    }
+    .footer-logo {
+      height: 36px;
+      width: auto;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .footer-text {
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      color: #8097a5;
+      line-height: 1.6;
+      margin: 0 0 16px 0;
+    }
+    .footer-links a {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #854931;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    @media only screen and (max-width: 480px) {
+      .container {
+        border-radius: 0 !important;
+        border: none !important;
+      }
+      .header, .content-body {
+        padding: 20px !important;
+      }
+      .details-cell {
+        display: block !important;
+        width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-bottom: 20px !important;
+      }
+      .details-cell:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="container">
+      
+      <!-- HEADER -->
+      <table class="header" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+          <td>
+            <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+              <tr>
+                <td align="left" valign="middle" style="padding-left: 8px;">
+                  {% if shop.email_logo_url %}
+                    <img src="{{ shop.email_logo_url }}" alt="{{ shop.name }}" width="{{ shop.email_logo_width }}" style="max-height: 55px; width: auto;">
+                  {% else %}
+                    <h1 style="margin: 0; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 24px; color: #854931; letter-spacing: -0.5px;">
+                      <a href="{{ shop.url }}" style="color: #854931; text-decoration: none;">{{ shop.name }}</a>
+                    </h1>
+                  {% endif %}
+                </td>
+                <td align="right" valign="middle" style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; color: #8097a5;">
+                  <span>Encomenda {{ order_name }}</span>
+                  {% if po_number %}
+                    <div style="font-size: 12px; margin-top: 4px; font-weight: 500;">PO: {{ po_number }}</div>
+                  {% endif %}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <!-- MAIN CONTENT -->
+      <div class="content-body">
+        
+        <!-- Welcome Message -->
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom: 28px;">
+          <tr>
+            <td>
+              <h2 style="margin: 0 0 12px 0; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.25; color: #854931;">
+                {{ email_title }}
+              </h2>
+              <div style="font-family: 'Nunito', sans-serif; font-size: 16px; line-height: 1.6; color: #2c3e50; margin: 0;">
+                {{ email_body }}
+              </div>
+              
+              <!-- Payment instructions -->
+              {% assign transaction_count = transactions | size %}
+              {% if transaction_count > 0 %}
+                {% for transaction in transactions %}
+                  {% if transaction.show_buyer_pending_payment_instructions? %}
+                    <div style="background-color: #FDF6E9; border-radius: 12px; padding: 16px; border-left: 4px solid #F4C466; margin-top: 20px;">
+                      <p style="margin: 0 0 12px 0; font-family: 'Nunito', sans-serif; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+                        {{ transaction.buyer_pending_payment_notice }}
+                      </p>
+                      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="font-family: 'Nunito', sans-serif; font-size: 13px; color: #2c3e50;">
+                        <tr style="font-weight: 700; color: #854931;">
+                          {% for instruction in transaction.buyer_pending_payment_instructions %}
+                            <td style="padding: 4px 8px 4px 0;">{{ instruction.header }}</td>
+                          {% endfor %}
+                          <td style="padding: 4px 0 4px 8px; text-align: right;">Valor</td>
+                        </tr>
+                        <tr>
+                          {% for instruction in transaction.buyer_pending_payment_instructions %}
+                            <td style="padding: 4px 8px 4px 0; vertical-align: top;">{{ instruction.value }}</td>
+                          {% endfor %}
+                          <td style="padding: 4px 0 4px 8px; text-align: right; font-weight: 700; vertical-align: top;">{{ transaction.amount | money }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+
+        <!-- Call to Action Buttons -->
+        {% if order_status_url %}
+          <div class="button-container">
+            <a href="{{ order_status_url }}" class="btn-primary">
+              Visualizar a sua encomenda
+            </a>
+            {% if shop.url %}
+              <a href="{{ shop.url }}" class="btn-secondary">
+                ou Visite a nossa loja
+              </a>
+            {% endif %}
+          </div>
+          
+          <!-- Shop App Integration -->
+          {% if shop_app_tracking_url and shop_app_tracking_button_variant_key %}
+            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-top: 16px; border-top: 1px solid #FDF6E9; padding-top: 16px;">
+              <tr>
+                <td style="font-family: 'Nunito', sans-serif; font-size: 13px; color: #8097a5; vertical-align: middle;">
+                  Rastreie a sua entrega em tempo real na app do Shop.
+                </td>
+                <td align="right" style="vertical-align: middle;">
+                  <a href="{{ shop_app_tracking_url }}" style="font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; color: #854931; text-decoration: none;">
+                    {% if shop_app_tracking_button_variant_key == "track_with_shop" %}
+                      Rastrear com Shop &rarr;
+                    {% else %}
+                      Instalar a app Shop &rarr;
+                    {% endif %}
+                  </a>
+                </td>
+              </tr>
+            </table>
+          {% endif %}
+        {% else %}
+          {% if shop.url %}
+            <div class="button-container">
+              <a href="{{ shop.url }}" class="btn-primary">
+                Visite a nossa loja
+              </a>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        <!-- ORDER SUMMARY -->
+        <div style="margin-top: 40px;">
+          <h3 class="section-title">Resumo da Encomenda</h3>
+          
+          <table class="product-table" cellpadding="0" cellspacing="0" role="presentation">
+            
+            {% if delivery_method_types.size > 1 %}
+              
+              <!-- Subtotal Line Items (For Multi-delivery methods) -->
+              {% for line in subtotal_line_items %}
+                {% unless line.delivery_agreement %}
+                  {% if line.groups.size == 0 %}
+                    {% unless line.nested_line_child? %}
+                      <tr class="product-row">
+                        <td class="product-img-cell" valign="top">
+                          {% if line.image %}
+                            <img src="{{ line | img_url: 'compact_cropped' }}" class="product-img" alt="{{ line.title }}">
+                          {% else %}
+                            <div style="width: 60px; height: 60px; border-radius: 12px; background-color: #FDF6E9; border: 1px dashed rgba(133, 73, 49, 0.2); text-align: center;"></div>
+                          {% endif %}
+                        </td>
+                        <td class="product-info-cell" valign="top">
+                          <h4 class="product-title">
+                            {{ line.title }} &times; {{ line.quantity }}
+                          </h4>
+                          {% if line.variant.title != 'Default Title' %}
+                            <p class="product-variant">{{ line.variant.title }}</p>
+                          {% endif %}
+                          
+                          {% if line.selling_plan_allocation %}
+                            <p class="product-variant" style="color: #854931;">{{ line.selling_plan_allocation.selling_plan.name }}</p>
+                          {% endif %}
+                          
+                          {% if line.refunded_quantity > 0 %}
+                            <p class="product-variant" style="color: #d9534f; font-weight: 700;">Reembolsado</p>
+                          {% endif %}
+                        </td>
+                        <td class="product-price-cell" valign="top">
+                          {% if line.original_line_price != line.final_line_price %}
+                            <del style="color: #666; font-size: 13px; font-weight: 500; margin-right: 4px;">{{ line.original_line_price | money }}</del>
+                          {% endif %}
+                          <span>
+                            {% if line.final_line_price > 0 %}
+                              {{ line.final_line_price | money }}
+                            {% else %}
+                              Grátis
+                            {% endif %}
+                          </span>
+                        </td>
+                      </tr>
+                    {% endunless %}
+                  {% endif %}
+                {% endunless %}
+              {% endfor %}
+
+              <!-- Line Item Groups -->
+              {% for line_item_group in line_item_groups %}
+                {% unless line_item_group.components.first.delivery_agreement %}
+                  <tr class="product-row">
+                    <td class="product-img-cell" valign="top">
+                      {% if line_item_group.image %}
+                        <img src="{{ line_item_group | img_url: 'compact_cropped' }}" class="product-img" alt="{{ line_item_group.display_title }}">
+                      {% else %}
+                        <div style="width: 60px; height: 60px; border-radius: 12px; background-color: #FDF6E9; border: 1px dashed rgba(133, 73, 49, 0.2); text-align: center;"></div>
+                      {% endif %}
+                    </td>
+                    <td class="product-info-cell" valign="top">
+                      <h4 class="product-title">
+                        {{ line_item_group.display_title }} &times; {{ line_item_group.quantity }}
+                      </h4>
+                      {% if line_item_group.variant and line_item_group.variant.title != 'Default Title' %}
+                        <p class="product-variant">{{ line_item_group.variant.title }}</p>
+                      {% endif %}
+                    </td>
+                    <td class="product-price-cell" valign="top">
+                      {% assign final_group_price = 0 %}
+                      {% for component in line_item_group.components %}
+                        {% assign final_group_price = final_group_price | plus: component.final_line_price %}
+                      {% endfor %}
+                      <span>
+                        {% if final_group_price > 0 %}
+                          {{ final_group_price | money }}
+                        {% else %}
+                          Grátis
+                        {% endif %}
+                      </span>
+                    </td>
+                  </tr>
+                {% endunless %}
+              {% endfor %}
+
+            {% endif %}
+
+            <!-- Delivery Agreements Loop (For grouping shipping methods) -->
+            {% for delivery_agreement in delivery_agreements %}
+              {% if delivery_agreement.line_items != blank %}
+                
+                <!-- Shipment Header in List -->
+                {% if delivery_agreements.size > 1 %}
+                  <tr>
+                    <td colspan="3" style="padding: 20px 0 10px 0; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; color: #854931; border-bottom: 1.5px solid #854931; text-transform: uppercase;">
+                      {{ delivery_agreement.delivery_method_name }} 
+                      {% if delivery_agreement.estimated_delivery_date %}
+                        <span style="color: #8097a5; font-size: 12px; text-transform: none; margin-left: 8px;">(Estimado: {{ delivery_agreement.estimated_delivery_date }})</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endif %}
+
+                {% for line in delivery_agreement.non_parent_line_items %}
+                  {% if line.groups.size == 0 %}
+                    {% unless line.nested_line_child? %}
+                      <tr class="product-row">
+                        <td class="product-img-cell" valign="top">
+                          {% if line.image %}
+                            <img src="{{ line | img_url: 'compact_cropped' }}" class="product-img" alt="{{ line.title }}">
+                          {% else %}
+                            <div style="width: 60px; height: 60px; border-radius: 12px; background-color: #FDF6E9; border: 1px dashed rgba(133, 73, 49, 0.2); text-align: center;"></div>
+                          {% endif %}
+                        </td>
+                        <td class="product-info-cell" valign="top">
+                          <h4 class="product-title">
+                            {{ line.title }} &times; {{ line.quantity }}
+                          </h4>
+                          {% if line.variant.title != 'Default Title' %}
+                            <p class="product-variant">{{ line.variant.title }}</p>
+                          {% endif %}
+                          {% if line.selling_plan_allocation %}
+                            <p class="product-variant" style="color: #854931;">{{ line.selling_plan_allocation.selling_plan.name }}</p>
+                          {% endif %}
+                        </td>
+                        <td class="product-price-cell" valign="top">
+                          {% if line.original_line_price != line.final_line_price %}
+                            <del style="color: #666; font-size: 13px; font-weight: 500; margin-right: 4px;">{{ line.original_line_price | money }}</del>
+                          {% endif %}
+                          <span>
+                            {% if line.final_line_price > 0 %}
+                              {{ line.final_line_price | money }}
+                            {% else %}
+                              Grátis
+                            {% endif %}
+                          </span>
+                        </td>
+                      </tr>
+                    {% endunless %}
+                  {% endif %}
+                {% endfor %}
+
+              {% endif %}
+            {% endfor %}
+
+          </table>
+
+          <!-- TOTALS TABLE -->
+          <table class="totals-table" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+            <tr class="total-row">
+              <td align="left">Subtotal</td>
+              <td align="right" style="color: #2c3e50; font-weight: 600;">{{ subtotal_price | money }}</td>
+            </tr>
+            
+            {% for discount_application in discount_applications %}
+              <tr class="total-row" style="color: #9FE2DD;">
+                <td align="left">
+                  <span style="background-color: rgba(159, 226, 221, 0.15); padding: 2px 8px; border-radius: 4px; color: #007396; font-weight: 700; font-size: 12px;">
+                    Desconto ({{ discount_application.title | upcase }})
+                  </span>
+                </td>
+                <td align="right" style="color: #007396; font-weight: 700;">-{{ discount_application.total_allocated_amount | money }}</td>
+              </tr>
+            {% endfor %}
+
+            <tr class="total-row">
+              <td align="left">Envio/Entrega</td>
+              <td align="right" style="color: #2c3e50; font-weight: 600;">
+                {% if shipping_price == 0 %}
+                  Grátis
+                {% else %}
+                  {{ shipping_price | money }}
+                {% endif %}
+              </td>
+            </tr>
+
+            {% if tax_price > 0 %}
+              <tr class="total-row">
+                <td align="left">Impostos incluídos</td>
+                <td align="right" style="color: #2c3e50; font-weight: 600;">{{ tax_price | money }}</td>
+              </tr>
+            {% endif %}
+
+            <tr class="total-row grand-total">
+              <td align="left">Total da Encomenda</td>
+              <td align="right">{{ total_price | money }}</td>
+            </tr>
+          </table>
+
+        </div>
+
+        <!-- CUSTOMER DETAILS (SHIPPING / BILLING) -->
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-top: 24px;">
+          <tr>
+            {% if shipping_address %}
+              <td class="details-cell" width="50%" valign="top" style="padding-right: 10px;">
+                <div class="details-box" style="height: 100%; min-height: 140px;">
+                  <h4 class="details-title">Endereço de Envio</h4>
+                  <p class="details-content">
+                    {{ shipping_address.name }}<br>
+                    {{ shipping_address.address1 }}<br>
+                    {% if shipping_address.address2 != blank %}{{ shipping_address.address2 }}<br>{% endif %}
+                    {{ shipping_address.zip }} {{ shipping_address.city }}<br>
+                    {{ shipping_address.country }}
+                  </p>
+                </div>
+              </td>
+            {% endif %}
+            
+            {% if billing_address %}
+              <td class="details-cell" width="50%" valign="top" style="padding-left: 10px;">
+                <div class="details-box" style="height: 100%; min-height: 140px;">
+                  <h4 class="details-title">Endereço de Faturação</h4>
+                  <p class="details-content">
+                    {{ billing_address.name }}<br>
+                    {{ billing_address.address1 }}<br>
+                    {% if billing_address.address2 != blank %}{{ billing_address.address2 }}<br>{% endif %}
+                    {{ billing_address.zip }} {{ billing_address.city }}<br>
+                    {{ billing_address.country }}
+                  </p>
+                </div>
+              </td>
+            {% endif %}
+          </tr>
+        </table>
+
+      </div>
+
+      <!-- FOOTER -->
+      <table class="footer" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+          <td>
+            <div style="font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 22px; color: #007396; margin-bottom: 16px; font-style: italic;">
+              Pés livres, e felizes!
+            </div>
+            
+            <p class="footer-text">
+              Dúvidas sobre a sua encomenda?<br>
+              Responda a este e-mail ou contacte-nos através de <a href="mailto:{{ shop.email }}" style="color: #854931; font-weight: 700; text-decoration: none;">{{ shop.email }}</a>.
+            </p>
+            
+            <div class="footer-links">
+              <a href="{{ shop.url }}">Visitar Loja</a>
+              <a href="{{ shop.url }}/policies/refund-policy">Política de Reembolso</a>
+              <a href="{{ shop.url }}/policies/terms-of-service">Termos de Serviço</a>
+            </div>
+            
+            <p style="margin: 20px 0 0 0; font-family: 'Nunito', sans-serif; font-size: 11px; color: #8097a5;">
+              &copy; {{ 'now' | date: "%Y" }} {{ shop.name }}. Todos os direitos reservados.
+            </p>
+          </td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+</body>
+</html>

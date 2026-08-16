@@ -127,8 +127,10 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       const variantsList = p.variants?.edges.map(e => e.node) || [];
 
       // Parse sizes from variant options whose name is "Tamanho" or "Tamanho de calçado"
+      // Only include sizes from variants that are actually available (not sold out)
       const sizesSet = new Set<string | number>();
       variantsList.forEach(v => {
+        if (!v.availableForSale) return; // skip sold-out variants
         v.selectedOptions.forEach(opt => {
           const nameLower = opt.name.toLowerCase();
           if (nameLower === 'tamanho' || nameLower === 'tamanho de calçado') {
