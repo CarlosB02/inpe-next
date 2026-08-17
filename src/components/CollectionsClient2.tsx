@@ -95,6 +95,60 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   });
   const [sortBy, setSortBy] = useState('mais-vendidos');
 
+  // Persistent Filters Storage Key & Expiration Timer (10 Minutes)
+  const FILTER_STORAGE_KEY = 'inpe_loja_filters_v1';
+  const FILTER_TTL_MS = 10 * 60 * 1000;
+
+  // 1. Restore saved filter state on mount if timer has not expired
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(FILTER_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.expiresAt && parsed.expiresAt > Date.now()) {
+          if (parsed.filters) setFilters(parsed.filters);
+          if (parsed.sortBy) setSortBy(parsed.sortBy);
+          if (parsed.localSearch) setLocalSearch(parsed.localSearch);
+        } else {
+          sessionStorage.removeItem(FILTER_STORAGE_KEY);
+        }
+      }
+    } catch (e) {
+      console.error('Error restoring persistent filters:', e);
+    }
+  }, []);
+
+  // 2. Save current filter state with expiration timestamp when filters change
+  useEffect(() => {
+    try {
+      const hasActiveFilters =
+        filters.categories.length > 0 ||
+        filters.subcategories.length > 0 ||
+        filters.sizes.length > 0 ||
+        filters.colors.length > 0 ||
+        filters.price.min > 0 ||
+        filters.price.max < 200 ||
+        sortBy !== 'mais-vendidos' ||
+        localSearch !== '';
+
+      if (hasActiveFilters) {
+        sessionStorage.setItem(
+          FILTER_STORAGE_KEY,
+          JSON.stringify({
+            filters,
+            sortBy,
+            localSearch,
+            expiresAt: Date.now() + FILTER_TTL_MS
+          })
+        );
+      } else {
+        sessionStorage.removeItem(FILTER_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.error('Error saving persistent filters:', e);
+    }
+  }, [filters, sortBy, localSearch]);
+
   const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
   if (searchQuery !== prevSearchQuery) {
     setPrevSearchQuery(searchQuery);
@@ -362,6 +416,9 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   }, [mappedProducts, filters, localSearch, sortBy]);
 
   const handleClearFilters = () => {
+    try {
+      sessionStorage.removeItem(FILTER_STORAGE_KEY);
+    } catch (e) {}
     setFilters({
       categories: [],
       subcategories: [],
