@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
-import ModelViewer from './ModelViewer';
 import Layout from './Layout';
 
 import products from '@/data/products';
@@ -723,17 +722,16 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   position: 'relative'
                 }}
               >
-                {/* 3D Model Display */}
-                <ModelViewer modelPath="/shoe.glb" autoRotate={true} />
-
-                {/* Floating tags */}
-                <span style={{ position: 'absolute', top: '25px', left: '25px', backgroundColor: '#FF9F1C', color: 'white', fontWeight: '800', fontSize: '0.75rem', padding: '6px 12px', borderRadius: '20px', textTransform: 'uppercase' }}>
-                  Ajuste 3D Real
-                </span>
-
-                <span style={{ position: 'absolute', bottom: '25px', right: '25px', backgroundColor: '#2C3E50', color: 'white', fontWeight: '800', fontSize: '0.75rem', padding: '6px 12px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Eye size={12} /> Arrasta para rodar
-                </span>
+                {/* Espaço para foto - substitua o src pela imagem desejada */}
+                <img
+                  src="/modelo-destaque-escola.jpg"
+                  alt="Sapato Inpe"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
               </motion.div>
             </div>
 
@@ -741,7 +739,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', textAlign: isMobile ? 'center' : 'left' }}>
               <div>
                 <h2 style={{ fontSize: 'clamp(1.8rem, 4.5vw, 2.5rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', marginTop: '1.2rem', lineHeight: 1.1 }}>
-                  Explora o teu <br /><span style={{ color: '#4CAF50' }}>Sapato em 3D!</span>
+                  Os pezinhos <br /><span style={{ color: '#4CAF50' }}>mais felizes!</span>
                 </h2>
                 <p style={{ color: '#555', fontSize: '1.05rem', marginTop: '1rem', lineHeight: 1.6 }}>
                   Descobre a flexibilidade e o conforto pensados para acompanhar cada aventura.
