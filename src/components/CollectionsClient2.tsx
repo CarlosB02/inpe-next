@@ -600,39 +600,37 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   const SidebarContent = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
 
-      {/* Search inside sidebar for desktop */}
-      {!isMobile && (
-        <div style={{ position: 'relative' }}>
-          <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '0.8rem' }}>Pesquisa Rápida</h4>
-          <div style={{ position: 'relative' }}>
-            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#8097a5' }} />
-            <input
-              type="text"
-              placeholder="Ex: Botas, Desportivo..."
-              value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 12px 12px 38px',
-                borderRadius: '16px',
-                border: '2px solid #eee',
-                fontSize: '0.95rem',
-                fontWeight: '600',
-                outline: 'none',
-                backgroundColor: '#fdfdfd',
-                color: '#2c3e50'
-              }}
-            />
-            {localSearch && (
-              <X
-                size={16}
-                onClick={() => setLocalSearch('')}
-                style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: '#888', cursor: 'pointer' }}
-              />
-            )}
+      {/* Price Slider */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <DollarSign size={18} color="#E06A55" /> Preço
+          </h4>
+          <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#E06A55', padding: '4px 10px', backgroundColor: '#FFEBEE', borderRadius: '20px' }}>
+            {filters.price.max}€
+          </span>
+        </div>
+        <div style={{ padding: '0 8px' }}>
+          <input
+            type="range"
+            min="0"
+            max="200"
+            value={filters.price.max}
+            onChange={(e) => setFilters(prev => ({ ...prev, price: { ...prev.price, max: parseInt(e.target.value) } }))}
+            style={{
+              width: '100%',
+              accentColor: '#E06A55',
+              height: '8px',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#888', marginTop: '6px', fontWeight: 'bold' }}>
+            <span>0€</span>
+            <span>200€</span>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Sort Filter */}
       <div>
@@ -799,7 +797,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Sparkles size={18} color="#854931" /> Cores
           </h4>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', justifyItems: 'center' }}>
             {availableColors.map(color => {
               const isActive = filters.colors.includes(color);
               const styleObj = getColorStyle(color);
@@ -837,38 +835,6 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           </div>
         </div>
       )}
-
-      {/* Price Slider */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <DollarSign size={18} color="#E06A55" /> Preço
-          </h4>
-          <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#E06A55', padding: '4px 10px', backgroundColor: '#FFEBEE', borderRadius: '20px' }}>
-            {filters.price.max}€
-          </span>
-        </div>
-        <div style={{ padding: '0 8px' }}>
-          <input
-            type="range"
-            min="0"
-            max="200"
-            value={filters.price.max}
-            onChange={(e) => setFilters(prev => ({ ...prev, price: { ...prev.price, max: parseInt(e.target.value) } }))}
-            style={{
-              width: '100%',
-              accentColor: '#E06A55',
-              height: '8px',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#888', marginTop: '6px', fontWeight: 'bold' }}>
-            <span>0€</span>
-            <span>200€</span>
-          </div>
-        </div>
-      </div>
 
       {/* Clear Button */}
       <motion.button

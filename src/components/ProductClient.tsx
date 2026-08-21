@@ -13,6 +13,7 @@ import { Product, ProductVariant } from '../types/shopify';
 import { useCart } from '../context/CartContext';
 import Layout from './Layout';
 import ProductCard from './ProductCard';
+import { getColorStyle, normalizeColorName } from '../lib/colors';
 
 // Brand & Model specific size tables matching size guide
 const tablesData = [
@@ -385,12 +386,70 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
 
     if (!selectedColor) return images;
 
-    const filtered = images.filter(img =>
-      img.altText && img.altText.toLowerCase().includes(selectedColor.toLowerCase())
-    );
+    const cleanStr = (str: string) => {
+      if (!str) return '';
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    };
 
-    return filtered.length > 0 ? filtered : images;
-  }, [images, selectedOptionsMap]);
+    const normSelectedColor = cleanStr(selectedColor);
+    const normSelectedColorAlias = cleanStr(normalizeColorName(selectedColor));
+
+    // Get all other colors of this product to avoid showing their images
+    const allColors = colorKey ? (optionValuesMap[colorKey] || []) : [];
+    const otherColorsClean = allColors
+      .filter(c => c !== selectedColor)
+      .map(c => cleanStr(c))
+      .filter(c => c.length > 0 && !normSelectedColor.includes(c));
+
+    // Filter images strictly based on altText
+    const filtered = images.filter(img => {
+      if (!img.altText) return false;
+      const normAlt = cleanStr(img.altText);
+      const normAltAlias = cleanStr(normalizeColorName(img.altText));
+
+      // Must contain selected color name or alias in alt text
+      const matchesSelected =
+        normAlt.includes(normSelectedColor) ||
+        (normSelectedColorAlias && normAlt.includes(normSelectedColorAlias)) ||
+        normAltAlias.includes(normSelectedColor) ||
+        (normSelectedColorAlias && normAltAlias.includes(normSelectedColorAlias));
+
+      if (!matchesSelected) return false;
+
+      // Must not explicitly match another color if that other color is distinct
+      const matchesOther = otherColorsClean.some(other =>
+        other.length > 2 && (normAlt.includes(other) || normAltAlias.includes(other))
+      );
+
+      return !matchesOther;
+    });
+
+    if (filtered.length > 0) return filtered;
+
+    // Fallback 1: If selected variant has an image assigned in Shopify
+    if (selectedVariant?.image?.url) {
+      const varImg = images.filter(img => img.url === selectedVariant.image?.url);
+      if (varImg.length > 0) return varImg;
+    }
+
+    // Fallback 2: Show images that do NOT belong to any other color of this product
+    const nonOtherImages = images.filter(img => {
+      if (!img.altText) return true;
+      const normAlt = cleanStr(img.altText);
+      const normAltAlias = cleanStr(normalizeColorName(img.altText));
+      return !otherColorsClean.some(other =>
+        other.length > 2 && (normAlt.includes(other) || normAltAlias.includes(other))
+      );
+    });
+
+    return nonOtherImages.length > 0 ? nonOtherImages : images;
+  }, [images, selectedOptionsMap, optionValuesMap, selectedVariant]);
 
   // Sync image when variant changes or color images change
   useEffect(() => {
@@ -847,27 +906,6 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
 
                   // Color selector in single row
                   if (isColor || (!isSize && optionNames.indexOf(name) === 0)) {
-                    const colorMap: Record<string, string> = {
-                      "preto": "#1c1c1c",
-                      "branco": "#f9f9f9",
-                      "azul": "#1a73e8",
-                      "vermelho": "#d93025",
-                      "verde": "#188038",
-                      "amarelo": "#f9ab00",
-                      "rosa": "#f06292",
-                      "roxo": "#9c27b0",
-                      "castanho": "#795548",
-                      "cinzento": "#9e9e9e",
-                      "cinza": "#9e9e9e",
-                      "laranja": "#f57c00",
-                      "bege": "#f5f5dc",
-                      "prateado": "#c0c0c0",
-                      "dourado": "#ffd700",
-                      "marinho": "#000080",
-                      "azul escuro": "#00008b",
-                      "verde seco": "#556b2f"
-                    };
-
                     return (
                       <div key={name} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <span style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--color-text)' }}>
@@ -876,15 +914,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                           {values.map(val => {
                             const isSelected = selectedOptionsMap[name] === val;
-                            const lowerVal = val.toLowerCase();
-                            // Find color match, default to a light gray if not found
-                            let cssColor = '#e0e0e0';
-                            for (const [key, color] of Object.entries(colorMap)) {
-                              if (lowerVal.includes(key)) {
-                                cssColor = color;
-                                break;
-                              }
-                            }
+                            const styleObj = getColorStyle(val);
 
                             return (
                               <button
@@ -895,15 +925,27 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                                   width: '42px',
                                   height: '42px',
                                   borderRadius: '50%',
-                                  border: isSelected ? '3px solid #FF9F1C' : '2px solid #EAEAEA',
-                                  backgroundColor: cssColor,
+                                  border: isSelected ? '3px solid #FF9F1C' : styleObj.isWhite ? '2px solid #ddd' : '2px solid #EAEAEA',
+                                  background: styleObj.background,
                                   cursor: 'pointer',
                                   transition: 'all 0.2s',
                                   padding: 0,
-                                  boxShadow: isSelected ? '0 0 0 2px white inset' : 'none'
+                                  boxShadow: isSelected ? '0 0 0 2px white inset, 0 4px 10px rgba(0,0,0,0.15)' : 'none',
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
                                 }}
                                 aria-label={`Cor ${val}`}
-                              />
+                              >
+                                {isSelected && (
+                                  <Check
+                                    size={18}
+                                    color={styleObj.isWhite ? '#2C3E50' : 'white'}
+                                    strokeWidth={3.5}
+                                  />
+                                )}
+                              </button>
                             );
                           })}
                         </div>
