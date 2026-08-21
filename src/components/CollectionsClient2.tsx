@@ -43,39 +43,7 @@ const PlayfulBadge = ({ children, color = '#FF9F1C', icon: Icon }: any) => (
   </motion.div>
 );
 
-const getColorHex = (colorName: string) => {
-  if (!colorName) return '#ddd';
-  if (colorName.startsWith('#')) return colorName;
-  
-  const colorMap: Record<string, string> = {
-    "preto": "#1c1c1c",
-    "branco": "#f9f9f9",
-    "azul": "#1a73e8",
-    "vermelho": "#d93025",
-    "verde": "#188038",
-    "amarelo": "#f9ab00",
-    "rosa": "#f06292",
-    "roxo": "#9c27b0",
-    "castanho": "#795548",
-    "cinzento": "#9e9e9e",
-    "cinza": "#9e9e9e",
-    "laranja": "#f57c00",
-    "bege": "#f5f5dc",
-    "prateado": "#c0c0c0",
-    "dourado": "#ffd700",
-    "marinho": "#000080",
-    "azul escuro": "#00008b",
-    "verde seco": "#556b2f"
-  };
-
-  const lowerVal = colorName.toLowerCase();
-  for (const [key, color] of Object.entries(colorMap)) {
-    if (lowerVal.includes(key)) {
-      return color;
-    }
-  }
-  return colorName;
-};
+import { getColorStyle, getColorHex, normalizeColorName } from '../lib/colors';
 
 export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   initialProducts = [],
@@ -204,7 +172,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
             opt.name.toLowerCase() === 'color' ||
             opt.name.toLowerCase() === 'colour'
           ) {
-            colorsSet.add(opt.value);
+            colorsSet.add(normalizeColorName(opt.value));
           }
         });
       });
@@ -219,14 +187,58 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
       // Map color names to their variant images for interactive preview
       const colorImages: Record<string, string> = {};
+      const parsedVariants: Array<{
+        id: string;
+        size: string | null;
+        color: string | null;
+        availableForSale: boolean;
+        image: string | null;
+      }> = [];
+
       variantsList.forEach(v => {
+        let sizeVal: string | null = null;
+        let colorVal: string | null = null;
+
+        v.selectedOptions.forEach(opt => {
+          const nameLower = opt.name.toLowerCase();
+          if (nameLower === 'tamanho' || nameLower === 'tamanho de calçado') {
+            sizeVal = opt.value;
+          } else if (nameLower === 'cor' || nameLower === 'color' || nameLower === 'colour') {
+            colorVal = normalizeColorName(opt.value);
+          }
+        });
+
         const colorOpt = v.selectedOptions.find(opt => {
           const nameLower = opt.name.toLowerCase();
           return nameLower === 'cor' || nameLower === 'color' || nameLower === 'colour';
         });
-        if (colorOpt && v.image?.url) {
-          colorImages[colorOpt.value] = v.image.url;
+
+        let varImgUrl = v.image?.url || null;
+
+        if (colorOpt) {
+          const rawColorName = colorOpt.value;
+          const normalizedColorName = normalizeColorName(rawColorName);
+          if (varImgUrl) {
+            colorImages[normalizedColorName] = varImgUrl;
+            colorImages[rawColorName] = varImgUrl;
+          } else if (!colorImages[normalizedColorName]) {
+            const colorLower = rawColorName.toLowerCase();
+            const matchedImg = p.images.edges.find(e => e.node.altText && e.node.altText.toLowerCase().includes(colorLower));
+            if (matchedImg) {
+              colorImages[normalizedColorName] = matchedImg.node.url;
+              colorImages[rawColorName] = matchedImg.node.url;
+              varImgUrl = matchedImg.node.url;
+            }
+          }
         }
+
+        parsedVariants.push({
+          id: v.id,
+          size: sizeVal,
+          color: colorVal,
+          availableForSale: v.availableForSale,
+          image: varImgUrl
+        });
       });
 
       const images = p.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText || '' })).filter(img => img.url);
@@ -242,6 +254,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         sizes,
         colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466'],
         colorImages,
+        variants: parsedVariants,
         images,
         isNew: tagsLower.includes('new') || tagsLower.includes('novo'),
         updatedAt: p.updatedAt
@@ -269,10 +282,10 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     const all = new Set<string>();
     mappedProducts.forEach(p => {
       if (p.colors) {
-        p.colors.forEach(c => all.add(c));
+        p.colors.forEach(c => all.add(normalizeColorName(c)));
       }
     });
-    return Array.from(all);
+    return Array.from(all).sort((a, b) => a.localeCompare(b, 'pt'));
   }, [mappedProducts]);
 
   const availableSubcategories = useMemo(() => {
@@ -381,7 +394,9 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
       // Color filter
       if (filters.colors.length > 0) {
-        const hasColor = product.colors && product.colors.some(c => filters.colors.includes(c));
+        const hasColor = product.colors && product.colors.some(c =>
+          filters.colors.some(fc => normalizeColorName(c).toLowerCase() === normalizeColorName(fc).toLowerCase())
+        );
         if (!hasColor) return false;
       }
 
@@ -414,6 +429,91 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
     return result;
   }, [mappedProducts, filters, localSearch, sortBy]);
+
+  const getDynamicProductImage = (product: (typeof mappedProducts)[0], selectedSizes: string[], selectedColors: string[]) => {
+    const defaultImg = product.image;
+    const hasSizes = selectedSizes.length > 0;
+    const hasColors = selectedColors.length > 0;
+
+    if (!hasSizes && !hasColors) {
+      return defaultImg;
+    }
+
+    const resolveImage = (v?: { color: string | null; image: string | null } | null) => {
+      if (!v) return null;
+      if (v.image) return v.image;
+      if (v.color) {
+        const norm = normalizeColorName(v.color);
+        if (product.colorImages[norm]) return product.colorImages[norm];
+        if (product.colorImages[v.color]) return product.colorImages[v.color];
+      }
+      return null;
+    };
+
+    // 1. If both size and color filters are active, try matching both first
+    if (hasSizes && hasColors) {
+      const matchBoth = product.variants.find(v =>
+        v.availableForSale &&
+        v.size && selectedSizes.includes(v.size.toString()) &&
+        v.color && selectedColors.includes(v.color) &&
+        resolveImage(v)
+      );
+      if (matchBoth) {
+        const img = resolveImage(matchBoth);
+        if (img) return img;
+      }
+    }
+
+    // 2. If size filter is active
+    if (hasSizes) {
+      const matchingVariants = product.variants.filter(v =>
+        v.availableForSale &&
+        v.size && selectedSizes.includes(v.size.toString())
+      );
+
+      if (matchingVariants.length > 0) {
+        // If color filter is active, check if matching variant has selected color
+        if (hasColors) {
+          const colorMatch = matchingVariants.find(v => v.color && selectedColors.includes(v.color) && resolveImage(v));
+          if (colorMatch) {
+            const img = resolveImage(colorMatch);
+            if (img) return img;
+          }
+        }
+
+        // Collect all valid matching variants with images
+        const validMatches = matchingVariants
+          .map(v => ({ variant: v, img: resolveImage(v) }))
+          .filter((item): item is { variant: typeof item.variant; img: string } => Boolean(item.img));
+
+        if (validMatches.length > 0) {
+          // Deterministic selection based on product ID so image does not flicker
+          let hash = 0;
+          for (let i = 0; i < product.id.length; i++) {
+            hash = (hash << 5) - hash + product.id.charCodeAt(i);
+          }
+          const index = Math.abs(hash) % validMatches.length;
+          return validMatches[index].img;
+        }
+      }
+    }
+
+    // 3. If color filter is active
+    if (hasColors) {
+      for (const color of selectedColors) {
+        if (product.colorImages[color]) {
+          return product.colorImages[color];
+        }
+        const colorVariant = product.variants.find(v => v.color === color && resolveImage(v));
+        if (colorVariant) {
+          const img = resolveImage(colorVariant);
+          if (img) return img;
+        }
+      }
+    }
+
+    return defaultImg;
+  };
 
   const handleClearFilters = () => {
     try {
@@ -702,8 +802,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {availableColors.map(color => {
               const isActive = filters.colors.includes(color);
-              const hex = getColorHex(color);
-              const isWhite = hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === 'white' || hex.toLowerCase() === '#f9f9f9';
+              const styleObj = getColorStyle(color);
               return (
                 <motion.button
                   key={color}
@@ -714,8 +813,8 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
-                    backgroundColor: hex,
-                    border: isActive ? '3px solid #2C3E50' : isWhite ? '2px solid #ddd' : '1px solid rgba(0,0,0,0.1)',
+                    background: styleObj.background,
+                    border: isActive ? '3px solid #2C3E50' : styleObj.isWhite ? '2px solid #ddd' : '1px solid rgba(0,0,0,0.1)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -728,7 +827,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                   {isActive && (
                     <Check
                       size={14}
-                      color={isWhite ? '#2C3E50' : 'white'}
+                      color={styleObj.isWhite ? '#2C3E50' : 'white'}
                       strokeWidth={3.5}
                     />
                   )}
@@ -818,7 +917,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           <div style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'url(/loja-hero.jpg)',
+            backgroundImage: 'url(/loja-hero.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             zIndex: 0
@@ -987,7 +1086,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
                 {filters.colors.map(color => (
                   <div key={color} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#E8F5E9', color: '#2C3E50', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getColorHex(color) }} /> Cor <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleColor(color)} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: getColorStyle(color).background }} /> Cor {color} <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleColor(color)} />
                   </div>
                 ))}
               </div>
@@ -1002,30 +1101,33 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                 }}
               >
                 <AnimatePresence mode="popLayout">
-                  {filteredProducts.map(product => (
-                    <motion.div
-                      layout
-                      key={product.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9, y: 15 }}
-                      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-                      style={{ height: '100%' }}
-                    >
-                      <ProductCard
-                        title={product.name}
-                        price={product.price}
-                        originalPrice={product.originalPrice}
-                        image={product.image}
-                        category={product.subcategory || product.category}
-                        id={product.id}
-                        colors={product.colors}
-                        colorImages={product.colorImages}
-                        images={product.images}
-                        isNew={product.isNew}
-                      />
-                    </motion.div>
-                  ))}
+                  {filteredProducts.map(product => {
+                    const displayImage = getDynamicProductImage(product, filters.sizes, filters.colors);
+                    return (
+                      <motion.div
+                        layout
+                        key={product.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 15 }}
+                        transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+                        style={{ height: '100%' }}
+                      >
+                        <ProductCard
+                          title={product.name}
+                          price={product.price}
+                          originalPrice={product.originalPrice}
+                          image={displayImage}
+                          category={product.subcategory || product.category}
+                          id={product.id}
+                          colors={product.colors}
+                          colorImages={product.colorImages}
+                          images={product.images}
+                          isNew={product.isNew}
+                        />
+                      </motion.div>
+                    );
+                  })}
                 </AnimatePresence>
               </motion.div>
 

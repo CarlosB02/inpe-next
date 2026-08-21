@@ -641,7 +641,9 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
   ];
 
   const priceVal = parseFloat(selectedVariant?.price.amount || product.priceRange.minVariantPrice.amount);
-  const compareAtPriceVal = parseFloat(selectedVariant?.compareAtPrice?.amount || product.compareAtPriceRange?.minVariantPrice?.amount || '0.00');
+  const compareAtPriceVal = selectedVariant?.compareAtPrice?.amount
+    ? parseFloat(selectedVariant.compareAtPrice.amount)
+    : (selectedVariant ? 0.00 : parseFloat(product.compareAtPriceRange?.minVariantPrice?.amount || '0.00'));
   const hasDiscount = compareAtPriceVal > priceVal;
   const discountPercentage = hasDiscount ? Math.round(((compareAtPriceVal - priceVal) / compareAtPriceVal) * 100) : 0;
   const currencySymbol = selectedVariant?.price.currencyCode === 'EUR' ? '€' : selectedVariant?.price.currencyCode;
@@ -939,6 +941,10 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                             const isAvailable = sizeVariant ? sizeVariant.availableForSale : false;
                             const isSelected = selectedOptionsMap[name] === val;
 
+                            const vCompareAt = sizeVariant?.compareAtPrice?.amount ? parseFloat(sizeVariant.compareAtPrice.amount) : 0;
+                            const vPrice = sizeVariant ? parseFloat(sizeVariant.price.amount) : 0;
+                            const isPromoVariant = sizeVariant && vCompareAt > vPrice;
+
                             return (
                               <motion.button
                                 key={val}
@@ -949,7 +955,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                                   minWidth: '54px',
                                   height: '54px',
                                   borderRadius: '50%',
-                                  border: isSelected ? '3px solid #FF9F1C' : '2px solid #EAEAEA',
+                                  border: isSelected ? '3px solid #FF9F1C' : isPromoVariant ? '2px solid #D93025' : '2px solid #EAEAEA',
                                   backgroundColor: isSelected ? '#FF9F1C' : isAvailable ? 'white' : '#F5F5F5',
                                   color: isSelected ? 'white' : isAvailable ? 'var(--color-text)' : '#BBB',
                                   fontWeight: '900',
@@ -963,6 +969,23 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                                 }}
                               >
                                 {val}
+                                {isAvailable && isPromoVariant && (
+                                  <span style={{
+                                    position: 'absolute',
+                                    top: '-4px',
+                                    right: '-4px',
+                                    fontSize: '0.55rem',
+                                    backgroundColor: '#D93025',
+                                    color: 'white',
+                                    padding: '1px 4px',
+                                    borderRadius: '6px',
+                                    fontWeight: 'bold',
+                                    lineHeight: '1',
+                                    boxShadow: '0 2px 4px rgba(217, 48, 37, 0.3)'
+                                  }}>
+                                    -%
+                                  </span>
+                                )}
                                 {!isAvailable && (
                                   <span style={{
                                     position: 'absolute',

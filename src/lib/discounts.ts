@@ -7,6 +7,7 @@ export interface ActiveDiscount {
   amount?: number;
   appliesToAll: boolean;
   productHandles: string[];
+  variantIds: string[];
   collectionHandles: string[];
 }
 
@@ -53,6 +54,16 @@ export async function getAutomaticDiscounts(): Promise<ActiveDiscount[]> {
                         edges {
                           node {
                             handle
+                          }
+                        }
+                      }
+                      productVariants(first: 100) {
+                        edges {
+                          node {
+                            id
+                            product {
+                              handle
+                            }
                           }
                         }
                       }
@@ -129,6 +140,7 @@ export async function getAutomaticDiscounts(): Promise<ActiveDiscount[]> {
 
       const appliesToAll = items?.__typename === 'AllDiscountItems';
       const productHandles: string[] = [];
+      const variantIds: string[] = [];
       const collectionHandles: string[] = [];
 
       if (items) {
@@ -136,6 +148,16 @@ export async function getAutomaticDiscounts(): Promise<ActiveDiscount[]> {
           for (const pEdge of items.products.edges) {
             if (pEdge.node?.handle) {
               productHandles.push(pEdge.node.handle);
+            }
+          }
+        }
+        if (items.productVariants?.edges) {
+          for (const vEdge of items.productVariants.edges) {
+            if (vEdge.node?.id) {
+              variantIds.push(vEdge.node.id);
+              if (vEdge.node?.product?.handle && !productHandles.includes(vEdge.node.product.handle)) {
+                productHandles.push(vEdge.node.product.handle);
+              }
             }
           }
         }
@@ -154,6 +176,7 @@ export async function getAutomaticDiscounts(): Promise<ActiveDiscount[]> {
         amount,
         appliesToAll,
         productHandles,
+        variantIds,
         collectionHandles,
       });
     }
@@ -172,22 +195,19 @@ export function applyAutomaticDiscounts(products: Product[], discounts: ActiveDi
   }
 
   return products.map(product => {
-    // Find a matching discount for this product
-    const matchingDiscount = discounts.find(d => {
+    // Find discounts that match this product or any of its variants
+    const matchingDiscounts = discounts.filter(d => {
       if (d.appliesToAll) return true;
       if (d.productHandles.includes(product.handle)) return true;
       if (product.collections?.edges?.some(edge => d.collectionHandles.includes(edge.node.handle))) return true;
+      if (product.variants?.edges?.some(vEdge => {
+        const vId = vEdge.node.id;
+        return d.variantIds.some(dVarId => dVarId === vId || dVarId.endsWith('/' + vId.split('/').pop()));
+      })) return true;
       return false;
     });
 
-    if (!matchingDiscount) return product;
-
-    // Only apply if the product doesn't already have a manual discount (compareAtPrice > price)
-    const hasManualDiscount = product.compareAtPriceRange &&
-      product.compareAtPriceRange.minVariantPrice &&
-      parseFloat(product.compareAtPriceRange.minVariantPrice.amount) > parseFloat(product.priceRange.minVariantPrice.amount);
-
-    if (hasManualDiscount) return product;
+    if (matchingDiscounts.length === 0) return product;
 
     // Clone product to avoid mutations on cache
     const cloned = JSON.parse(JSON.stringify(product)) as Product;
@@ -195,13 +215,28 @@ export function applyAutomaticDiscounts(products: Product[], discounts: ActiveDi
     // Apply discount on variants
     const updatedVariants = cloned.variants?.edges?.map(edge => {
       const variant = edge.node;
-      const originalPriceVal = parseFloat(variant.price.amount);
-      let discountedPriceVal = originalPriceVal;
+      const variantId = variant.id;
 
-      if (matchingDiscount.percentage !== undefined) {
-        discountedPriceVal = originalPriceVal * (1 - matchingDiscount.percentage / 100);
-      } else if (matchingDiscount.amount !== undefined) {
-        discountedPriceVal = Math.max(0, originalPriceVal - matchingDiscount.amount);
+      // Find best matching discount for this variant
+      const disc = matchingDiscounts.find(d => {
+        if (d.variantIds && d.variantIds.length > 0) {
+          return d.variantIds.some(dVarId => dVarId === variantId || dVarId.endsWith('/' + variantId.split('/').pop()));
+        }
+        return true;
+      });
+
+      if (!disc) return edge;
+
+      // Check if variant already has manual compareAtPrice > price
+      const originalCompareAt = variant.compareAtPrice?.amount ? parseFloat(variant.compareAtPrice.amount) : 0;
+      const originalPriceVal = parseFloat(variant.price.amount);
+      if (originalCompareAt > originalPriceVal) return edge;
+
+      let discountedPriceVal = originalPriceVal;
+      if (disc.percentage !== undefined) {
+        discountedPriceVal = originalPriceVal * (1 - disc.percentage / 100);
+      } else if (disc.amount !== undefined) {
+        discountedPriceVal = Math.max(0, originalPriceVal - disc.amount);
       }
 
       if (discountedPriceVal < originalPriceVal) {
@@ -221,14 +256,19 @@ export function applyAutomaticDiscounts(products: Product[], discounts: ActiveDi
 
     // Recalculate price ranges
     const variantPrices = updatedVariants.map(e => parseFloat(e.node.price.amount));
-    const variantComparePrices = updatedVariants.map(e => parseFloat(e.node.compareAtPrice?.amount || e.node.price.amount));
+    const discountedComparePrices: number[] = [];
+
+    updatedVariants.forEach(e => {
+      const p = parseFloat(e.node.price.amount);
+      const c = e.node.compareAtPrice?.amount ? parseFloat(e.node.compareAtPrice.amount) : 0;
+      if (c > p) {
+        discountedComparePrices.push(c);
+      }
+    });
 
     if (variantPrices.length > 0) {
       const minPrice = Math.min(...variantPrices);
       const maxPrice = Math.max(...variantPrices);
-      const minCompare = Math.min(...variantComparePrices);
-      const maxCompare = Math.max(...variantComparePrices);
-
       const currency = cloned.priceRange.minVariantPrice.currencyCode;
 
       cloned.priceRange = {
@@ -236,14 +276,19 @@ export function applyAutomaticDiscounts(products: Product[], discounts: ActiveDi
         maxVariantPrice: { amount: maxPrice.toFixed(2), currencyCode: currency }
       };
 
-      if (minCompare > minPrice) {
+      if (discountedComparePrices.length > 0) {
+        const minCompare = Math.min(...discountedComparePrices);
+        const maxCompare = Math.max(...discountedComparePrices);
         cloned.compareAtPriceRange = {
           minVariantPrice: { amount: minCompare.toFixed(2), currencyCode: currency },
           maxVariantPrice: { amount: maxCompare.toFixed(2), currencyCode: currency }
         };
+      } else {
+        cloned.compareAtPriceRange = undefined;
       }
     }
 
     return cloned;
   });
 }
+

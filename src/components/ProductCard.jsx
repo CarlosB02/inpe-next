@@ -3,39 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-const getColorHex = (colorName) => {
-  if (!colorName) return '#ddd';
-  if (colorName.startsWith('#')) return colorName;
-  
-  const colorMap = {
-    "preto": "#1c1c1c",
-    "branco": "#f9f9f9",
-    "azul": "#1a73e8",
-    "vermelho": "#d93025",
-    "verde": "#188038",
-    "amarelo": "#f9ab00",
-    "rosa": "#f06292",
-    "roxo": "#9c27b0",
-    "castanho": "#795548",
-    "cinzento": "#9e9e9e",
-    "cinza": "#9e9e9e",
-    "laranja": "#f57c00",
-    "bege": "#f5f5dc",
-    "prateado": "#c0c0c0",
-    "dourado": "#ffd700",
-    "marinho": "#000080",
-    "azul escuro": "#00008b",
-    "verde seco": "#556b2f"
-  };
-
-  const lowerVal = colorName.toLowerCase();
-  for (const [key, color] of Object.entries(colorMap)) {
-    if (lowerVal.includes(key)) {
-      return color;
-    }
-  }
-  return colorName;
-};
+import { getColorStyle, normalizeColorName } from '../lib/colors';
 
 /**
  * @param {object} props
@@ -259,15 +227,16 @@ const ProductCard = ({ title, price, originalPrice, image, category, id, isNew, 
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
             >
               {colorsList.slice(0, 3).map((color, idx) => {
-                const hex = getColorHex(color);
-                const isWhite = hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === 'white' || hex.toLowerCase() === '#f9f9f9';
-                const hasImage = imagesMap[color];
+                const styleObj = getColorStyle(color);
+                const normalized = normalizeColorName(color);
+                const colorImg = imagesMap[color] || imagesMap[normalized] || imagesMap[color.toLowerCase()];
+                const hasImage = Boolean(colorImg);
                 return (
                   <div
                     key={idx}
                     onMouseEnter={() => {
                       if (hasImage) {
-                        setHoveredColorImage(imagesMap[color]);
+                        setHoveredColorImage(colorImg);
                       }
                     }}
                     onMouseLeave={() => {
@@ -277,14 +246,14 @@ const ProductCard = ({ title, price, originalPrice, image, category, id, isNew, 
                       width: '12px',
                       height: '12px',
                       borderRadius: '50%',
-                      backgroundColor: hex,
-                      border: isWhite ? '1px solid #ddd' : '1px solid rgba(0,0,0,0.1)',
+                      background: styleObj.background,
+                      border: styleObj.isWhite ? '1px solid #ddd' : '1px solid rgba(0,0,0,0.1)',
                       cursor: hasImage ? 'pointer' : 'default',
                       transition: 'transform 0.15s ease'
                     }}
                     onMouseOver={(e) => { if (hasImage) e.currentTarget.style.transform = 'scale(1.2)'; }}
                     onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-                    title={color}
+                    title={normalized || color}
                   />
                 );
               })}

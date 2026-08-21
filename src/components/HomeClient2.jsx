@@ -724,7 +724,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
               >
                 {/* Espaço para foto - substitua o src pela imagem desejada */}
                 <img
-                  src="/modelo-destaque-escola.jpg"
+                  src="/modelo-destaque-escola.webp"
                   alt="Sapato Inpe"
                   style={{
                     width: '100%',
@@ -830,7 +830,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 <div style={{
                   position: 'absolute',
                   inset: 0,
-                  backgroundImage: 'url(/colecao-sol-areia.jpg)',
+                  backgroundImage: 'url(/colecao-sol-areia.webp)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   zIndex: 0
@@ -910,7 +910,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 <div style={{
                   position: 'absolute',
                   inset: 0,
-                  backgroundImage: 'url(/colecao-chuva-lama.jpg)',
+                  backgroundImage: 'url(/colecao-chuva-lama.webp)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   zIndex: 0
@@ -1102,7 +1102,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   backgroundColor: '#FAF7F2'
                 }}>
                   <img
-                    src="/colecao-lonas.png"
+                    src="/colecao-lonas.webp"
                     alt="Coleção Lonas Barefoot"
                     onError={(e) => {
                       // Fallback visual display in case image isn't uploaded yet
@@ -1135,7 +1135,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   >
                     <Footprints size={64} style={{ marginBottom: '1rem', opacity: 0.8 }} />
                     <h3 style={{ margin: '0 0 10px', fontWeight: '900', fontSize: '1.2rem', textTransform: 'uppercase' }}>Espaço para Foto</h3>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#888', fontWeight: '600' }}>Ficheiro recomendado: <br /><code>/colecao-lonas.jpg</code></p>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#888', fontWeight: '600' }}>Ficheiro recomendado: <br /><code>/colecao-lonas.webp</code></p>
                   </div>
                 </div>
               </motion.div>
@@ -1300,7 +1300,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
           <div style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'url(/colecao-papas.jpg)',
+            backgroundImage: 'url(/colecao-papas.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             zIndex: 0
@@ -1415,7 +1415,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 <div style={{
                   position: 'absolute',
                   inset: 0,
-                  backgroundImage: 'url(/modelo-destaque-terra.jpg)',
+                  backgroundImage: 'url(/modelo-destaque-terra.webp)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   zIndex: 0
@@ -1510,7 +1510,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 <div style={{
                   position: 'absolute',
                   inset: 0,
-                  backgroundImage: 'url(/modelo-destaque-escola.jpg)',
+                  backgroundImage: 'url(/modelo-destaque-escola.webp)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   zIndex: 0
