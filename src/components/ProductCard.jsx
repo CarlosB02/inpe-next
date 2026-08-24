@@ -39,29 +39,54 @@ const ProductCard = ({ title, price, originalPrice, image, category, id, isNew, 
 
   const hoverImage = useMemo(() => {
     if (imagesList.length <= 1) return image;
-    
+
+    const cleanStr = (str) => {
+      if (!str) return '';
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    };
+
     // Find the default image object to inspect its alt text
     const defaultImageObj = imagesList.find(img => img.url === image);
-    const defaultAlt = defaultImageObj ? defaultImageObj.altText.toLowerCase() : '';
-    
-    // Check if the alt text contains any of our colors
-    const activeColor = colorsList.find(color => 
-      defaultAlt.includes(color.toLowerCase())
+    const defaultAlt = defaultImageObj ? cleanStr(defaultImageObj.altText) : '';
+
+    // Try to detect which color the default image belongs to
+    const activeColor = colorsList.find(color =>
+      defaultAlt && defaultAlt.includes(cleanStr(color))
     );
-    
+
     if (activeColor) {
-      const colorLower = activeColor.toLowerCase();
+      const colorNorm = cleanStr(activeColor);
       // Filter images that match the active color
-      const colorFiltered = imagesList.filter(img => 
-        img.altText && img.altText.toLowerCase().includes(colorLower)
+      const colorFiltered = imagesList.filter(img =>
+        img.altText && cleanStr(img.altText).includes(colorNorm)
       );
+      // If this color has more than 1 image, show the last one on hover
       if (colorFiltered.length > 1) {
         return colorFiltered[colorFiltered.length - 1].url;
       }
+      // If this color only has 1 image (or 0), stay on the same image
+      return image;
     }
-    
-    // Fallback to the last image of the entire list
-    return imagesList[imagesList.length - 1].url;
+
+    // No color detected in default image alt text: fallback to second image if available
+    // but only if it doesn't seem to belong to a different color
+    const secondImg = imagesList.find(img => img.url !== image);
+    if (secondImg && !secondImg.altText) return secondImg.url;
+
+    // If second image belongs to a color we can identify, stay on current image
+    const secondAlt = secondImg ? cleanStr(secondImg.altText) : '';
+    const secondBelongsToOtherColor = colorsList.some(color =>
+      secondAlt && secondAlt.includes(cleanStr(color))
+    );
+    if (secondBelongsToOtherColor) return image;
+
+    return secondImg ? secondImg.url : image;
   }, [imagesList, image, colorsList]);
 
   const activeImage = hoveredColorImage || (isHovered ? hoverImage : image);

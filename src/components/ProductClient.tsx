@@ -400,20 +400,34 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     const normSelectedColor = cleanStr(selectedColor);
     const normSelectedColorAlias = cleanStr(normalizeColorName(selectedColor));
 
-    // Get all other colors of this product to avoid showing their images
+    // 1. Find all image URLs assigned to any variant of this selected color
+    const colorVariantImageUrls = new Set<string>();
+    variants.forEach(v => {
+      const cOpt = v.selectedOptions.find(o => o.name === colorKey);
+      if (cOpt && cOpt.value === selectedColor && v.image?.url) {
+        colorVariantImageUrls.add(v.image.url);
+      }
+    });
+
+    // 2. Find all other colors of this product
     const allColors = colorKey ? (optionValuesMap[colorKey] || []) : [];
     const otherColorsClean = allColors
       .filter(c => c !== selectedColor)
       .map(c => cleanStr(c))
-      .filter(c => c.length > 0 && !normSelectedColor.includes(c));
+      .filter(c => c.length > 0 && c !== normSelectedColor && c !== normSelectedColorAlias);
 
-    // Filter images strictly based on altText
-    const filtered = images.filter(img => {
+    // 3. Filter images: include if assigned to variant of this color OR if altText matches this color
+    const matchedImages = images.filter(img => {
+      // Check if image is directly assigned to a variant of this color
+      if (colorVariantImageUrls.has(img.url)) {
+        return true;
+      }
+
       if (!img.altText) return false;
       const normAlt = cleanStr(img.altText);
       const normAltAlias = cleanStr(normalizeColorName(img.altText));
 
-      // Must contain selected color name or alias in alt text
+      // Check if altText matches selected color name or alias
       const matchesSelected =
         normAlt.includes(normSelectedColor) ||
         (normSelectedColorAlias && normAlt.includes(normSelectedColorAlias)) ||
@@ -422,43 +436,43 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
 
       if (!matchesSelected) return false;
 
-      // Must not explicitly match another color if that other color is distinct
-      const matchesOther = otherColorsClean.some(other =>
-        other.length > 2 && (normAlt.includes(other) || normAltAlias.includes(other))
-      );
+      // Ensure it doesn't exclusively belong to a different color (unless selected color also contains it)
+      const matchesOther = otherColorsClean.some(other => {
+        if (other.length < 3) return false;
+        if (normSelectedColor.includes(other) || normSelectedColorAlias.includes(other)) return false;
+        return normAlt.includes(other) || normAltAlias.includes(other);
+      });
 
       return !matchesOther;
     });
 
-    if (filtered.length > 0) return filtered;
+    if (matchedImages.length > 0) return matchedImages;
 
-    // Fallback 1: If selected variant has an image assigned in Shopify
-    if (selectedVariant?.image?.url) {
-      const varImg = images.filter(img => img.url === selectedVariant.image?.url);
-      if (varImg.length > 0) return varImg;
-    }
-
-    // Fallback 2: Show images that do NOT belong to any other color of this product
+    // Fallback: If no altText matches, return images that don't belong to other colors
     const nonOtherImages = images.filter(img => {
+      if (colorVariantImageUrls.has(img.url)) return true;
       if (!img.altText) return true;
       const normAlt = cleanStr(img.altText);
       const normAltAlias = cleanStr(normalizeColorName(img.altText));
-      return !otherColorsClean.some(other =>
-        other.length > 2 && (normAlt.includes(other) || normAltAlias.includes(other))
-      );
+      return !otherColorsClean.some(other => {
+        if (other.length < 3) return false;
+        if (normSelectedColor.includes(other) || normSelectedColorAlias.includes(other)) return false;
+        return normAlt.includes(other) || normAltAlias.includes(other);
+      });
     });
 
     return nonOtherImages.length > 0 ? nonOtherImages : images;
-  }, [images, selectedOptionsMap, optionValuesMap, selectedVariant]);
+  }, [images, selectedOptionsMap, optionValuesMap, variants]);
 
-  // Sync image when variant changes or color images change
+  // Sync image when color/displayImages changes
   useEffect(() => {
-    if (selectedVariant?.image?.url) {
-      setSelectedImage(selectedVariant.image.url);
-    } else if (displayImages.length > 0 && !displayImages.some(img => img.url === selectedImage)) {
+    if (displayImages.length === 0) return;
+    // If current selectedImage is not in the filtered displayImages, jump to first of new color set
+    const currentIsInDisplay = displayImages.some(img => img.url === selectedImage);
+    if (!currentIsInDisplay) {
       setSelectedImage(displayImages[0].url);
     }
-  }, [selectedVariant, displayImages]);
+  }, [displayImages]);
 
   const handleOptionChange = (optionName: string, optionValue: string) => {
     const updatedMap = { ...selectedOptionsMap, [optionName]: optionValue };
@@ -818,15 +832,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                   {product.title}
                 </h1>
 
-                {/* Star rating info */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-                  <div style={{ display: 'flex', gap: '2px' }}>
-                    {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="#F4C466" color="#F4C466" />)}
-                  </div>
-                  <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#8097a5' }}>
-                    (128 Exploradores Felizes)
-                  </span>
-                </div>
+
               </div>
 
               {/* Price Sticker and Free Shipping */}
