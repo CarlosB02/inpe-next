@@ -3,7 +3,7 @@ import { getProducts } from '@/lib/shopify';
 import { getAutomaticDiscounts, applyAutomaticDiscounts } from '@/lib/discounts';
 
 export const metadata = {
-  title: 'Inpe – Pés livres, e felizes!',
+  title: 'Inpe – Por Pés livres e felizes!',
   description: 'Sapatos barefoot que acompanham cada passo, permitindo que os pés das crianças cresçam e explorem o mundo com liberdade e conforto.',
   robots: {
     index: true,
@@ -13,7 +13,7 @@ export const metadata = {
     canonical: 'https://inpe.pt',
   },
   openGraph: {
-    title: 'Inpe – Pés livres, e felizes!',
+    title: 'Inpe – Por Pés livres e felizes!',
     description: 'Sapatos barefoot que acompanham cada passo, permitindo que os pés das crianças cresçam e explorem o mundo com liberdade e conforto.',
     url: 'https://inpe.pt',
     siteName: 'Inpe',
