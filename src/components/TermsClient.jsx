@@ -19,9 +19,9 @@ const termsSections = [
         <p>A marca comercial <strong>Inpe Barefoot</strong> e o website correspondente são geridos pela seguinte entidade comercial:</p>
         <ul style={{ listStyle: 'none', padding: 0, margin: '0.5rem 0', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
           <li><strong>Denominação Social:</strong> Inpe Barefoot (ou "Nós")</li>
-          <li><strong>Sede Física / Loja:</strong> Av. Sá carneiro 224, 1º andar 2ª loja dto, 3660-428 S. Pedro do Sul, Portugal</li>
+          <li><strong>Sede Física / Loja:</strong> R. Aires Gouveia 5, 3670-243 Vouzela, Portugal</li>
           <li><strong>NIPC / Contribuinte Fiscal:</strong> 500000000 (Empresa registada em Portugal)</li>
-          <li><strong>Contacto de E-mail:</strong> <a href="mailto:geral@inpe.pt" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>geral@inpe.pt</a></li>
+          <li><strong>Contacto de E-mail:</strong> <a href="mailto:inpe@gmail.com" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>inpe@gmail.com</a></li>
         </ul>
         <p>Ao navegar no site ou efetuar uma compra, o utilizador concorda na totalidade com as presentes condições gerais de venda.</p>
       </div>
@@ -118,7 +118,7 @@ const termsSections = [
             <div><strong>Trocas Gratuitas:</strong> O primeiro processo de recolha e envio do novo tamanho é totalmente gratuito para o cliente, garantindo que o pezinho tem o tamanho certo sem custos adicionais.</div>
           </li>
         </ul>
-        <p>Para iniciar uma devolução ou troca, basta enviar um e-mail para <a href="mailto:geral@inpe.pt" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>geral@inpe.pt</a> indicando o número da encomenda.</p>
+        <p>Para iniciar uma devolução ou troca, basta enviar um e-mail para <a href="mailto:inpe@gmail.com" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>inpe@gmail.com</a> indicando o número da encomenda.</p>
       </div>
     )
   },

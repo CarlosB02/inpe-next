@@ -143,7 +143,7 @@ const privacySections = [
             <Mail size={20} color="var(--color-winter-blue)" style={{ flexShrink: 0 }} />
             <div>
               <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#007396', textTransform: 'uppercase', display: 'block' }}>E-mail</span>
-              <a href="mailto:geral@inpe.pt" style={{ fontWeight: '800', color: 'var(--color-text)', wordBreak: 'break-all' }}>geral@inpe.pt</a>
+              <a href="mailto:inpe@gmail.com" style={{ fontWeight: '800', color: 'var(--color-text)', wordBreak: 'break-all' }}>inpe@gmail.com</a>
             </div>
           </div>
 
@@ -151,7 +151,7 @@ const privacySections = [
             <MapPin size={20} color="var(--color-accent-brown)" style={{ flexShrink: 0 }} />
             <div>
               <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#854931', textTransform: 'uppercase', display: 'block' }}>Morada Sede</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--color-text)', lineHeight: '1.2' }}>Av. Sá carneiro 224, 1º esq., S. Pedro do Sul</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--color-text)', lineHeight: '1.2' }}>R. Aires Gouveia 5, 3670-243 Vouzela</span>
             </div>
           </div>
         </div>

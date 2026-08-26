@@ -59,6 +59,10 @@ const ContactClient = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (formState.name && formState.email && formState.message) {
+      const messageText = `Olá! Chamo-me ${formState.name} (${formState.email}).\n\nMensagem:\n${formState.message}`;
+      const whatsappUrl = `https://wa.me/351968459763?text=${encodeURIComponent(messageText)}`;
+      window.open(whatsappUrl, '_blank');
+
       setFormSubmitted(true);
       setTimeout(() => {
         setFormSubmitted(false);
@@ -113,7 +117,7 @@ const ContactClient = () => {
 
               {/* Email Card */}
               <motion.a
-                href="mailto:geral@inpe.pt"
+                href="mailto:inpe@gmail.com"
                 whileHover={{ scale: 1.03, y: -4 }}
                 style={{
                   display: 'flex',
@@ -143,7 +147,7 @@ const ContactClient = () => {
                 </div>
                 <div style={{ minWidth: 0, overflow: 'hidden' }}>
                   <h3 style={{ fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: '900', color: '#007396', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Envia um Email</h3>
-                  <span style={{ fontSize: 'clamp(1rem, 3.8vw, 1.25rem)', fontWeight: '800', color: '#2C3E50', wordBreak: 'break-all' }}>geral@inpe.pt</span>
+                  <span style={{ fontSize: 'clamp(1rem, 3.8vw, 1.25rem)', fontWeight: '800', color: '#2C3E50', wordBreak: 'break-all' }}>inpe@gmail.com</span>
                 </div>
               </motion.a>
 
@@ -177,7 +181,7 @@ const ContactClient = () => {
                 <div>
                   <h3 style={{ fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: '900', color: '#854931', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Visita a nossa Loja</h3>
                   <p style={{ fontSize: 'clamp(0.9rem, 3.2vw, 1.05rem)', fontWeight: '800', color: '#2C3E50', margin: 0, lineHeight: 1.4 }}>
-                    Av. Sá carneiro 224, 1º andar 2ª loja dto<br />3660-428 S. Pedro do Sul
+                    R. Aires Gouveia 5<br />3670-243 Vouzela
                   </p>
                 </div>
               </motion.div>
@@ -440,7 +444,7 @@ const ContactClient = () => {
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src="https://maps.google.com/maps?q=Vouzela&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              src="https://maps.google.com/maps?q=R.%20Aires%20Gouveia%205,%203670-243%20Vouzela&t=&z=17&ie=UTF8&iwloc=&output=embed"
               title="Localização Inpe"
             ></iframe>
           </div>
