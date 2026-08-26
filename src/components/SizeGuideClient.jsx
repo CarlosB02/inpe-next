@@ -758,7 +758,7 @@ const SizeGuideClient = () => {
                 Trocas e Devoluções Simplificadas
               </h4>
               <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--color-text-light)', lineHeight: '1.5' }}>
-                Os nossos sapatos barefoot são desenhados para replicar o andar natural. Se comprares um tamanho e achares que não assenta como deve ser, oferecemos trocas simples e gratuitas até 30 dias.
+                Os nossos sapatos barefoot são desenhados para replicar o andar natural. Se comprares um tamanho e achares que não assenta como deve ser, oferecemos trocas simples e gratuitas até 15 dias.
               </p>
             </div>
           </div>

@@ -726,7 +726,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
         <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#FFF9ED', borderRadius: '20px', border: '2px dashed #F4C466' }}>
           <ShieldCheck size={44} color="#FF9F1C" style={{ margin: '0 auto 10px' }} />
           <p style={{ color: '#2C3E50', fontWeight: '800', fontSize: '1rem' }}>Trocas e Devoluções Simplificadas</p>
-          <p style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px' }}>Queremos que escolha com tranquilidade. Se necessário, pode trocar ou devolver até 30 dias.</p>
+          <p style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px' }}>Queremos que escolha com tranquilidade. Se necessário, pode trocar ou devolver até 15 dias.</p>
         </div>
       )
     }
@@ -1287,7 +1287,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                   gap: '6px'
                 }}>
                   <RotateCcw size={22} color="#E06A55" />
-                  <span style={{ fontWeight: '800', fontSize: '0.85rem', color: '#2C3E50' }}>30 Dias para devolução</span>
+                  <span style={{ fontWeight: '800', fontSize: '0.85rem', color: '#2C3E50' }}>15 Dias para devolução</span>
                   <span style={{ fontSize: '0.75rem', color: '#666' }}>Devolução simplificada e grátis</span>
                 </div>
               </div>
@@ -1988,7 +1988,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                     },
                     {
                       q: 'E se o tamanho não servir?',
-                      a: 'Podes efetuar a troca ou devolução dentro de 30 dias. Queremos que escolhas com total confiança.',
+                      a: 'Podes efetuar a troca ou devolução dentro de 15 dias. Queremos que escolhas com total confiança.',
                       color: '#F4C466', bg: '#FFFDE7', icon: <Feather size={22} />
                     },
                   ].map((item, i) => (

@@ -107,7 +107,7 @@ const termsSections = [
         <ul style={{ listStyle: 'none', padding: 0, margin: '0.5rem 0', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
           <li style={{ display: 'flex', gap: '8px', alignItems: 'start' }}>
             <span style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>•</span>
-            <div><strong>Prazo de 30 Dias:</strong> Podes solicitar a troca ou devolução até 30 dias após receberes a encomenda em casa.</div>
+            <div><strong>Prazo de 15 Dias:</strong> Podes solicitar a troca ou devolução até 15 dias após receberes a encomenda em casa.</div>
           </li>
           <li style={{ display: 'flex', gap: '8px', alignItems: 'start' }}>
             <span style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>•</span>

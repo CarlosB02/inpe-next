@@ -651,7 +651,7 @@ const HistoryClient2 = () => {
                 },
                 {
                   q: 'E se o tamanho não servir?',
-                  a: 'Podes efetuar a troca ou devolução dentro de 30 dias. Queremos que escolhas com total confiança.',
+                  a: 'Podes efetuar a troca ou devolução dentro de 15 dias. Queremos que escolhas com total confiança.',
                   color: '#F4C466', bg: '#FFFDE7', icon: <Feather size={22} />
                 },
               ].map((item, i) => (
