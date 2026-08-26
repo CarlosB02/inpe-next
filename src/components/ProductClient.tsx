@@ -409,21 +409,40 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       }
     });
 
-    // 2. Find all other colors of this product
+    // 2. Find all image URLs exclusively assigned to OTHER colors' variants (not this color)
+    const otherColorVariantImageUrls = new Set<string>();
+    variants.forEach(v => {
+      const cOpt = v.selectedOptions.find(o => o.name === colorKey);
+      if (cOpt && cOpt.value !== selectedColor && v.image?.url) {
+        // Only add if not also used by the selected color
+        if (!colorVariantImageUrls.has(v.image.url)) {
+          otherColorVariantImageUrls.add(v.image.url);
+        }
+      }
+    });
+
+    // 3. Find all other colors of this product
     const allColors = colorKey ? (optionValuesMap[colorKey] || []) : [];
     const otherColorsClean = allColors
       .filter(c => c !== selectedColor)
       .map(c => cleanStr(c))
       .filter(c => c.length > 0 && c !== normSelectedColor && c !== normSelectedColorAlias);
 
-    // 3. Filter images: include if assigned to variant of this color OR if altText matches this color
+    // 4. Filter images: include if:
+    //    a) Directly assigned to a variant of this color, OR
+    //    b) altText explicitly matches this color (and not another), OR
+    //    c) No altText AND not exclusively assigned to another color's variant
     const matchedImages = images.filter(img => {
       // Check if image is directly assigned to a variant of this color
       if (colorVariantImageUrls.has(img.url)) {
         return true;
       }
 
-      if (!img.altText) return false;
+      // If no altText: include unless it belongs exclusively to another color's variant
+      if (!img.altText) {
+        return !otherColorVariantImageUrls.has(img.url);
+      }
+
       const normAlt = cleanStr(img.altText);
       const normAltAlias = cleanStr(normalizeColorName(img.altText));
 
@@ -434,16 +453,16 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
         normAltAlias.includes(normSelectedColor) ||
         (normSelectedColorAlias && normAltAlias.includes(normSelectedColorAlias));
 
-      if (!matchesSelected) return false;
-
-      // Ensure it doesn't exclusively belong to a different color (unless selected color also contains it)
+      // Check if altText exclusively matches another color
       const matchesOther = otherColorsClean.some(other => {
         if (other.length < 3) return false;
         if (normSelectedColor.includes(other) || normSelectedColorAlias.includes(other)) return false;
         return normAlt.includes(other) || normAltAlias.includes(other);
       });
 
-      return !matchesOther;
+      if (matchesOther && !matchesSelected) return false;
+
+      return matchesSelected || !matchesOther;
     });
 
     if (matchedImages.length > 0) return matchedImages;
