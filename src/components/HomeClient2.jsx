@@ -71,20 +71,27 @@ const HomeClient2 = ({ initialProducts = [] }) => {
   // Map products
   const mappedProducts = useMemo(() => {
     if (!initialProducts || initialProducts.length === 0) {
-      return products;
+      return products.map(p => ({
+        ...p,
+        isNovaColecao: p.isNew || p.id > 25,
+      }));
     }
     return initialProducts.map(p => {
-      const variantsList = p.variants?.edges.map(e => e.node) || [];
-      const tagsLower = p.tags.map(t => t.toLowerCase());
+      const variantsList = p.variants?.edges?.map(e => e.node) || [];
+      const tagsLower = (p.tags || []).map(t => t.toLowerCase());
+      const collectionsList = p.collections?.edges?.map(e => e.node) || [];
+      const collectionTitles = collectionsList.map(c => (c.title || '').toLowerCase());
+      const collectionHandles = collectionsList.map(c => (c.handle || '').toLowerCase());
+
       const category = tagsLower.find(t => t === 'crianca' || t === 'mulher' || t === 'homem') || 'crianca';
-      const subcategory = p.productType || p.tags.find(t => {
+      const subcategory = p.productType || p.tags?.find(t => {
         const l = t.toLowerCase();
         return l === 'sapatilhas' || l === 'botas' || l === 'sandálias' || l === 'sandalias';
       }) || 'Sapatilhas';
 
       const colorsSet = new Set();
       variantsList.forEach(v => {
-        v.selectedOptions.forEach(opt => {
+        v.selectedOptions?.forEach(opt => {
           if (
             opt.name.toLowerCase() === 'cor' ||
             opt.name.toLowerCase() === 'color' ||
@@ -97,7 +104,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
       const colorImages = {};
       variantsList.forEach(v => {
-        const colorOpt = v.selectedOptions.find(opt => {
+        const colorOpt = v.selectedOptions?.find(opt => {
           const nameLower = opt.name.toLowerCase();
           return nameLower === 'cor' || nameLower === 'color' || nameLower === 'colour';
         });
@@ -106,17 +113,40 @@ const HomeClient2 = ({ initialProducts = [] }) => {
         }
       });
 
-      const images = p.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText || '' })).filter(img => img.url);
+      const images = p.images?.edges ? p.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText || '' })).filter(img => img.url) : (p.images || []);
+
+      const isNovaColecao = 
+        p.isNew === true ||
+        tagsLower.some(t => 
+          t.includes('nova colecao') || 
+          t.includes('nova coleção') || 
+          t.includes('nova-colecao') || 
+          t.includes('nova-coleção') || 
+          t.includes('nova_colecao') || 
+          t.includes('new collection') ||
+          t === 'nova' ||
+          t === 'new' ||
+          t === 'novo'
+        ) ||
+        collectionTitles.some(t => 
+          t.includes('nova') || 
+          t.includes('new')
+        ) ||
+        collectionHandles.some(h => 
+          h.includes('nova') || 
+          h.includes('new')
+        );
 
       return {
-        id: p.handle,
-        name: p.title,
-        price: p.priceRange.minVariantPrice.amount,
-        originalPrice: p.compareAtPriceRange?.minVariantPrice?.amount || '0.00',
-        image: p.images.edges[0]?.node.url || '',
+        id: p.handle || p.id,
+        name: p.title || p.name,
+        price: p.priceRange?.minVariantPrice?.amount || p.price,
+        originalPrice: p.compareAtPriceRange?.minVariantPrice?.amount || p.originalPrice || '0.00',
+        image: p.images?.edges ? (p.images.edges[0]?.node?.url || '') : (p.image || ''),
         category,
         subcategory,
-        isNew: tagsLower.includes('new') || tagsLower.includes('novo'),
+        isNew: isNovaColecao,
+        isNovaColecao,
         colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466'],
         colorImages,
         images
@@ -135,21 +165,13 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
   // Best Sellers and New Collection filtering
   const bestSellers = useMemo(() => {
-    // Always take the first 4 available products for display
-    // (rules/curation TBD — using sequential slice to avoid empty gaps)
     if (mappedProducts.length === 0) return [];
     return mappedProducts.slice(0, 4);
   }, [mappedProducts]);
 
   const newCollection = useMemo(() => {
-    // Use all products for display purposes; real rules TBD
     if (mappedProducts.length === 0) return [];
-    // Try to pick different indices than bestSellers to vary display
-    const indices = [1, 2, 4, 6, 7, 9, 11, 13];
-    const list = indices.map(i => mappedProducts[i]).filter(Boolean);
-    if (list.length >= 4) return list;
-    // Final fallback: just use all products
-    return mappedProducts.slice(0, Math.min(8, mappedProducts.length));
+    return mappedProducts.filter(p => p.isNovaColecao);
   }, [mappedProducts]);
 
   // Dynamic filtering based on "Adventure Type"
@@ -644,34 +666,50 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 }}
                 className="hide-scrollbar"
               >
-                {(newCollection.length > 0 ? newCollection : bestSellers).map(p => (
-                  <div
-                    key={p.id}
-                    style={{
-                      // Desktop: fit 4 cards exactly (25% minus shared gaps)
-                      // Mobile: 85% so next card peeks in
-                      flex: isMobile
-                        ? '0 0 calc(85% - 0.375rem)'
-                        : '0 0 calc(25% - 1.125rem)',
-                      minWidth: 0,
-                      scrollSnapAlign: 'start',
-                    }}
-                  >
-                    <ProductCard
-                      title={p.name}
-                      price={p.price}
-                      originalPrice={p.originalPrice}
-                      image={p.image}
-                      category={p.subcategory || p.category}
-                      id={p.id}
-                      colors={p.colors}
-                      colorImages={p.colorImages}
-                      images={p.images || p.gallery || [p.image]}
-                      isNew={p.isNew}
-                      compact={true}
-                    />
+                {newCollection.length > 0 ? (
+                  newCollection.map(p => (
+                    <div
+                      key={p.id}
+                      style={{
+                        // Desktop: fit 4 cards exactly (25% minus shared gaps)
+                        // Mobile: 85% so next card peeks in
+                        flex: isMobile
+                          ? '0 0 calc(85% - 0.375rem)'
+                          : '0 0 calc(25% - 1.125rem)',
+                        minWidth: 0,
+                        scrollSnapAlign: 'start',
+                      }}
+                    >
+                      <ProductCard
+                        title={p.name}
+                        price={p.price}
+                        originalPrice={p.originalPrice}
+                        image={p.image}
+                        category={p.subcategory || p.category}
+                        id={p.id}
+                        colors={p.colors}
+                        colorImages={p.colorImages}
+                        images={p.images || p.gallery || [p.image]}
+                        isNew={p.isNew}
+                        compact={true}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    padding: '2.5rem 1rem',
+                    textAlign: 'center',
+                    color: '#5C768D',
+                    fontSize: '1.05rem',
+                    fontWeight: '600',
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    borderRadius: '16px',
+                    border: '1px dashed #B2DFDB'
+                  }}>
+                    Novos modelos em breve na nossa Nova Coleção!
                   </div>
-                ))}
+                )}
               </div>
               {/* Right fade — always visible to hint at scrollable content */}
               <div style={{

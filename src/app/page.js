@@ -1,5 +1,5 @@
 import HomeClient2 from '@/components/HomeClient2';
-import { getProducts } from '@/lib/shopify';
+import { getProducts, getCollectionProducts } from '@/lib/shopify';
 import { getAutomaticDiscounts, applyAutomaticDiscounts } from '@/lib/discounts';
 
 export const metadata = {
@@ -33,7 +33,26 @@ export const metadata = {
 export default async function HomePage() {
   let shopifyProducts = [];
   try {
-    shopifyProducts = await getProducts({ first: 20 });
+    const mainProducts = await getProducts({ first: 50 });
+    let collectionProducts = [];
+    try {
+      collectionProducts = await getCollectionProducts({ collection: 'nova-colecao', first: 50 });
+    } catch (e1) {
+      try {
+        collectionProducts = await getCollectionProducts({ collection: 'nova-coleção', first: 50 });
+      } catch (e2) {
+        // Fallback if collection handle does not exist yet
+      }
+    }
+
+    const productMap = new Map();
+    [...mainProducts, ...collectionProducts].forEach(p => {
+      if (p && p.handle && !productMap.has(p.handle)) {
+        productMap.set(p.handle, p);
+      }
+    });
+
+    shopifyProducts = Array.from(productMap.values());
     const discounts = await getAutomaticDiscounts();
     shopifyProducts = applyAutomaticDiscounts(shopifyProducts, discounts);
   } catch (err) {
