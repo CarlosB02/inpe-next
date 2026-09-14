@@ -18,12 +18,12 @@ const getGallery = (id) => {
   return [main, main, main, main];
 };
 
-const categories = ['crianca', 'mulher', 'homem'];
+const categories = ['menino', 'menina', 'mulher', 'homem'];
 const subcategories = ['Sapatilhas', 'Botas', 'Sandálias'];
 
 const products = Array.from({ length: 33 }, (_, i) => {
   const id = i + 1;
-  const category = categories[i % 3];
+  const category = categories[i % 4];
   const availableColors = ['#000000', '#FFFFFF', '#8B4513', '#1C1C1C', '#F5F5DC', '#A52A2A', '#000080'];
   // Deterministic colors
   const numColors = (id % 3) + 1;
@@ -31,7 +31,7 @@ const products = Array.from({ length: 33 }, (_, i) => {
   for (let j = 0; j < numColors; j++) randomColors.push(availableColors[(id + j) % availableColors.length]);
   
   let sizes = [];
-  if (category === 'crianca') {
+  if (category === 'menino' || category === 'menina' || category === 'crianca') {
     sizes = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
   } else {
     sizes = [35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46];
@@ -39,7 +39,7 @@ const products = Array.from({ length: 33 }, (_, i) => {
   // Deterministic sizes
   const productSizes = sizes.filter((_, idx) => (id + idx) % 2 === 0);
   
-  const name = category === 'crianca' ? 'Barefoot Kids ' + id : category === 'mulher' ? 'Barefoot Woman ' + id : 'Barefoot Man ' + id;
+  const name = (category === 'menino' || category === 'menina') ? `Barefoot Kids ${id}` : category === 'mulher' ? `Barefoot Woman ${id}` : `Barefoot Man ${id}`;
   return {
     id,
     name,

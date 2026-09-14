@@ -37,10 +37,10 @@ const FilterSidebar = ({ filters, setFilters }) => {
         <div style={{ marginBottom: '2.5rem' }}>
           <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#555' }}>Gênero</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {['homem', 'mulher', 'crianca'].map(cat => (
+            {['menino', 'menina', 'mulher', 'homem'].map(cat => (
               <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: '#666', fontSize: '1rem' }}>
                 <input type='checkbox' value={cat} checked={filters.categories?.includes(cat)} onChange={toggleCategory} style={{ accentColor: 'var(--color-teal)', width: '18px', height: '18px' }} />
-                <span style={{ textTransform: 'capitalize' }}>{cat === 'crianca' ? 'Criança' : cat}</span>
+                <span style={{ textTransform: 'capitalize' }}>{cat}</span>
               </label>
             ))}
           </div>

@@ -46,6 +46,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
   const bestSellersRef = useRef(null);
   const newCollectionRef = useRef(null);
   const adventureRef = useRef(null);
+  const parentsRef = useRef(null);
 
   const scroll = (ref, direction) => {
     if (ref.current) {
@@ -83,7 +84,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
       const collectionTitles = collectionsList.map(c => (c.title || '').toLowerCase());
       const collectionHandles = collectionsList.map(c => (c.handle || '').toLowerCase());
 
-      const category = tagsLower.find(t => t === 'crianca' || t === 'mulher' || t === 'homem') || 'crianca';
+      const category = tagsLower.find(t => t === 'menino' || t === 'menina' || t === 'crianca' || t === 'mulher' || t === 'homem') || 'crianca';
       const subcategory = p.productType || p.tags?.find(t => {
         const l = t.toLowerCase();
         return l === 'sapatilhas' || l === 'botas' || l === 'sandálias' || l === 'sandalias';
@@ -156,11 +157,11 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
   // Filter products for kids, and category matching
   const kidsProducts = useMemo(() => {
-    return mappedProducts.filter(p => p.category === 'crianca');
+    return mappedProducts.filter(p => p.category !== 'homem' && p.category !== 'mulher');
   }, [mappedProducts]);
 
   const parentsProducts = useMemo(() => {
-    return mappedProducts.filter(p => p.category !== 'crianca').slice(0, 4);
+    return mappedProducts.filter(p => p.category === 'homem' || p.category === 'mulher');
   }, [mappedProducts]);
 
   // Best Sellers and New Collection filtering
@@ -1353,23 +1354,142 @@ const HomeClient2 = ({ initialProducts = [] }) => {
 
           {/* Content */}
           <div style={{ position: 'relative', zIndex: 2 }}>
-            <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '2.5rem' }}>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', marginTop: '1.2rem' }}>
-                Coleção Papás: <span style={{ color: '#007396' }}>Caminha Igual!</span>
-              </h2>
-              <p style={{ color: '#444', fontSize: '1.1rem', marginTop: '1rem', fontWeight: '500' }}>
-                Os adultos também merecem conforto. Descobre as nossas linhas para caminhar em harmonia com os mais pequenos.
-              </p>
+            <div style={{
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              justifyContent: 'space-between',
+              alignItems: isMobile ? 'flex-start' : 'flex-end',
+              marginBottom: isMobile ? '2rem' : '2.5rem',
+              gap: '1rem'
+            }}>
+              <div>
+                <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '900', color: '#2C3E50', textTransform: 'uppercase', marginTop: '1.2rem', lineHeight: '1.1' }}>
+                  Coleção Papás: <span style={{ color: '#007396' }}>Caminha Igual!</span>
+                </h2>
+                <p style={{ color: '#444', fontSize: '1.1rem', marginTop: '1rem', fontWeight: '500' }}>
+                  Os adultos também merecem conforto. Descobre as nossas linhas para caminhar em harmonia com os mais pequenos.
+                </p>
+              </div>
+
+              {/* Arrow controls */}
+              <div style={{ display: 'flex', gap: '10px', alignSelf: isMobile ? 'flex-end' : 'auto' }}>
+                <button
+                  onClick={() => scroll(parentsRef, 'left')}
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                    border: '2px solid #B2DFDB',
+                    color: '#007396',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#B2DFDB'; e.currentTarget.style.color = 'white'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#007396'; }}
+                  aria-label="Anterior"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={() => scroll(parentsRef, 'right')}
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                    border: '2px solid #B2DFDB',
+                    color: '#007396',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#B2DFDB'; e.currentTarget.style.color = 'white'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#007396'; }}
+                  aria-label="Seguinte"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </div>
             </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-              gap: '2.5rem'
-            }}>
-              {parentsProducts.map(p => (
-                <ProductCard key={p.id} title={p.name} price={p.price} originalPrice={p.originalPrice} image={p.image} category={p.subcategory || p.category} id={p.id} colors={p.colors} colorImages={p.colorImages} images={p.images || p.gallery || [p.image]} isNew={p.isNew} compact={isMobile} />
-              ))}
+            {/* Carousel */}
+            <div style={{ position: 'relative', overflow: 'hidden' }}>
+              <div
+                ref={parentsRef}
+                className="hide-scrollbar"
+                style={{
+                  display: 'flex',
+                  gap: '1.5rem',
+                  overflowX: 'auto',
+                  padding: '10px 0 25px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollSnapType: 'x mandatory',
+                }}
+              >
+                {parentsProducts.length > 0 ? (
+                  parentsProducts.map(p => (
+                    <div
+                      key={p.id}
+                      style={{
+                        flex: isMobile
+                          ? '0 0 calc(85% - 0.375rem)'
+                          : '0 0 calc(25% - 1.125rem)',
+                        minWidth: 0,
+                        scrollSnapAlign: 'start',
+                      }}
+                    >
+                      <ProductCard
+                        title={p.name}
+                        price={p.price}
+                        originalPrice={p.originalPrice}
+                        image={p.image}
+                        category={p.subcategory || p.category}
+                        id={p.id}
+                        colors={p.colors}
+                        colorImages={p.colorImages}
+                        images={p.images || p.gallery || [p.image]}
+                        isNew={p.isNew}
+                        compact={true}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    padding: '2.5rem 1rem',
+                    textAlign: 'center',
+                    color: '#5C768D',
+                    fontSize: '1.05rem',
+                    fontWeight: '600',
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    borderRadius: '16px',
+                    border: '1px dashed #B2DFDB'
+                  }}>
+                    Modelos para adultos disponíveis em breve!
+                  </div>
+                )}
+              </div>
+              {/* Right fade hinting more content */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '60px',
+                height: '100%',
+                background: 'linear-gradient(to right, rgba(240, 247, 249, 0) 0%, rgba(240, 247, 249, 0.9) 100%)',
+                pointerEvents: 'none',
+                zIndex: 2,
+              }} />
             </div>
 
             {/* CTA Button */}

@@ -178,8 +178,31 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       });
 
       // Map tags to categories/subcategories
-      const tagsLower = p.tags.map(t => t.toLowerCase());
-      const category = tagsLower.find(t => t === 'crianca' || t === 'mulher' || t === 'homem') || 'crianca';
+      const tagsLower = (p.tags || []).map(t => t.toLowerCase().trim());
+      
+      const hasMenino = tagsLower.some(t => t === 'menino' || t === 'meninos' || t === 'boy' || t === 'boys');
+      const hasMenina = tagsLower.some(t => t === 'menina' || t === 'meninas' || t === 'girl' || t === 'girls');
+      const hasMulher = tagsLower.some(t => t === 'mulher' || t === 'mulheres' || t === 'woman' || t === 'women' || t === 'senhora');
+      const hasHomem = tagsLower.some(t => t === 'homem' || t === 'homens' || t === 'man' || t === 'men');
+
+      const productCategories: string[] = [];
+      if (hasMenino) productCategories.push('menino');
+      if (hasMenina) productCategories.push('menina');
+      if (hasMulher) productCategories.push('mulher');
+      if (hasHomem) productCategories.push('homem');
+
+      // If no specific menino/menina tag is detected, default to BOTH 'menino' and 'menina'
+      if (!hasMenino && !hasMenina) {
+        if (!hasHomem && !hasMulher) {
+          productCategories.push('menino', 'menina');
+        } else if (tagsLower.some(t => t === 'crianca' || t === 'criança' || t === 'kids' || t === 'infantil' || t === 'sapatinhos')) {
+          productCategories.push('menino', 'menina');
+        }
+      }
+
+      const category = productCategories.includes('menino') && productCategories.includes('menina')
+        ? 'Criança'
+        : (productCategories[0] ? productCategories[0].charAt(0).toUpperCase() + productCategories[0].slice(1) : 'Criança');
       const subcategory = p.productType || p.tags.find(t => {
         const l = t.toLowerCase();
         return l === 'sapatilhas' || l === 'botas' || l === 'sandálias' || l === 'sandalias' || l === 'desportivo' || l === 'lonas';
@@ -250,6 +273,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         originalPrice: p.compareAtPriceRange?.minVariantPrice?.amount || '0.00',
         image: p.images.edges[0]?.node.url || '',
         category,
+        categories: productCategories,
         subcategory,
         sizes,
         colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466'],
@@ -310,7 +334,15 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     let updatedSubs = [] as string[];
 
     if (categoriaParam) {
-      updatedCats = categoriaParam.split(',').map(c => c.trim().toLowerCase()).filter(Boolean);
+      const rawCats = categoriaParam.split(',').map(c => c.trim().toLowerCase()).filter(Boolean);
+      rawCats.forEach(c => {
+        if (c === 'crianca' || c === 'criança' || c === 'kids') {
+          updatedCats.push('menino', 'menina');
+        } else {
+          updatedCats.push(c);
+        }
+      });
+      updatedCats = Array.from(new Set(updatedCats));
     }
 
     if (subcategoriaParam) {
@@ -370,13 +402,21 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       if (localSearch) {
         const query = localSearch.toLowerCase();
         const matchesName = product.name.toLowerCase().includes(query);
-        const matchesCategory = product.category.toLowerCase().includes(query);
+        const matchesCategory = (product.categories || []).some(c => c.toLowerCase().includes(query)) || product.category.toLowerCase().includes(query);
         const matchesSub = product.subcategory.toLowerCase().includes(query);
         if (!matchesName && !matchesCategory && !matchesSub) return false;
       }
 
       // Categories filter
-      if (filters.categories.length > 0 && !filters.categories.includes(product.category)) return false;
+      if (filters.categories.length > 0) {
+        const matchesCategoryFilter = filters.categories.some(cat => {
+          if (cat === 'crianca' || cat === 'criança') {
+            return (product.categories || []).includes('menino') || (product.categories || []).includes('menina');
+          }
+          return (product.categories || []).includes(cat);
+        });
+        if (!matchesCategoryFilter) return false;
+      }
 
       // Subcategories/Style filter
       if (filters.subcategories.length > 0 && !filters.subcategories.includes(product.subcategory)) return false;
@@ -570,29 +610,40 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   const getCategoryStyles = (cat: string) => {
     const active = filters.categories.includes(cat);
     switch (cat) {
-      case 'crianca':
+      case 'menino':
         return {
           bg: active ? '#E0F2F1' : 'white',
           border: active ? '3px solid #9FE2DD' : '3px solid #f0f0f0',
           color: '#007396',
-          emoji: '👦'
+          emoji: '👦',
+          label: 'Menino'
+        };
+      case 'menina':
+        return {
+          bg: active ? '#FCE4EC' : 'white',
+          border: active ? '3px solid #F8BBD0' : '3px solid #f0f0f0',
+          color: '#C2185B',
+          emoji: '👧',
+          label: 'Menina'
         };
       case 'mulher':
         return {
           bg: active ? '#FFEBEE' : 'white',
           border: active ? '3px solid #F4C466' : '3px solid #f0f0f0',
           color: '#854931',
-          emoji: '👩'
+          emoji: '👩',
+          label: 'Mulher'
         };
       case 'homem':
         return {
           bg: active ? '#E8F5E9' : 'white',
           border: active ? '3px solid #A5D6A7' : '3px solid #f0f0f0',
           color: '#2C3E50',
-          emoji: '👨'
+          emoji: '👨',
+          label: 'Homem'
         };
       default:
-        return { bg: 'white', border: '3px solid #f0f0f0', color: '#666', emoji: '👣' };
+        return { bg: 'white', border: '3px solid #f0f0f0', color: '#666', emoji: '👣', label: cat };
     }
   };
 
@@ -682,7 +733,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           <Smile size={18} color="#FF9F1C" /> Quem vai calçar?
         </h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {['crianca', 'mulher', 'homem'].map(cat => {
+          {['menino', 'menina', 'mulher', 'homem'].map(cat => {
             const styles = getCategoryStyles(cat);
             const isActive = filters.categories.includes(cat);
             return (
@@ -705,9 +756,9 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                   transition: 'background-color 0.2s, border-color 0.2s'
                 }}
               >
-                <span style={{ fontSize: '1rem' }}>{styles.emoji}</span>
+                <span style={{ fontSize: '1.1rem' }}>{styles.emoji}</span>
                 <span style={{ fontSize: '0.95rem', fontWeight: '800', color: styles.color, textTransform: 'capitalize', flex: 1 }}>
-                  {cat === 'crianca' ? 'Criança' : cat}
+                  {styles.label || cat}
                 </span>
                 {isActive && (
                   <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: styles.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
@@ -1032,11 +1083,28 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                   </div>
                 )}
 
-                {filters.categories.map(cat => (
-                  <div key={cat} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#E0F2F1', color: '#007396', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px', textTransform: 'capitalize' }}>
-                    {cat} <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleCategory(cat)} />
-                  </div>
-                ))}
+                {filters.categories.map(cat => {
+                  const styles = getCategoryStyles(cat);
+                  return (
+                    <div
+                      key={cat}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        backgroundColor: styles.bg !== 'white' ? styles.bg : '#E0F2F1',
+                        color: styles.color || '#007396',
+                        fontSize: '0.8rem',
+                        fontWeight: '800',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        textTransform: 'capitalize'
+                      }}
+                    >
+                      {styles.label || cat} <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleCategory(cat)} />
+                    </div>
+                  );
+                })}
 
                 {filters.subcategories.map(sub => (
                   <div key={sub} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#FFEBEE', color: '#E06A55', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px' }}>
