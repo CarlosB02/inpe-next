@@ -1288,7 +1288,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
                 }}>
                   <RotateCcw size={22} color="#E06A55" />
                   <span style={{ fontWeight: '800', fontSize: '0.85rem', color: '#2C3E50' }}>15 Dias para devolução</span>
-                  <span style={{ fontSize: '0.75rem', color: '#666' }}>Devolução simplificada e grátis</span>
+                  <span style={{ fontSize: '0.75rem', color: '#666' }}>Devolução simplificada</span>
                 </div>
               </div>
 

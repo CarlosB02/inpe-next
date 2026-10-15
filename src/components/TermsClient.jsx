@@ -115,7 +115,7 @@ const termsSections = [
           </li>
           <li style={{ display: 'flex', gap: '8px', alignItems: 'start' }}>
             <span style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>•</span>
-            <div><strong>Trocas Gratuitas:</strong> O primeiro processo de recolha e envio do novo tamanho é totalmente gratuito para o cliente, garantindo que o pezinho tem o tamanho certo sem custos adicionais.</div>
+            <div><strong>Trocas de Artigos:</strong> Em caso de troca, a recolha do produto é da responsabilidade do comprador.</div>
           </li>
         </ul>
         <p>Para iniciar uma devolução ou troca, basta enviar um e-mail para <a href="mailto:inpe@gmail.com" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>inpe@gmail.com</a> indicando o número da encomenda.</p>
