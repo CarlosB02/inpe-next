@@ -217,7 +217,7 @@ const ContactClient = () => {
                   <h3 style={{ fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: '900', color: '#E06A55', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Segue as nossas aventuras</h3>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <a
-                      href="https://www.facebook.com/profile.php?id=61556669931835"
+                      href="https://www.facebook.com/profile.php?id=61576129953246"
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{

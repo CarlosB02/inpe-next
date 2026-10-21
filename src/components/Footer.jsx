@@ -36,7 +36,7 @@ const Footer = () => {
               Calçado ético, sustentável e que respeita a anatomia do pé.
             </p>
             <div style={{ display: 'flex', gap: '0.8rem', marginTop: '0.5rem' }}>
-              <a href='https://www.facebook.com/profile.php?id=61556669931835' target='_blank' rel='noopener noreferrer' className="social-btn" aria-label="Facebook">
+              <a href='https://www.facebook.com/profile.php?id=61576129953246' target='_blank' rel='noopener noreferrer' className="social-btn" aria-label="Facebook">
                 <FacebookIcon />
               </a>
               <a href='https://www.instagram.com/inpe_barefoot/' target='_blank' rel='noopener noreferrer' className="social-btn" aria-label="Instagram">
