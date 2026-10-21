@@ -247,7 +247,7 @@ const HistoryClient2 = () => {
                   Inês Santos e Inês Oliveira, são fisioterapeutas e mães de dois casais de crianças entre os 2 e os 6 anos. Foi a fisioterapia que as uniu há mais de 14 anos, mas foi a cumplicidade, a amizade e as aventuras por que passaram juntas que fizeram com que se mantivessem unidas até hoje.
                 </p>
                 <p style={{ color: '#666', lineHeight: 1.7, fontSize: '1.05rem', margin: 0 }}>
-                  A Barefoot nasceu da visão de duas profissionais unidas pelo compromisso com o bem-estar infantil. A experiência da Inês Santos na fisioterapia pediátrica e o espírito empreendedor da Inês Oliveira deram origem a um projeto dedicado ao desenvolvimento saudável das crianças, promovendo a liberdade de movimento e o crescimento natural desde os primeiros passos.
+                  A Inpe nasceu da visão de duas profissionais unidas pelo compromisso com o bem-estar infantil. A experiência da Inês Santos na fisioterapia pediátrica e o espírito empreendedor da Inês Oliveira deram origem a um projeto dedicado ao desenvolvimento saudável das crianças, promovendo a liberdade de movimento e o crescimento natural desde os primeiros passos.
                 </p>
 
                 <div style={{ display: 'flex', gap: '10px', marginTop: '1.5rem', flexWrap: isMobile ? 'wrap' : 'nowrap', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center' }}>

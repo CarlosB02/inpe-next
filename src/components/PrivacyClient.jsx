@@ -143,7 +143,7 @@ const privacySections = [
             <Mail size={20} color="var(--color-winter-blue)" style={{ flexShrink: 0 }} />
             <div>
               <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#007396', textTransform: 'uppercase', display: 'block' }}>E-mail</span>
-              <a href="mailto:inpe@gmail.com" style={{ fontWeight: '800', color: 'var(--color-text)', wordBreak: 'break-all' }}>inpe@gmail.com</a>
+              <a href="mailto:inpebarefoot@gmail.com" style={{ fontWeight: '800', color: 'var(--color-text)', wordBreak: 'break-all' }}>inpebarefoot@gmail.com</a>
             </div>
           </div>
 

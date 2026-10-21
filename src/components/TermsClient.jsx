@@ -21,7 +21,7 @@ const termsSections = [
           <li><strong>Denominação Social:</strong> Inpe Barefoot (ou "Nós")</li>
           <li><strong>Sede Física / Loja:</strong> R. Aires Gouveia 5, 3670-243 Vouzela, Portugal</li>
           <li><strong>NIPC / Contribuinte Fiscal:</strong> 500000000 (Empresa registada em Portugal)</li>
-          <li><strong>Contacto de E-mail:</strong> <a href="mailto:inpe@gmail.com" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>inpe@gmail.com</a></li>
+          <li><strong>Contacto de E-mail:</strong> <a href="mailto:inpebarefoot@gmail.com" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>inpebarefoot@gmail.com</a></li>
         </ul>
         <p>Ao navegar no site ou efetuar uma compra, o utilizador concorda na totalidade com as presentes condições gerais de venda.</p>
       </div>
@@ -118,7 +118,7 @@ const termsSections = [
             <div><strong>Trocas de Artigos:</strong> Em caso de troca, a recolha do produto é da responsabilidade do comprador.</div>
           </li>
         </ul>
-        <p>Para iniciar uma devolução ou troca, basta enviar um e-mail para <a href="mailto:inpe@gmail.com" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>inpe@gmail.com</a> indicando o número da encomenda.</p>
+        <p>Para iniciar uma devolução ou troca, basta enviar um e-mail para <a href="mailto:inpebarefoot@gmail.com" style={{ color: 'var(--color-winter-blue)', fontWeight: 'bold' }}>inpebarefoot@gmail.com</a> indicando o número da encomenda.</p>
       </div>
     )
   },

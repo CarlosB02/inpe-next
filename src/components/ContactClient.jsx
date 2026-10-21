@@ -117,7 +117,7 @@ const ContactClient = () => {
 
               {/* Email Card */}
               <motion.a
-                href="mailto:inpe@gmail.com"
+                href="mailto:inpebarefoot@gmail.com"
                 whileHover={{ scale: 1.03, y: -4 }}
                 style={{
                   display: 'flex',
@@ -147,7 +147,7 @@ const ContactClient = () => {
                 </div>
                 <div style={{ minWidth: 0, overflow: 'hidden' }}>
                   <h3 style={{ fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', fontWeight: '900', color: '#007396', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Envia um Email</h3>
-                  <span style={{ fontSize: 'clamp(1rem, 3.8vw, 1.25rem)', fontWeight: '800', color: '#2C3E50', wordBreak: 'break-all' }}>inpe@gmail.com</span>
+                  <span style={{ fontSize: 'clamp(1rem, 3.8vw, 1.25rem)', fontWeight: '800', color: '#2C3E50', wordBreak: 'break-all' }}>inpebarefoot@gmail.com</span>
                 </div>
               </motion.a>
 
