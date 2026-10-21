@@ -21,6 +21,247 @@ import { tablesData } from '../data/sizeTables';
 
 >>>>>>> Stashed changes
 
+<<<<<<< Updated upstream
+=======
+// Brand & Model specific size tables matching size guide
+const tablesData = [
+  {
+    id: 'igor-galochas',
+    brand: 'Igor',
+    model: 'Galochas',
+    data: [
+      { size: '20', length: '12,9', width: '5,8' },
+      { size: '21', length: '13,5', width: '6,0' },
+      { size: '22', length: '14,2', width: '6,2' },
+      { size: '23', length: '14,9', width: '6,3' },
+      { size: '24', length: '15,5', width: '6,4' },
+      { size: '25', length: '16,1', width: '6,5' },
+      { size: '26', length: '16,8', width: '6,7' },
+      { size: '27', length: '17,5', width: '6,9' },
+      { size: '28', length: '18,1', width: '7,0' },
+      { size: '29', length: '18,8', width: '7,2' },
+      { size: '30', length: '19,5', width: '7,4' },
+      { size: '31', length: '20,1', width: '7,5' },
+      { size: '32', length: '20,7', width: '7,6' },
+      { size: '33', length: '21,3', width: '8,1' },
+      { size: '34', length: '22,0', width: '8,3' },
+      { size: '35', length: '22,6', width: '8,4' },
+    ]
+  },
+  {
+    id: 'igor-lonas',
+    brand: 'Igor',
+    model: 'Lonas',
+    data: [
+      { size: '20', length: '13,1', width: '6,0' },
+      { size: '21', length: '13,8', width: '6,1' },
+      { size: '22', length: '14,4', width: '6,2' },
+      { size: '23', length: '15,0', width: '6,4' },
+      { size: '24', length: '15,7', width: '6,5' },
+      { size: '25', length: '16,4', width: '6,7' },
+      { size: '26', length: '17,0', width: '6,9' },
+      { size: '27', length: '17,5', width: '7,2' },
+      { size: '28', length: '18,1', width: '7,3' },
+      { size: '29', length: '18,8', width: '7,4' },
+      { size: '30', length: '19,4', width: '7,6' },
+    ]
+  },
+  {
+    id: 'igor-nemo',
+    brand: 'Igor',
+    model: 'Nemo',
+    data: [
+      { size: '20', length: '12,5', width: '5,9' },
+      { size: '21', length: '13,1', width: '6,0' },
+      { size: '22', length: '13,7', width: '6,1' },
+      { size: '23', length: '14,3', width: '6,2' },
+      { size: '24', length: '15,0', width: '6,3' },
+      { size: '25', length: '15,7', width: '6,4' },
+      { size: '26', length: '16,3', width: '6,6' },
+      { size: '27', length: '16,9', width: '6,8' },
+      { size: '28', length: '17,6', width: '6,9' },
+      { size: '29', length: '18,2', width: '7,0' },
+      { size: '30', length: '18,9', width: '7,1' },
+      { size: '31', length: '19,6', width: '7,2' },
+      { size: '32', length: '20,2', width: '7,4' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-1',
+    brand: 'Blanditos',
+    model: 'Vénus, Crono, Ares',
+    data: [
+      { size: '24', length: '15,8', width: '6,7' },
+      { size: '25', length: '16,5', width: '6,8' },
+      { size: '26', length: '17,2', width: '6,9' },
+      { size: '27', length: '17,8', width: '7,1' },
+      { size: '28', length: '18,5', width: '7,3' },
+      { size: '29', length: '19,1', width: '7,4' },
+      { size: '30', length: '19,8', width: '7,6' },
+      { size: '31', length: '20,5', width: '7,8' },
+      { size: '32', length: '21,1', width: '8,0' },
+      { size: '33', length: '21,8', width: '8,1' },
+      { size: '34', length: '22,5', width: '8,2' },
+      { size: '35', length: '23,3', width: '8,5' },
+      { size: '36', length: '23,9', width: '8,6' },
+      { size: '37', length: '24,6', width: '8,8' },
+      { size: '38', length: '25,0', width: '8,8' },
+      { size: '39', length: '25,9', width: '9,0' },
+      { size: '40', length: '26,5', width: '9,2' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-2',
+    brand: 'Blanditos',
+    model: 'Londres, Milán, Módena, Atenas, Talco, Azores',
+    data: [
+      { size: '19', length: '12,1', width: '5,7' },
+      { size: '20', length: '12,7', width: '5,8' },
+      { size: '21', length: '13,3', width: '5,9' },
+      { size: '22', length: '14,0', width: '6,1' },
+      { size: '23', length: '14,6', width: '6,2' },
+      { size: '24', length: '15,3', width: '6,4' },
+      { size: '25', length: '16,0', width: '6,5' },
+      { size: '26', length: '16,5', width: '6,7' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-3',
+    brand: 'Blanditos',
+    model: 'Rio, Marea, Berlim, Borneo, Delphin',
+    data: [
+      { size: '26', length: '16,7', width: '6,8' },
+      { size: '27', length: '17,3', width: '6,9' },
+      { size: '28', length: '17,9', width: '7,1' },
+      { size: '29', length: '18,7', width: '7,3' },
+      { size: '30', length: '19,3', width: '7,5' },
+      { size: '31', length: '20,0', width: '7,6' },
+      { size: '32', length: '20,7', width: '7,8' },
+      { size: '33', length: '21,5', width: '8,0' },
+      { size: '34', length: '22,1', width: '8,1' },
+      { size: '35', length: '22,8', width: '8,2' },
+      { size: '36', length: '23,4', width: '8,5' },
+      { size: '37', length: '24,0', width: '8,6' },
+      { size: '38', length: '24,6', width: '8,8' },
+      { size: '39', length: '25,2', width: '8,9' },
+      { size: '40', length: '25,9', width: '9,1' },
+    ]
+  },
+  {
+    id: 'blanditos-modelo-4',
+    brand: 'Blanditos',
+    model: 'Coco, Sandía, Fresa, Guinda, Mango',
+    data: [
+      { size: '20', length: '13,1', width: '5,8' },
+      { size: '21', length: '13,7', width: '6,0' },
+      { size: '22', length: '14,5', width: '6,1' },
+      { size: '23', length: '15,0', width: '6,2' },
+      { size: '24', length: '15,8', width: '6,4' },
+      { size: '25', length: '16,3', width: '6,5' },
+      { size: '26', length: '17,0', width: '6,7' },
+      { size: '27', length: '17,6', width: '6,8' },
+      { size: '28', length: '18,2', width: '7,0' },
+      { size: '29', length: '18,9', width: '7,2' },
+    ]
+  },
+  {
+    id: 'blanditos-platy',
+    brand: 'Blanditos',
+    model: 'Platy',
+    data: [
+      { size: '22', length: '13,4', width: '6,0' },
+      { size: '23', length: '14,1', width: '6,3' },
+      { size: '24', length: '14,7', width: '6,4' },
+      { size: '25', length: '15,3', width: '6,6' },
+      { size: '26', length: '16,0', width: '6,8' },
+      { size: '27', length: '16,7', width: '7,1' },
+      { size: '28', length: '17,4', width: '7,2' },
+      { size: '29', length: '18,1', width: '7,4' },
+      { size: '30', length: '18,8', width: '7,5' },
+    ]
+  },
+  {
+    id: 'lejan-melrose-crianca',
+    brand: 'Lejan',
+    model: 'Melrose (Criança)',
+    data: [
+      { size: '21', length: '13,1', width: '5,7' },
+      { size: '22', length: '13,9', width: '5,8' },
+      { size: '23', length: '14,3', width: '6,0' },
+      { size: '24', length: '15,1', width: '6,3' },
+      { size: '25', length: '15,9', width: '6,4' },
+      { size: '26', length: '16,4', width: '6,5' },
+      { size: '27', length: '17,3', width: '6,6' },
+      { size: '28', length: '17,9', width: '6,8' },
+      { size: '29', length: '18,5', width: '7,0' },
+      { size: '30', length: '19,4', width: '7,2' },
+      { size: '31', length: '19,9', width: '7,4' },
+      { size: '32', length: '20,6', width: '7,5' },
+      { size: '33', length: '21,2', width: '7,7' },
+      { size: '34', length: '21,9', width: '7,8' },
+      { size: '35', length: '22,6', width: '7,9' },
+    ]
+  },
+  {
+    id: 'lejan-melrose-adulto',
+    brand: 'Lejan',
+    model: 'Melrose (Adulto)',
+    data: [
+      { size: '36', length: '23,9', width: '8,8' },
+      { size: '37', length: '24,6', width: '9,0' },
+      { size: '38', length: '25,5', width: '9,2' },
+      { size: '39', length: '26,3', width: '9,3' },
+      { size: '40', length: '26,9', width: '9,5' },
+      { size: '41', length: '27,4', width: '9,6' },
+      { size: '42', length: '28,2', width: '9,9' },
+      { size: '43', length: '28,9', width: '10,1' },
+      { size: '44', length: '29,5', width: '10,2' },
+      { size: '45', length: '29,9', width: '10,3' },
+      { size: '46', length: '30,3', width: '10,5' },
+    ]
+  },
+  {
+    id: 'lejan-one-crianca',
+    brand: 'Lejan',
+    model: 'One (Criança)',
+    data: [
+      { size: '21', length: '13,1', width: '5,7' },
+      { size: '22', length: '13,9', width: '5,8' },
+      { size: '23', length: '14,3', width: '6,0' },
+      { size: '24', length: '15,1', width: '6,3' },
+      { size: '25', length: '15,9', width: '6,4' },
+      { size: '26', length: '16,4', width: '6,5' },
+      { size: '27', length: '17,3', width: '6,6' },
+      { size: '28', length: '17,9', width: '6,8' },
+      { size: '29', length: '18,5', width: '7,0' },
+      { size: '30', length: '19,4', width: '7,2' },
+      { size: '31', length: '19,9', width: '7,4' },
+      { size: '32', length: '20,6', width: '7,5' },
+      { size: '33', length: '21,2', width: '7,7' },
+      { size: '34', length: '21,9', width: '7,8' },
+      { size: '35', length: '22,6', width: '7,9' },
+    ]
+  },
+  {
+    id: 'lejan-one-adulto',
+    brand: 'Lejan',
+    model: 'One (Adulto)',
+    data: [
+      { size: '36', length: '24,4', width: '8,5' },
+      { size: '37', length: '25,0', width: '8,6' },
+      { size: '38', length: '25,6', width: '8,8' },
+      { size: '39', length: '26,4', width: '9,0' },
+      { size: '40', length: '27,2', width: '9,1' },
+      { size: '41', length: '27,7', width: '9,2' },
+      { size: '42', length: '28,3', width: '9,4' },
+      { size: '43', length: '29,0', width: '9,5' },
+      { size: '44', length: '29,6', width: '9,7' },
+      { size: '45', length: '30,0', width: '9,8' },
+      { size: '46', length: '30,6', width: '10,0' },
+    ]
+  }
+];
+>>>>>>> Stashed changes
 
 interface ProductClientProps {
   product: Product;
@@ -409,6 +650,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     }
   };
 
+<<<<<<< Updated upstream
   // Match product tags/title/handle to a size table
   const matchedTableId = useMemo(() => {
     if (!product) return null;
@@ -417,24 +659,152 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     const handleLower = product.handle ? product.handle.toLowerCase() : '';
 
     if (normalizedTags.includes('igor-galochas') || normalizedTags.includes('igor-galocha')) {
+=======
+  // Match product tags, title, or variant sizes to a size table
+  const matchedTableId = useMemo(() => {
+    if (!product) return null;
+    const normalizedTags = (product.tags || []).map(t => t.toLowerCase().trim().replace(/\s+/g, '-'));
+    const titleLower = (product.title || '').toLowerCase();
+    
+    // Differentiate child (<=35) vs adult (>=36)
+    const variantSizes = (product.variants?.edges || [])
+      .map(e => {
+        const opt = e.node.selectedOptions?.find(o => o.name.toLowerCase().includes('tamanho') || o.name.toLowerCase().includes('size'));
+        return opt ? parseInt(opt.value, 10) : NaN;
+      })
+      .filter(n => !isNaN(n));
+    const hasAdultSizes = variantSizes.some(s => s >= 36);
+    const hasChildSizes = variantSizes.some(s => s <= 35);
+    const isAdult = normalizedTags.some(t => t.includes('adulto') || t.includes('adult') || t === 'homem' || t === 'mulher' || t.includes('homem') || t.includes('mulher')) || 
+                    titleLower.includes('adulto') || titleLower.includes('homem') || titleLower.includes('mulher') || 
+                    (hasAdultSizes && !hasChildSizes);
+    const isChild = normalizedTags.some(t => t.includes('crianca') || t.includes('criança') || t.includes('kids') || t.includes('infantil') || t.includes('junior') || t === 'menino' || t === 'menina' || t.includes('menino') || t.includes('menina') || t.includes('bebe') || t.includes('bebé')) || 
+                    titleLower.includes('criança') || titleLower.includes('crianca') || titleLower.includes('kids') || titleLower.includes('menino') || titleLower.includes('menina') ||
+                    (hasChildSizes && !hasAdultSizes);
+
+    // 1. LEJAN MELROSE
+    if (
+      normalizedTags.includes('lejan-melrose-crianca') ||
+      normalizedTags.includes('melrose-crianca') ||
+      normalizedTags.includes('lejan-melrose-kids')
+    ) {
+      return 'lejan-melrose-crianca';
+    }
+    if (
+      normalizedTags.includes('lejan-melrose-adulto') ||
+      normalizedTags.includes('melrose-adulto')
+    ) {
+      return 'lejan-melrose-adulto';
+    }
+    if (
+      normalizedTags.some(t => t.includes('melrose')) ||
+      titleLower.includes('melrose')
+    ) {
+      if (isAdult && !isChild) return 'lejan-melrose-adulto';
+      return 'lejan-melrose-crianca';
+    }
+
+    // 2. LEJAN ONE
+    if (
+      normalizedTags.includes('lejan-one-crianca') ||
+      normalizedTags.includes('one-crianca') ||
+      normalizedTags.includes('lejan-one-kids')
+    ) {
+      return 'lejan-one-crianca';
+    }
+    if (
+      normalizedTags.includes('lejan-one-adulto') ||
+      normalizedTags.includes('one-adulto')
+    ) {
+      return 'lejan-one-adulto';
+    }
+    if (
+      normalizedTags.some(t => t === 'lejan-one' || t === 'one') ||
+      titleLower.includes('lejan one') ||
+      (titleLower.includes('lejan') && titleLower.includes('one'))
+    ) {
+      if (isAdult && !isChild) return 'lejan-one-adulto';
+      return 'lejan-one-crianca';
+    }
+
+    // 3. BLANDITOS PLATY
+    if (
+      normalizedTags.includes('blanditos-platy') ||
+      normalizedTags.includes('platy') ||
+      titleLower.includes('platy')
+    ) {
+      return 'blanditos-platy';
+    }
+
+    // 4. IGOR
+    if (normalizedTags.includes('igor-galochas') || normalizedTags.includes('igor-galocha') || titleLower.includes('galocha')) {
+>>>>>>> Stashed changes
       return 'igor-galochas';
     }
-    if (normalizedTags.includes('igor-lonas') || normalizedTags.includes('igor-lona')) {
+    if (normalizedTags.includes('igor-lonas') || normalizedTags.includes('igor-lona') || titleLower.includes('lona')) {
       return 'igor-lonas';
     }
-    if (normalizedTags.includes('igor-nemo')) {
+    if (normalizedTags.includes('igor-nemo') || titleLower.includes('nemo')) {
       return 'igor-nemo';
     }
-    if (normalizedTags.includes('blanditos-modelo-1') || normalizedTags.includes('venus') || normalizedTags.includes('crono') || normalizedTags.includes('ares') || normalizedTags.includes('blanditos-venus-crono-ares')) {
+
+    // 5. BLANDITOS MODELO 1: Vénus, Crono, Ares
+    if (
+      normalizedTags.includes('blanditos-modelo-1') ||
+      normalizedTags.includes('venus') || normalizedTags.includes('vénus') ||
+      normalizedTags.includes('crono') ||
+      normalizedTags.includes('ares') ||
+      normalizedTags.includes('blanditos-venus-crono-ares') ||
+      titleLower.includes('vénus') || titleLower.includes('venus') ||
+      titleLower.includes('crono') || titleLower.includes('ares')
+    ) {
       return 'blanditos-modelo-1';
     }
-    if (normalizedTags.includes('blanditos-modelo-2') || normalizedTags.includes('londres') || normalizedTags.includes('milan') || normalizedTags.includes('modena') || normalizedTags.includes('blanditos-londres-milan-modena')) {
+
+    // 6. BLANDITOS MODELO 2: Londres, Milán, Módena, Atenas, Talco, Azores
+    if (
+      normalizedTags.includes('blanditos-modelo-2') ||
+      normalizedTags.includes('londres') ||
+      normalizedTags.includes('milan') || normalizedTags.includes('milán') ||
+      normalizedTags.includes('modena') || normalizedTags.includes('módena') ||
+      normalizedTags.includes('atenas') ||
+      normalizedTags.includes('talco') ||
+      normalizedTags.includes('azores') ||
+      normalizedTags.includes('blanditos-londres-milan-modena') ||
+      titleLower.includes('londres') || titleLower.includes('milán') || titleLower.includes('milan') ||
+      titleLower.includes('módena') || titleLower.includes('modena') ||
+      titleLower.includes('atenas') || titleLower.includes('talco') || titleLower.includes('azores')
+    ) {
       return 'blanditos-modelo-2';
     }
-    if (normalizedTags.includes('blanditos-modelo-3') || normalizedTags.includes('rio') || normalizedTags.includes('marea') || normalizedTags.includes('berlim') || normalizedTags.includes('blanditos-rio-marea-berlim')) {
+
+    // 7. BLANDITOS MODELO 3: Rio, Marea, Berlim, Borneo, Delphin
+    if (
+      normalizedTags.includes('blanditos-modelo-3') ||
+      normalizedTags.includes('rio') ||
+      normalizedTags.includes('marea') ||
+      normalizedTags.includes('berlim') ||
+      normalizedTags.includes('borneo') ||
+      normalizedTags.includes('delphin') ||
+      normalizedTags.includes('blanditos-rio-marea-berlim') ||
+      titleLower.includes('rio') || titleLower.includes('marea') ||
+      titleLower.includes('berlim') || titleLower.includes('borneo') || titleLower.includes('delphin')
+    ) {
       return 'blanditos-modelo-3';
     }
-    if (normalizedTags.includes('blanditos-modelo-4') || normalizedTags.includes('coco') || normalizedTags.includes('sandia') || normalizedTags.includes('fresa') || normalizedTags.includes('guinda') || normalizedTags.includes('mango') || normalizedTags.includes('blanditos-coco-sandia-fresa-guinda-mango')) {
+
+    // 8. BLANDITOS MODELO 4: Coco, Sandía, Fresa, Guinda, Mango
+    if (
+      normalizedTags.includes('blanditos-modelo-4') ||
+      normalizedTags.includes('coco') ||
+      normalizedTags.includes('sandia') || normalizedTags.includes('sandía') ||
+      normalizedTags.includes('fresa') ||
+      normalizedTags.includes('guinda') ||
+      normalizedTags.includes('mango') ||
+      normalizedTags.includes('blanditos-coco-sandia-fresa-guinda-mango') ||
+      titleLower.includes('coco') || titleLower.includes('sandia') || titleLower.includes('sandía') ||
+      titleLower.includes('fresa') || titleLower.includes('guinda') || titleLower.includes('mango')
+    ) {
       return 'blanditos-modelo-4';
     }
     if (normalizedTags.includes('platy') || titleLower.includes('platy') || handleLower.includes('platy')) {
@@ -477,8 +847,8 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       // Parse lengths to float
       const parsedData = matchedTable.data.map(item => ({
         size: item.size,
-        length: parseFloat(item.length.replace(',', '.')),
-        width: parseFloat(item.width.replace(',', '.'))
+        length: parseFloat(item.length.toString().replace(',', '.')),
+        width: parseFloat(item.width.toString().replace(',', '.'))
       }));
 
       // Find candidates where wiggle room is at least 0.5 cm
