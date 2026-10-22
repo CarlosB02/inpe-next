@@ -100,7 +100,7 @@ export const tablesData: TableData[] = [
   {
     id: 'blanditos-modelo-2',
     brand: 'Blanditos',
-    model: 'Londres, Milán, Módena',
+    model: 'Londres, Milán, Módena, Atenas, Talco, Azores',
     data: [
       { size: '19', length: '12,1', width: '5,7' },
       { size: '20', length: '12,7', width: '5,8' },
@@ -115,7 +115,7 @@ export const tablesData: TableData[] = [
   {
     id: 'blanditos-modelo-3',
     brand: 'Blanditos',
-    model: 'Rio, Marea, Berlim',
+    model: 'Rio, Marea, Berlim, Borneo, Delphin',
     data: [
       { size: '26', length: '16,7', width: '6,8' },
       { size: '27', length: '17,3', width: '6,9' },
@@ -152,8 +152,8 @@ export const tablesData: TableData[] = [
     ]
   },
   {
-    id: 'platy',
-    brand: 'Platy',
+    id: 'blanditos-platy',
+    brand: 'Blanditos',
     model: 'Platy',
     data: [
       { size: '22', length: '13,4', width: '6,0' },
@@ -168,9 +168,9 @@ export const tablesData: TableData[] = [
     ]
   },
   {
-    id: 'lejan-one-kids',
+    id: 'lejan-melrose-crianca',
     brand: 'Lejan',
-    model: 'One Kids',
+    model: 'Melrose (Criança)',
     data: [
       { size: '21', length: '13,1', width: '5,7' },
       { size: '22', length: '13,9', width: '5,8' },
@@ -190,9 +190,49 @@ export const tablesData: TableData[] = [
     ]
   },
   {
-    id: 'lejan-one',
+    id: 'lejan-melrose-adulto',
     brand: 'Lejan',
-    model: 'One',
+    model: 'Melrose (Adulto)',
+    data: [
+      { size: '36', length: '23,9', width: '8,8' },
+      { size: '37', length: '24,6', width: '9,0' },
+      { size: '38', length: '25,5', width: '9,2' },
+      { size: '39', length: '26,3', width: '9,3' },
+      { size: '40', length: '26,9', width: '9,5' },
+      { size: '41', length: '27,4', width: '9,6' },
+      { size: '42', length: '28,2', width: '9,9' },
+      { size: '43', length: '28,9', width: '10,1' },
+      { size: '44', length: '29,5', width: '10,2' },
+      { size: '45', length: '29,9', width: '10,3' },
+      { size: '46', length: '30,3', width: '10,5' },
+    ]
+  },
+  {
+    id: 'lejan-one-crianca',
+    brand: 'Lejan',
+    model: 'One (Criança)',
+    data: [
+      { size: '21', length: '13,1', width: '5,7' },
+      { size: '22', length: '13,9', width: '5,8' },
+      { size: '23', length: '14,3', width: '6,0' },
+      { size: '24', length: '15,1', width: '6,3' },
+      { size: '25', length: '15,9', width: '6,4' },
+      { size: '26', length: '16,4', width: '6,5' },
+      { size: '27', length: '17,3', width: '6,6' },
+      { size: '28', length: '17,9', width: '6,8' },
+      { size: '29', length: '18,5', width: '7,0' },
+      { size: '30', length: '19,4', width: '7,2' },
+      { size: '31', length: '19,9', width: '7,4' },
+      { size: '32', length: '20,6', width: '7,5' },
+      { size: '33', length: '21,2', width: '7,7' },
+      { size: '34', length: '21,9', width: '7,8' },
+      { size: '35', length: '22,6', width: '7,9' },
+    ]
+  },
+  {
+    id: 'lejan-one-adulto',
+    brand: 'Lejan',
+    model: 'One (Adulto)',
     data: [
       { size: '36', length: '24,4', width: '8,5' },
       { size: '37', length: '25,0', width: '8,6' },
@@ -204,7 +244,7 @@ export const tablesData: TableData[] = [
       { size: '43', length: '29,0', width: '9,5' },
       { size: '44', length: '29,6', width: '9,7' },
       { size: '45', length: '30,0', width: '9,8' },
-      { size: '46', length: '30,6', width: '10' },
+      { size: '46', length: '30,6', width: '10,0' },
     ]
   }
 ];

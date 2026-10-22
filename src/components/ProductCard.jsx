@@ -2,12 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-<<<<<<< Updated upstream
-
 import { getColorStyle, normalizeColorName } from '../lib/colors';
-=======
-import { getColorHex } from '../utils/colors';
->>>>>>> Stashed changes
 
 /**
  * @param {object} props

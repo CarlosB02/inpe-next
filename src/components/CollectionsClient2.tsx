@@ -11,7 +11,7 @@ import { Product } from '../types/shopify';
 import ProductCard from './ProductCard';
 import Layout from './Layout';
 import { useRouter } from 'next/navigation';
-import { getColorHex, colorMap } from '../utils/colors';
+import { getColorStyle, getColorHex, normalizeColorName } from '../lib/colors';
 
 interface CollectionsClientProps {
   initialProducts: Product[];
@@ -44,11 +44,7 @@ const PlayfulBadge = ({ children, color = '#FF9F1C', icon: Icon }: any) => (
   </motion.div>
 );
 
-<<<<<<< Updated upstream
-import { getColorStyle, getColorHex, normalizeColorName } from '../lib/colors';
 
-=======
->>>>>>> Stashed changes
 export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   initialProducts = [],
   searchQuery = ''
