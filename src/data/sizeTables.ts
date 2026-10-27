@@ -12,6 +12,216 @@ export interface TableData {
 }
 
 export const tablesData: TableData[] = [
+  // 1. BLANDITOS — MUM
+  {
+    id: 'blanditos-mum',
+    brand: 'Blanditos',
+    model: 'MUM',
+    data: [
+      { size: '36', length: '24', width: '9,2' },
+      { size: '37', length: '24,8', width: '9,4' },
+      { size: '38', length: '25,4', width: '9,4' },
+      { size: '39', length: '26,1', width: '9,6' },
+      { size: '40', length: '26,7', width: '9,6' },
+      { size: '41', length: '27,5', width: '9,8' },
+      { size: '42', length: '28', width: '9,8' },
+    ]
+  },
+
+  // 2. BLANDITOS — Londres, Lisboa, Atenas, Caicos, Bahamas, Azores, Cairo, Maui, Lima, Ottawa, Doha, Pekín, Kyoto e Zürich
+  {
+    id: 'blanditos-londres-lisboa-atenas',
+    brand: 'Blanditos',
+    model: 'Londres, Lisboa, Atenas, Caicos, Bahamas, Azores, Cairo, Maui, Lima, Ottawa, Doha, Pekín, Kyoto, Zürich',
+    data: [
+      { size: '19', length: '12,1', width: '5,7' },
+      { size: '20', length: '12,7', width: '5,8' },
+      { size: '21', length: '13,3', width: '5,9' },
+      { size: '22', length: '14,0', width: '6,1' },
+      { size: '23', length: '14,6', width: '6,2' },
+      { size: '24', length: '15,3', width: '6,4' },
+      { size: '25', length: '16,0', width: '6,5' },
+      { size: '26', length: '16,5', width: '6,7' },
+    ]
+  },
+
+  // 3. BLANDITOS — Torino, Porto y Riga
+  {
+    id: 'blanditos-torino-porto-riga',
+    brand: 'Blanditos',
+    model: 'Torino, Porto, Riga',
+    data: [
+      { size: '21', length: '13,3', width: '5,9' },
+      { size: '22', length: '14,0', width: '6,1' },
+      { size: '23', length: '14,6', width: '6,2' },
+      { size: '24', length: '15,3', width: '6,4' },
+      { size: '25', length: '16,0', width: '6,5' },
+      { size: '26', length: '16,5', width: '6,7' },
+      { size: '27', length: '17,3', width: '7,2' },
+    ]
+  },
+
+  // 4. BLANDITOS — Dallas, Quito, Delhi, Troya
+  {
+    id: 'blanditos-dallas-quito-delhi-troya',
+    brand: 'Blanditos',
+    model: 'Dallas, Quito, Delhi, Troya',
+    data: [
+      { size: '19', length: '12,1', width: '5,7' },
+      { size: '20', length: '12,7', width: '5,8' },
+      { size: '21', length: '13,3', width: '5,9' },
+      { size: '22', length: '14,0', width: '6,1' },
+      { size: '23', length: '14,6', width: '6,2' },
+      { size: '24', length: '15,3', width: '6,4' },
+      { size: '25', length: '16,0', width: '6,5' },
+      { size: '26', length: '16,5', width: '6,7' },
+      { size: '27', length: '17,3', width: '7,2' },
+    ]
+  },
+
+  // 5. BLANDITOS — Río, Delfín, Kauai, Borneo, Imola, Etna, Génova, Alaska, Chicago, Aspen, Boreal, Bristol, Dakar, Hielo, Quebec, Hadas
+  {
+    id: 'blanditos-rio-delfin-kauai',
+    brand: 'Blanditos',
+    model: 'Río, Delfín, Kauai, Borneo, Imola, Etna, Génova, Alaska, Chicago, Aspen, Boreal, Bristol, Dakar, Hielo, Quebec, Hadas',
+    data: [
+      { size: '26', length: '16,7', width: '6,8' },
+      { size: '27', length: '17,3', width: '6,9' },
+      { size: '28', length: '17,9', width: '7,1' },
+      { size: '29', length: '18,7', width: '7,3' },
+      { size: '30', length: '19,3', width: '7,5' },
+      { size: '31', length: '20,0', width: '7,6' },
+      { size: '32', length: '20,7', width: '7,8' },
+      { size: '33', length: '21,5', width: '8,0' },
+      { size: '34', length: '22,1', width: '8,1' },
+      { size: '35', length: '22,8', width: '8,2' },
+      { size: '36', length: '23,4', width: '8,5' },
+      { size: '37', length: '24,0', width: '8,6' },
+      { size: '38', length: '24,6', width: '8,8' },
+      { size: '39', length: '25,2', width: '8,9' },
+      { size: '40', length: '25,9', width: '9,1' },
+    ]
+  },
+
+  // 6. BLANDITOS — Ballet, Eclat, Florencia
+  {
+    id: 'blanditos-ballet-eclat-florencia',
+    brand: 'Blanditos',
+    model: 'Ballet, Eclat, Florencia',
+    data: [
+      { size: '26', length: '17,0', width: '6,7' },
+      { size: '27', length: '17,7', width: '6,8' },
+      { size: '28', length: '18,1', width: '7,0' },
+      { size: '29', length: '19,0', width: '7,0' },
+      { size: '30', length: '19,6', width: '7,2' },
+      { size: '31', length: '20,3', width: '7,5' },
+      { size: '32', length: '21,0', width: '7,6' },
+      { size: '33', length: '21,5', width: '7,8' },
+      { size: '34', length: '22,2', width: '8,0' },
+      { size: '35', length: '22,9', width: '8,1' },
+      { size: '36', length: '23,5', width: '8,2' },
+      { size: '37', length: '24,1', width: '8,4' },
+      { size: '38', length: '24,8', width: '8,6' },
+      { size: '39', length: '25,4', width: '8,8' },
+      { size: '40', length: '26,0', width: '9,0' },
+      { size: '41', length: '26,6', width: '9,1' },
+      { size: '42', length: '27,3', width: '9,3' },
+    ]
+  },
+
+  // 7. BLANDITOS — Ares, Aquiles, Poseidón
+  {
+    id: 'blanditos-ares-aquiles-poseidon',
+    brand: 'Blanditos',
+    model: 'Ares, Aquiles, Poseidón',
+    data: [
+      { size: '24', length: '15,8', width: '6,7' },
+      { size: '25', length: '16,5', width: '6,8' },
+      { size: '26', length: '17,2', width: '6,9' },
+      { size: '27', length: '17,8', width: '7,1' },
+      { size: '28', length: '18,5', width: '7,3' },
+      { size: '29', length: '19,1', width: '7,4' },
+      { size: '30', length: '19,8', width: '7,6' },
+      { size: '31', length: '20,5', width: '7,8' },
+      { size: '32', length: '21,1', width: '8,0' },
+      { size: '33', length: '21,8', width: '8,1' },
+      { size: '34', length: '22,5', width: '8,2' },
+      { size: '35', length: '23,3', width: '8,5' },
+      { size: '36', length: '23,9', width: '8,6' },
+      { size: '37', length: '24,6', width: '8,8' },
+      { size: '38', length: '25,0', width: '8,8' },
+      { size: '39', length: '25,9', width: '9,0' },
+      { size: '40', length: '26,5', width: '9,2' },
+    ]
+  },
+
+  // 8. BLANDITOS — Heray, Apolo (À prova de água)
+  {
+    id: 'blanditos-heray-apolo',
+    brand: 'Blanditos',
+    model: 'Heray, Apolo (À prova de água)',
+    data: [
+      { size: '24', length: '15,8', width: '6,4' },
+      { size: '25', length: '16,4', width: '6,4' },
+      { size: '26', length: '17', width: '6,5' },
+      { size: '27', length: '17,5', width: '6,7' },
+      { size: '28', length: '18,2', width: '7' },
+      { size: '29', length: '19', width: '7,2' },
+      { size: '30', length: '19,4', width: '7,2' },
+      { size: '31', length: '20,2', width: '7,5' },
+      { size: '32', length: '20,8', width: '7,7' },
+      { size: '33', length: '21,5', width: '7,7' },
+      { size: '34', length: '22', width: '7,9' },
+      { size: '35', length: '22,8', width: '8,3' },
+      { size: '36', length: '23,4', width: '8,4' },
+      { size: '37', length: '24', width: '8,4' },
+      { size: '38', length: '24,8', width: '8,7' },
+      { size: '39', length: '25,5', width: '9' },
+      { size: '40', length: '26', width: '9,1' },
+    ]
+  },
+
+  // 9. BLANDITOS — Chiclid, Guppy, Platy, Xhipo
+  {
+    id: 'blanditos-chiclid-guppy-platy-xhipo',
+    brand: 'Blanditos',
+    model: 'Chiclid, Guppy, Platy, Xhipo',
+    data: [
+      { size: '22', length: '13,4', width: '6,0' },
+      { size: '23', length: '14,1', width: '6,3' },
+      { size: '24', length: '14,7', width: '6,4' },
+      { size: '25', length: '15,3', width: '6,6' },
+      { size: '26', length: '16', width: '6,8' },
+      { size: '27', length: '16,7', width: '7,1' },
+      { size: '28', length: '17,4', width: '7,2' },
+      { size: '29', length: '18,1', width: '7,4' },
+      { size: '30', length: '18,8', width: '7,5' },
+    ]
+  },
+
+  // 10. BLANDITOS — Aneto, Heracles, Hércules y Ulises
+  {
+    id: 'blanditos-aneto-heracles-hercules-ulises',
+    brand: 'Blanditos',
+    model: 'Aneto, Heracles, Hércules, Ulises',
+    data: [
+      { size: '28', length: '18,0', width: '7,6' },
+      { size: '29', length: '18,7', width: '7,7' },
+      { size: '30', length: '19,4', width: '7,8' },
+      { size: '31', length: '20,01', width: '8,0' },
+      { size: '32', length: '20,09', width: '8,2' },
+      { size: '33', length: '21,6', width: '8,4' },
+      { size: '34', length: '22,2', width: '8,6' },
+      { size: '35', length: '22,8', width: '8,6' },
+      { size: '36', length: '23,5', width: '8,8' },
+      { size: '37', length: '24,3', width: '9,0' },
+      { size: '38', length: '24,8', width: '9,1' },
+      { size: '39', length: '25,6', width: '9,3' },
+      { size: '40', length: '26,2', width: '9,5' },
+    ]
+  },
+
+  // IGOR
   {
     id: 'igor-galochas',
     brand: 'Igor',
@@ -73,100 +283,8 @@ export const tablesData: TableData[] = [
       { size: '32', length: '20,2', width: '7,4' },
     ]
   },
-  {
-    id: 'blanditos-modelo-1',
-    brand: 'Blanditos',
-    model: 'Vénus, Crono, Ares',
-    data: [
-      { size: '24', length: '15,8', width: '6,7' },
-      { size: '25', length: '16,5', width: '6,8' },
-      { size: '26', length: '17,2', width: '6,9' },
-      { size: '27', length: '17,8', width: '7,1' },
-      { size: '28', length: '18,5', width: '7,3' },
-      { size: '29', length: '19,1', width: '7,4' },
-      { size: '30', length: '19,8', width: '7,6' },
-      { size: '31', length: '20,5', width: '7,8' },
-      { size: '32', length: '21,1', width: '8,0' },
-      { size: '33', length: '21,8', width: '8,1' },
-      { size: '34', length: '22,5', width: '8,2' },
-      { size: '35', length: '23,3', width: '8,5' },
-      { size: '36', length: '23,9', width: '8,6' },
-      { size: '37', length: '24,6', width: '8,8' },
-      { size: '38', length: '25,0', width: '8,8' },
-      { size: '39', length: '25,9', width: '9,0' },
-      { size: '40', length: '26,5', width: '9,2' },
-    ]
-  },
-  {
-    id: 'blanditos-modelo-2',
-    brand: 'Blanditos',
-    model: 'Londres, Milán, Módena, Atenas, Talco, Azores',
-    data: [
-      { size: '19', length: '12,1', width: '5,7' },
-      { size: '20', length: '12,7', width: '5,8' },
-      { size: '21', length: '13,3', width: '5,9' },
-      { size: '22', length: '14,0', width: '6,1' },
-      { size: '23', length: '14,6', width: '6,2' },
-      { size: '24', length: '15,3', width: '6,4' },
-      { size: '25', length: '16,0', width: '6,5' },
-      { size: '26', length: '16,5', width: '6,7' },
-    ]
-  },
-  {
-    id: 'blanditos-modelo-3',
-    brand: 'Blanditos',
-    model: 'Rio, Marea, Berlim, Borneo, Delphin',
-    data: [
-      { size: '26', length: '16,7', width: '6,8' },
-      { size: '27', length: '17,3', width: '6,9' },
-      { size: '28', length: '17,9', width: '7,1' },
-      { size: '29', length: '18,7', width: '7,3' },
-      { size: '30', length: '19,3', width: '7,5' },
-      { size: '31', length: '20,0', width: '7,6' },
-      { size: '32', length: '20,7', width: '7,8' },
-      { size: '33', length: '21,5', width: '8,0' },
-      { size: '34', length: '22,1', width: '8,1' },
-      { size: '35', length: '22,8', width: '8,2' },
-      { size: '36', length: '23,4', width: '8,5' },
-      { size: '37', length: '24,0', width: '8,6' },
-      { size: '38', length: '24,6', width: '8,8' },
-      { size: '39', length: '25,2', width: '8,9' },
-      { size: '40', length: '25,9', width: '9,1' },
-    ]
-  },
-  {
-    id: 'blanditos-modelo-4',
-    brand: 'Blanditos',
-    model: 'Coco, Sandía, Fresa, Guinda, Mango',
-    data: [
-      { size: '20', length: '13,1', width: '5,8' },
-      { size: '21', length: '13,7', width: '6,0' },
-      { size: '22', length: '14,5', width: '6,1' },
-      { size: '23', length: '15,0', width: '6,2' },
-      { size: '24', length: '15,8', width: '6,4' },
-      { size: '25', length: '16,3', width: '6,5' },
-      { size: '26', length: '17,0', width: '6,7' },
-      { size: '27', length: '17,6', width: '6,8' },
-      { size: '28', length: '18,2', width: '7,0' },
-      { size: '29', length: '18,9', width: '7,2' },
-    ]
-  },
-  {
-    id: 'blanditos-platy',
-    brand: 'Blanditos',
-    model: 'Platy',
-    data: [
-      { size: '22', length: '13,4', width: '6,0' },
-      { size: '23', length: '14,1', width: '6,3' },
-      { size: '24', length: '14,7', width: '6,4' },
-      { size: '25', length: '15,3', width: '6,6' },
-      { size: '26', length: '16,0', width: '6,8' },
-      { size: '27', length: '16,7', width: '7,1' },
-      { size: '28', length: '17,4', width: '7,2' },
-      { size: '29', length: '18,1', width: '7,4' },
-      { size: '30', length: '18,8', width: '7,5' },
-    ]
-  },
+
+  // LEJAN
   {
     id: 'lejan-melrose-crianca',
     brand: 'Lejan',

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Footprints, Shield, Heart, HelpCircle, ArrowRight,
   ShoppingBag, Eye, RefreshCw, Smile, Search, SlidersHorizontal,
-  X, Check, DollarSign, Compass, ArrowUpDown
+  X, Check, DollarSign, Compass, ArrowUpDown, Tag
 } from 'lucide-react';
 import { Product } from '../types/shopify';
 import ProductCard from './ProductCard';
@@ -57,6 +57,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   const [filters, setFilters] = useState({
     categories: [] as string[],
     subcategories: [] as string[],
+    brands: [] as string[],
     sizes: [] as string[],
     colors: [] as string[],
     price: { min: 0, max: 200 }
@@ -74,7 +75,16 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && parsed.expiresAt && parsed.expiresAt > Date.now()) {
-          if (parsed.filters) setFilters(parsed.filters);
+          if (parsed.filters) {
+            setFilters({
+              categories: parsed.filters.categories || [],
+              subcategories: parsed.filters.subcategories || [],
+              brands: parsed.filters.brands || [],
+              sizes: parsed.filters.sizes || [],
+              colors: parsed.filters.colors || [],
+              price: parsed.filters.price || { min: 0, max: 200 }
+            });
+          }
           if (parsed.sortBy) setSortBy(parsed.sortBy);
           if (parsed.localSearch) setLocalSearch(parsed.localSearch);
         } else {
@@ -92,6 +102,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       const hasActiveFilters =
         filters.categories.length > 0 ||
         filters.subcategories.length > 0 ||
+        filters.brands.length > 0 ||
         filters.sizes.length > 0 ||
         filters.colors.length > 0 ||
         filters.price.min > 0 ||
@@ -179,7 +190,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
       // Map tags to categories/subcategories
       const tagsLower = (p.tags || []).map(t => t.toLowerCase().trim());
-      
+
       const hasMenino = tagsLower.some(t => t === 'menino' || t === 'meninos' || t === 'boy' || t === 'boys');
       const hasMenina = tagsLower.some(t => t === 'menina' || t === 'meninas' || t === 'girl' || t === 'girls');
       const hasMulher = tagsLower.some(t => t === 'mulher' || t === 'mulheres' || t === 'woman' || t === 'women' || t === 'senhora');
@@ -266,9 +277,36 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
       const images = p.images.edges.map(e => ({ url: e.node.url, altText: e.node.altText || '' })).filter(img => img.url);
 
+      // Extract and normalize brand / vendor
+      let brand = (p.vendor || '').trim();
+      if (!brand) {
+        const knownBrands = ['Igor', 'Blanditos', 'Lejan'];
+        const matchedTag = (p.tags || []).find(t =>
+          knownBrands.some(kb => kb.toLowerCase() === t.toLowerCase().trim())
+        );
+        if (matchedTag) {
+          brand = knownBrands.find(kb => kb.toLowerCase() === matchedTag.toLowerCase().trim()) || matchedTag;
+        } else {
+          const matchedTitle = knownBrands.find(kb => (p.title || '').toLowerCase().includes(kb.toLowerCase()));
+          if (matchedTitle) {
+            brand = matchedTitle;
+          }
+        }
+      }
+      if (brand) {
+        const knownBrands = ['Igor', 'Blanditos', 'Lejan'];
+        const matchedKnown = knownBrands.find(kb => kb.toLowerCase() === brand.toLowerCase());
+        if (matchedKnown) {
+          brand = matchedKnown;
+        } else if (brand === brand.toLowerCase() || brand === brand.toUpperCase()) {
+          brand = brand.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+        }
+      }
+
       return {
         id: p.handle,
         name: p.title,
+        brand,
         price: p.priceRange.minVariantPrice.amount,
         originalPrice: p.compareAtPriceRange?.minVariantPrice?.amount || '0.00',
         image: p.images.edges[0]?.node.url || '',
@@ -320,18 +358,30 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     return Array.from(all);
   }, [mappedProducts]);
 
+  const availableBrands = useMemo(() => {
+    const all = new Set<string>();
+    mappedProducts.forEach(p => {
+      if (p.brand && p.brand.trim()) {
+        all.add(p.brand.trim());
+      }
+    });
+    return Array.from(all).sort((a, b) => a.localeCompare(b, 'pt'));
+  }, [mappedProducts]);
+
   const isInitializedRef = useRef(false);
 
-  // Pre-fill category & subcategory filters from URL parameters
+  // Pre-fill category, subcategory & brand filters from URL parameters
   useEffect(() => {
-    if (isInitializedRef.current || availableSubcategories.length === 0) return;
+    if (isInitializedRef.current || (availableSubcategories.length === 0 && availableBrands.length === 0 && mappedProducts.length === 0)) return;
 
     const params = new URLSearchParams(window.location.search);
     const categoriaParam = params.get('categoria') || params.get('categoria[]');
     const subcategoriaParam = params.get('subcategoria') || params.get('subcategoria[]') || params.get('subcategory') || params.get('subcategorias');
+    const marcaParam = params.get('marca') || params.get('marca[]') || params.get('brand') || params.get('brands') || params.get('marcas');
 
     let updatedCats = [] as string[];
     let updatedSubs = [] as string[];
+    let updatedBrands = [] as string[];
 
     if (categoriaParam) {
       const rawCats = categoriaParam.split(',').map(c => c.trim().toLowerCase()).filter(Boolean);
@@ -385,15 +435,27 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       });
     }
 
-    if (updatedCats.length > 0 || updatedSubs.length > 0) {
+    if (marcaParam) {
+      const rawBrands = marcaParam.split(',').map(b => b.trim().toLowerCase()).filter(Boolean);
+      rawBrands.forEach(rawB => {
+        const matched = availableBrands.find(ab => ab.toLowerCase() === rawB);
+        if (matched) {
+          updatedBrands.push(matched);
+        }
+      });
+      updatedBrands = Array.from(new Set(updatedBrands));
+    }
+
+    if (updatedCats.length > 0 || updatedSubs.length > 0 || updatedBrands.length > 0) {
       setFilters(prev => ({
         ...prev,
         categories: updatedCats.length > 0 ? updatedCats : prev.categories,
-        subcategories: updatedSubs.length > 0 ? updatedSubs : prev.subcategories
+        subcategories: updatedSubs.length > 0 ? updatedSubs : prev.subcategories,
+        brands: updatedBrands.length > 0 ? updatedBrands : prev.brands
       }));
     }
     isInitializedRef.current = true;
-  }, [availableSubcategories]);
+  }, [availableSubcategories, availableBrands, mappedProducts.length]);
 
   // Filter products based on search query and sidebar filters
   const filteredProducts = useMemo(() => {
@@ -404,7 +466,8 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         const matchesName = product.name.toLowerCase().includes(query);
         const matchesCategory = (product.categories || []).some(c => c.toLowerCase().includes(query)) || product.category.toLowerCase().includes(query);
         const matchesSub = product.subcategory.toLowerCase().includes(query);
-        if (!matchesName && !matchesCategory && !matchesSub) return false;
+        const matchesBrand = product.brand ? product.brand.toLowerCase().includes(query) : false;
+        if (!matchesName && !matchesCategory && !matchesSub && !matchesBrand) return false;
       }
 
       // Categories filter
@@ -416,6 +479,13 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           return (product.categories || []).includes(cat);
         });
         if (!matchesCategoryFilter) return false;
+      }
+
+      // Brand filter
+      if (filters.brands.length > 0) {
+        if (!product.brand || !filters.brands.some(b => b.toLowerCase() === product.brand.toLowerCase())) {
+          return false;
+        }
       }
 
       // Subcategories/Style filter
@@ -558,10 +628,11 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
   const handleClearFilters = () => {
     try {
       sessionStorage.removeItem(FILTER_STORAGE_KEY);
-    } catch (e) {}
+    } catch (e) { }
     setFilters({
       categories: [],
       subcategories: [],
+      brands: [],
       sizes: [],
       colors: [],
       price: { min: 0, max: 200 }
@@ -576,6 +647,15 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       categories: prev.categories.includes(category)
         ? prev.categories.filter(c => c !== category)
         : [...prev.categories, category]
+    }));
+  };
+
+  const toggleBrand = (brand: string) => {
+    setFilters(prev => ({
+      ...prev,
+      brands: prev.brands.includes(brand)
+        ? prev.brands.filter(b => b !== brand)
+        : [...prev.brands, brand]
     }));
   };
 
@@ -770,6 +850,58 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
           })}
         </div>
       </div>
+
+      {/* Brands Section */}
+      {availableBrands.length > 0 && (
+        <div>
+          <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Tag size={18} color="#FF9F1C" /> Marcas
+          </h4>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {availableBrands.map(brand => {
+              const isActive = filters.brands.includes(brand);
+              const count = mappedProducts.filter(p => p.brand && p.brand.toLowerCase() === brand.toLowerCase()).length;
+              return (
+                <motion.button
+                  key={brand}
+                  whileHover={{ scale: 1.05, y: -1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => toggleBrand(brand)}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: '30px',
+                    fontSize: '0.85rem',
+                    fontWeight: '800',
+                    border: isActive ? '2px solid #FF9F1C' : '2px solid #eee',
+                    backgroundColor: isActive ? '#FF9F1C' : 'white',
+                    color: isActive ? 'white' : '#2C3E50',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: isActive ? '0 4px 10px rgba(255, 159, 28, 0.25)' : 'none'
+                  }}
+                >
+                  <span>{brand}</span>
+                  <span style={{
+                    fontSize: '0.72rem',
+                    fontWeight: '700',
+                    opacity: isActive ? 0.95 : 0.65,
+                    backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : '#f0f2f5',
+                    color: isActive ? 'white' : '#64748b',
+                    padding: '2px 6px',
+                    borderRadius: '10px'
+                  }}>
+                    {count}
+                  </span>
+                  {isActive && <Check size={13} strokeWidth={3} />}
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Style Section */}
       <div>
@@ -1055,7 +1187,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#2C3E50', margin: 0 }}>Filtros</h3>
-                  {(filters.categories.length > 0 || filters.subcategories.length > 0 || filters.sizes.length > 0 || filters.colors.length > 0 || localSearch) && (
+                  {(filters.categories.length > 0 || filters.subcategories.length > 0 || filters.brands.length > 0 || filters.sizes.length > 0 || filters.colors.length > 0 || localSearch) && (
                     <span
                       onClick={handleClearFilters}
                       style={{ fontSize: '0.85rem', fontWeight: '800', color: '#FF9F1C', textDecoration: 'underline', cursor: 'pointer' }}
@@ -1112,6 +1244,12 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                   </div>
                 ))}
 
+                {filters.brands.map(brand => (
+                  <div key={brand} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#FFF3E0', color: '#E65100', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px' }}>
+                    Marca: {brand} <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleBrand(brand)} />
+                  </div>
+                ))}
+
                 {filters.sizes.map(size => (
                   <div key={size} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#FFF3E0', color: '#FF9F1C', fontSize: '0.8rem', fontWeight: '800', padding: '6px 12px', borderRadius: '20px' }}>
                     Tamanho {size} <X size={12} style={{ cursor: 'pointer' }} onClick={() => toggleSize(size)} />
@@ -1153,6 +1291,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
                           originalPrice={product.originalPrice}
                           image={displayImage}
                           category={product.subcategory || product.category}
+                          brand={product.brand}
                           id={product.id}
                           colors={product.colors}
                           colorImages={product.colorImages}

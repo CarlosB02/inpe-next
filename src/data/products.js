@@ -29,7 +29,7 @@ const products = Array.from({ length: 33 }, (_, i) => {
   const numColors = (id % 3) + 1;
   const randomColors = [];
   for (let j = 0; j < numColors; j++) randomColors.push(availableColors[(id + j) % availableColors.length]);
-  
+
   let sizes = [];
   if (category === 'menino' || category === 'menina' || category === 'crianca') {
     sizes = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
@@ -38,7 +38,7 @@ const products = Array.from({ length: 33 }, (_, i) => {
   }
   // Deterministic sizes
   const productSizes = sizes.filter((_, idx) => (id + idx) % 2 === 0);
-  
+
   const name = (category === 'menino' || category === 'menina') ? `Barefoot Kids ${id}` : category === 'mulher' ? `Barefoot Woman ${id}` : `Barefoot Man ${id}`;
   return {
     id,

@@ -43,7 +43,6 @@ const HomeClient2 = ({ initialProducts = [] }) => {
   const [selectedShoeColor, setSelectedShoeColor] = useState('#F4C466');
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const videoRef = useRef(null);
-  const bestSellersRef = useRef(null);
   const newCollectionRef = useRef(null);
   const adventureRef = useRef(null);
   const parentsRef = useRef(null);
@@ -164,11 +163,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
     return mappedProducts.filter(p => p.category === 'homem' || p.category === 'mulher');
   }, [mappedProducts]);
 
-  // Best Sellers and New Collection filtering
-  const bestSellers = useMemo(() => {
-    if (mappedProducts.length === 0) return [];
-    return mappedProducts.slice(0, 4);
-  }, [mappedProducts]);
+  // New Collection filtering
 
   const newCollection = useMemo(() => {
     if (mappedProducts.length === 0) return [];
@@ -420,7 +415,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
           )}
         </section>
 
-        {/* NEW SECTION: BEST SELLERS & NEW COLLECTION (2 ROWS) */}
+        {/* SECTION: ÚLTIMA COLEÇÃO */}
         <section style={{
           padding: '6rem 0 4rem',
           background: 'linear-gradient(180deg, #FFFDF9 0%, #F4FBF7 50%, #FFFDF9 100%)',
@@ -461,120 +456,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             pointerEvents: 'none'
           }} />
 
-          {/* ROW 1: MAIS VENDIDOS — carousel */}
-          <div style={{
-            maxWidth: '1200px',
-            margin: '0 auto 6rem',
-            padding: '0 4%',
-            position: 'relative',
-            zIndex: 1
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '2.5rem'
-            }}>
-              <h3 style={{
-                fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
-                fontWeight: '900',
-                color: '#2C3E50',
-                textTransform: 'uppercase',
-                marginTop: '0.8rem',
-                lineHeight: '1.1'
-              }}>
-                Mais Vendidos
-              </h3>
-
-              {/* Arrow controls */}
-              <div style={{ display: isMobile ? 'flex' : 'none', gap: '10px' }}>
-                <button
-                  onClick={() => scroll(bestSellersRef, 'left')}
-                  style={{
-                    width: '48px', height: '48px', borderRadius: '50%',
-                    backgroundColor: 'white', border: '2px solid #B2DFDB',
-                    color: '#007396', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)', transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#B2DFDB'; e.currentTarget.style.color = 'white'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#007396'; }}
-                >
-                  <ChevronLeft size={24} />
-                </button>
-                <button
-                  onClick={() => scroll(bestSellersRef, 'right')}
-                  style={{
-                    width: '48px', height: '48px', borderRadius: '50%',
-                    backgroundColor: 'white', border: '2px solid #B2DFDB',
-                    color: '#007396', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)', transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#B2DFDB'; e.currentTarget.style.color = 'white'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#007396'; }}
-                >
-                  <ChevronRight size={24} />
-                </button>
-              </div>
-            </div>
-
-            {/* Carousel — 4 visible on desktop, 1+peek on mobile */}
-            <div style={{ position: 'relative', overflow: 'hidden' }}>
-              <div
-                ref={bestSellersRef}
-                style={{
-                  display: 'flex',
-                  gap: '1.5rem',
-                  overflowX: 'auto',
-                  padding: '10px 0 25px',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                  WebkitOverflowScrolling: 'touch',
-                  scrollSnapType: 'x mandatory',
-                }}
-                className="hide-scrollbar"
-              >
-                {bestSellers.map(p => (
-                  <div
-                    key={p.id}
-                    style={{
-                      flex: isMobile
-                        ? '0 0 calc(85% - 0.375rem)'
-                        : '0 0 calc(25% - 1.125rem)',
-                      minWidth: 0,
-                      scrollSnapAlign: 'start',
-                    }}
-                  >
-                    <ProductCard
-                      title={p.name}
-                      price={p.price}
-                      originalPrice={p.originalPrice}
-                      image={p.image}
-                      category={p.subcategory || p.category}
-                      id={p.id}
-                      colors={p.colors}
-                      colorImages={p.colorImages}
-                      images={p.images || p.gallery || [p.image]}
-                      isNew={p.isNew}
-                      compact={true}
-                    />
-                  </div>
-                ))}
-              </div>
-              {/* Right fade hinting more content */}
-              {isMobile && (
-                <div style={{
-                  position: 'absolute', top: 0, right: 0,
-                  width: '60px', height: '100%',
-                  background: 'linear-gradient(to right, rgba(244,251,247,0) 0%, rgba(244,251,247,0.9) 100%)',
-                  pointerEvents: 'none', zIndex: 2,
-                }} />
-              )}
-            </div>
-          </div>
-
-          {/* ROW 2: NOVA COLEÇÃO — peek carousel (1 card visible + next peeking) */}
+          {/* ÚLTIMA COLEÇÃO — peek carousel (1 card visible + next peeking) */}
           <div style={{
             maxWidth: '1200px',
             margin: '0 auto',
@@ -597,7 +479,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                   marginTop: '0.8rem',
                   lineHeight: '1.1'
                 }}>
-                  Nova Coleção
+                  Última Coleção
                 </h3>
               </div>
 

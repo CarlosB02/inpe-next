@@ -471,18 +471,232 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       return 'lejan-one-crianca';
     }
 
-    // 3. BLANDITOS PLATY
+    // 3. BLANDITOS MUM
     if (
-      normalizedTags.includes('blanditos-platy') ||
-      normalizedTags.includes('platy') ||
-      titleLower.includes('platy')
+      normalizedTags.includes('blanditos-mum') ||
+      normalizedTags.includes('mum') ||
+      titleLower.includes('mum')
     ) {
-      return 'blanditos-platy';
+      return 'blanditos-mum';
     }
 
-    // 4. IGOR
-    if (normalizedTags.includes('igor-galochas') || normalizedTags.includes('igor-galocha') || titleLower.includes('galocha')) {
+    // 4. BLANDITOS CHICLID, GUPPY, PLATY, XHIPO
+    if (
+      normalizedTags.includes('blanditos-chiclid-guppy-platy-xhipo') ||
+      normalizedTags.includes('blanditos-platy') ||
+      normalizedTags.includes('chiclid') ||
+      normalizedTags.includes('guppy') ||
+      normalizedTags.includes('platy') ||
+      normalizedTags.includes('xhipo') ||
+      titleLower.includes('chiclid') ||
+      titleLower.includes('guppy') ||
+      titleLower.includes('platy') ||
+      titleLower.includes('xhipo')
+    ) {
+      return 'blanditos-chiclid-guppy-platy-xhipo';
+    }
 
+    // 5. BLANDITOS HERAY, APOLO (À PROVA DE ÁGUA)
+    if (
+      normalizedTags.includes('blanditos-heray-apolo') ||
+      normalizedTags.includes('heray') ||
+      normalizedTags.includes('apolo') ||
+      titleLower.includes('heray') ||
+      titleLower.includes('apolo')
+    ) {
+      return 'blanditos-heray-apolo';
+    }
+
+    // 6. BLANDITOS ANETO, HERACLES, HÉRCULES, ULISES
+    if (
+      normalizedTags.includes('blanditos-aneto-heracles-hercules-ulises') ||
+      normalizedTags.includes('aneto') ||
+      normalizedTags.includes('heracles') ||
+      normalizedTags.includes('hercules') ||
+      normalizedTags.includes('hércules') ||
+      normalizedTags.includes('ulises') ||
+      normalizedTags.includes('ulisses') ||
+      titleLower.includes('aneto') ||
+      titleLower.includes('heracles') ||
+      titleLower.includes('hercules') ||
+      titleLower.includes('hércules') ||
+      titleLower.includes('ulises') ||
+      titleLower.includes('ulisses')
+    ) {
+      return 'blanditos-aneto-heracles-hercules-ulises';
+    }
+
+    // 7. BLANDITOS BALLET, ECLAT, FLORENCIA
+    if (
+      normalizedTags.includes('blanditos-ballet-eclat-florencia') ||
+      normalizedTags.includes('ballet') ||
+      normalizedTags.includes('eclat') ||
+      normalizedTags.includes('éclat') ||
+      normalizedTags.includes('florencia') ||
+      titleLower.includes('ballet') ||
+      titleLower.includes('eclat') ||
+      titleLower.includes('éclat') ||
+      titleLower.includes('florencia')
+    ) {
+      return 'blanditos-ballet-eclat-florencia';
+    }
+
+    // 8. BLANDITOS TORINO, PORTO, RIGA
+    if (
+      normalizedTags.includes('blanditos-torino-porto-riga') ||
+      normalizedTags.includes('torino') ||
+      normalizedTags.includes('porto') ||
+      normalizedTags.includes('riga') ||
+      titleLower.includes('torino') ||
+      titleLower.includes('porto') ||
+      titleLower.includes('riga')
+    ) {
+      return 'blanditos-torino-porto-riga';
+    }
+
+    // 9. BLANDITOS DALLAS, QUITO, DELHI, TROYA
+    if (
+      normalizedTags.includes('blanditos-dallas-quito-delhi-troya') ||
+      normalizedTags.includes('dallas') ||
+      normalizedTags.includes('quito') ||
+      normalizedTags.includes('delhi') ||
+      normalizedTags.includes('troya') ||
+      titleLower.includes('dallas') ||
+      titleLower.includes('quito') ||
+      titleLower.includes('delhi') ||
+      titleLower.includes('troya')
+    ) {
+      return 'blanditos-dallas-quito-delhi-troya';
+    }
+
+    // 10. BLANDITOS ARES, AQUILES, POSEIDÓN (e anteriores venus, crono)
+    if (
+      normalizedTags.includes('blanditos-ares-aquiles-poseidon') ||
+      normalizedTags.includes('blanditos-modelo-1') ||
+      normalizedTags.includes('ares') ||
+      normalizedTags.includes('aquiles') ||
+      normalizedTags.includes('poseidon') ||
+      normalizedTags.includes('poseidón') ||
+      normalizedTags.includes('venus') ||
+      normalizedTags.includes('vénus') ||
+      normalizedTags.includes('crono') ||
+      titleLower.includes('ares') ||
+      titleLower.includes('aquiles') ||
+      titleLower.includes('poseidon') ||
+      titleLower.includes('poseidón') ||
+      titleLower.includes('venus') ||
+      titleLower.includes('vénus') ||
+      titleLower.includes('crono')
+    ) {
+      return 'blanditos-ares-aquiles-poseidon';
+    }
+
+    // 11. BLANDITOS LONDRES, LISBOA, ATENAS, CAICOS, BAHAMAS, AZORES, CAIRO, MAUI, LIMA, OTTAWA, DOHA, PEKÍN, KYOTO, ZÜRICH
+    if (
+      normalizedTags.includes('blanditos-londres-lisboa-atenas') ||
+      normalizedTags.includes('blanditos-modelo-2') ||
+      normalizedTags.includes('londres') ||
+      normalizedTags.includes('lisboa') ||
+      normalizedTags.includes('atenas') ||
+      normalizedTags.includes('caicos') ||
+      normalizedTags.includes('bahamas') ||
+      normalizedTags.includes('azores') ||
+      normalizedTags.includes('cairo') ||
+      normalizedTags.includes('maui') ||
+      normalizedTags.includes('lima') ||
+      normalizedTags.includes('ottawa') ||
+      normalizedTags.includes('doha') ||
+      normalizedTags.includes('pekin') ||
+      normalizedTags.includes('pequim') ||
+      normalizedTags.includes('kyoto') ||
+      normalizedTags.includes('kioto') ||
+      normalizedTags.includes('zurich') ||
+      normalizedTags.includes('zürich') ||
+      normalizedTags.includes('milan') ||
+      normalizedTags.includes('milán') ||
+      normalizedTags.includes('modena') ||
+      normalizedTags.includes('módena') ||
+      normalizedTags.includes('talco') ||
+      titleLower.includes('londres') ||
+      titleLower.includes('lisboa') ||
+      titleLower.includes('atenas') ||
+      titleLower.includes('caicos') ||
+      titleLower.includes('bahamas') ||
+      titleLower.includes('azores') ||
+      titleLower.includes('cairo') ||
+      titleLower.includes('maui') ||
+      titleLower.includes('lima') ||
+      titleLower.includes('ottawa') ||
+      titleLower.includes('doha') ||
+      titleLower.includes('pekin') ||
+      titleLower.includes('pequim') ||
+      titleLower.includes('kyoto') ||
+      titleLower.includes('kioto') ||
+      titleLower.includes('zurich') ||
+      titleLower.includes('zürich') ||
+      titleLower.includes('milan') ||
+      titleLower.includes('milán') ||
+      titleLower.includes('modena') ||
+      titleLower.includes('módena') ||
+      titleLower.includes('talco')
+    ) {
+      return 'blanditos-londres-lisboa-atenas';
+    }
+
+    // 12. BLANDITOS RÍO, DELFÍN, KAUAI, BORNEO, IMOLA, ETNA, GÉNOVA, ALASKA, CHICAGO, ASPEN, BOREAL, BRISTOL, DAKAR, HIELO, QUEBEC, HADAS
+    if (
+      normalizedTags.includes('blanditos-rio-delfin-kauai') ||
+      normalizedTags.includes('blanditos-modelo-3') ||
+      normalizedTags.includes('rio') ||
+      normalizedTags.includes('río') ||
+      normalizedTags.includes('delfin') ||
+      normalizedTags.includes('delfín') ||
+      normalizedTags.includes('delphin') ||
+      normalizedTags.includes('kauai') ||
+      normalizedTags.includes('borneo') ||
+      normalizedTags.includes('imola') ||
+      normalizedTags.includes('etna') ||
+      normalizedTags.includes('genova') ||
+      normalizedTags.includes('génova') ||
+      normalizedTags.includes('alaska') ||
+      normalizedTags.includes('chicago') ||
+      normalizedTags.includes('aspen') ||
+      normalizedTags.includes('boreal') ||
+      normalizedTags.includes('bristol') ||
+      normalizedTags.includes('dakar') ||
+      normalizedTags.includes('hielo') ||
+      normalizedTags.includes('quebec') ||
+      normalizedTags.includes('hadas') ||
+      normalizedTags.includes('marea') ||
+      normalizedTags.includes('berlim') ||
+      titleLower.includes('rio') ||
+      titleLower.includes('río') ||
+      titleLower.includes('delfin') ||
+      titleLower.includes('delfín') ||
+      titleLower.includes('delphin') ||
+      titleLower.includes('kauai') ||
+      titleLower.includes('borneo') ||
+      titleLower.includes('imola') ||
+      titleLower.includes('etna') ||
+      titleLower.includes('genova') ||
+      titleLower.includes('génova') ||
+      titleLower.includes('alaska') ||
+      titleLower.includes('chicago') ||
+      titleLower.includes('aspen') ||
+      titleLower.includes('boreal') ||
+      titleLower.includes('bristol') ||
+      titleLower.includes('dakar') ||
+      titleLower.includes('hielo') ||
+      titleLower.includes('quebec') ||
+      titleLower.includes('hadas') ||
+      titleLower.includes('marea') ||
+      titleLower.includes('berlim')
+    ) {
+      return 'blanditos-rio-delfin-kauai';
+    }
+
+    // 13. IGOR
+    if (normalizedTags.includes('igor-galochas') || normalizedTags.includes('igor-galocha') || titleLower.includes('galocha')) {
       return 'igor-galochas';
     }
     if (normalizedTags.includes('igor-lonas') || normalizedTags.includes('igor-lona') || titleLower.includes('lona')) {
@@ -490,66 +704,6 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     }
     if (normalizedTags.includes('igor-nemo') || titleLower.includes('nemo')) {
       return 'igor-nemo';
-    }
-
-    // 5. BLANDITOS MODELO 1: Vénus, Crono, Ares
-    if (
-      normalizedTags.includes('blanditos-modelo-1') ||
-      normalizedTags.includes('venus') || normalizedTags.includes('vénus') ||
-      normalizedTags.includes('crono') ||
-      normalizedTags.includes('ares') ||
-      normalizedTags.includes('blanditos-venus-crono-ares') ||
-      titleLower.includes('vénus') || titleLower.includes('venus') ||
-      titleLower.includes('crono') || titleLower.includes('ares')
-    ) {
-      return 'blanditos-modelo-1';
-    }
-
-    // 6. BLANDITOS MODELO 2: Londres, Milán, Módena, Atenas, Talco, Azores
-    if (
-      normalizedTags.includes('blanditos-modelo-2') ||
-      normalizedTags.includes('londres') ||
-      normalizedTags.includes('milan') || normalizedTags.includes('milán') ||
-      normalizedTags.includes('modena') || normalizedTags.includes('módena') ||
-      normalizedTags.includes('atenas') ||
-      normalizedTags.includes('talco') ||
-      normalizedTags.includes('azores') ||
-      normalizedTags.includes('blanditos-londres-milan-modena') ||
-      titleLower.includes('londres') || titleLower.includes('milán') || titleLower.includes('milan') ||
-      titleLower.includes('módena') || titleLower.includes('modena') ||
-      titleLower.includes('atenas') || titleLower.includes('talco') || titleLower.includes('azores')
-    ) {
-      return 'blanditos-modelo-2';
-    }
-
-    // 7. BLANDITOS MODELO 3: Rio, Marea, Berlim, Borneo, Delphin
-    if (
-      normalizedTags.includes('blanditos-modelo-3') ||
-      normalizedTags.includes('rio') ||
-      normalizedTags.includes('marea') ||
-      normalizedTags.includes('berlim') ||
-      normalizedTags.includes('borneo') ||
-      normalizedTags.includes('delphin') ||
-      normalizedTags.includes('blanditos-rio-marea-berlim') ||
-      titleLower.includes('rio') || titleLower.includes('marea') ||
-      titleLower.includes('berlim') || titleLower.includes('borneo') || titleLower.includes('delphin')
-    ) {
-      return 'blanditos-modelo-3';
-    }
-
-    // 8. BLANDITOS MODELO 4: Coco, Sandía, Fresa, Guinda, Mango
-    if (
-      normalizedTags.includes('blanditos-modelo-4') ||
-      normalizedTags.includes('coco') ||
-      normalizedTags.includes('sandia') || normalizedTags.includes('sandía') ||
-      normalizedTags.includes('fresa') ||
-      normalizedTags.includes('guinda') ||
-      normalizedTags.includes('mango') ||
-      normalizedTags.includes('blanditos-coco-sandia-fresa-guinda-mango') ||
-      titleLower.includes('coco') || titleLower.includes('sandia') || titleLower.includes('sandía') ||
-      titleLower.includes('fresa') || titleLower.includes('guinda') || titleLower.includes('mango')
-    ) {
-      return 'blanditos-modelo-4';
     }
     return null;
   }, [product]);

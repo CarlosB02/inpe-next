@@ -12,6 +12,10 @@ import { getColorStyle, normalizeColorName } from '../lib/colors';
  * @param {string} [props.category]
  * @param {string|number} props.id
  * @param {boolean} [props.isNew]
+ * @param {string} [props.category]
+ * @param {string} [props.brand]
+ * @param {string|number} props.id
+ * @param {boolean} [props.isNew]
  * @param {string[]} [props.colors]
  * @param {Record<string, string>} [props.colorImages]
  * @param {string|number} [props.originalPrice]
@@ -19,7 +23,7 @@ import { getColorStyle, normalizeColorName } from '../lib/colors';
  * @param {boolean} [props.compact]
  * @param {React.ReactNode} [props.children]
  */
-const ProductCard = ({ title, price, originalPrice, image, category, id, isNew, colors, colorImages, images, compact, children }) => {
+const ProductCard = ({ title, price, originalPrice, image, category, brand, id, isNew, colors, colorImages, images, compact, children }) => {
   const [hoveredColorImage, setHoveredColorImage] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   
@@ -336,17 +340,31 @@ const ProductCard = ({ title, price, originalPrice, image, category, id, isNew, 
             </div>
           </div>
 
-          {/* Subtitle / Category */}
-          <p style={{
-            fontSize: '0.8rem',
-            color: '#8097a5',
-            margin: '4px 0 0 0',
-            lineHeight: '1.4',
-            fontWeight: '600',
-            textTransform: 'capitalize'
-          }}>
-            {category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Barefoot'}
-          </p>
+          {/* Subtitle / Category & Brand */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '4px 0 0 0', flexWrap: 'wrap' }}>
+            {brand && (
+              <span style={{
+                fontSize: '0.75rem',
+                fontWeight: '800',
+                color: '#FF9F1C',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                {brand}
+              </span>
+            )}
+            {brand && category && <span style={{ fontSize: '0.7rem', color: '#cbd5e1' }}>•</span>}
+            <p style={{
+              fontSize: '0.8rem',
+              color: '#8097a5',
+              margin: 0,
+              lineHeight: '1.4',
+              fontWeight: '600',
+              textTransform: 'capitalize'
+            }}>
+              {category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Barefoot'}
+            </p>
+          </div>
 
           {children && (
             <div 
