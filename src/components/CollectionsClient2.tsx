@@ -62,7 +62,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
     colors: [] as string[],
     price: { min: 0, max: 200 }
   });
-  const [sortBy, setSortBy] = useState('mais-vendidos');
+  const [sortBy, setSortBy] = useState('novidades');
 
   // Persistent Filters Storage Key & Expiration Timer (10 Minutes)
   const FILTER_STORAGE_KEY = 'inpe_loja_filters_v1';
@@ -107,7 +107,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         filters.colors.length > 0 ||
         filters.price.min > 0 ||
         filters.price.max < 200 ||
-        sortBy !== 'mais-vendidos' ||
+        sortBy !== 'novidades' ||
         localSearch !== '';
 
       if (hasActiveFilters) {
@@ -638,7 +638,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       price: { min: 0, max: 200 }
     });
     setLocalSearch('');
-    setSortBy('mais-vendidos');
+    setSortBy('novidades');
   };
 
   const toggleCategory = (category: string) => {
@@ -693,7 +693,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       case 'menino':
         return {
           bg: active ? '#E0F2F1' : 'white',
-          border: active ? '3px solid #9FE2DD' : '3px solid #f0f0f0',
+          border: active ? '2px solid #007396' : '1.5px solid #E2E8F0',
           color: '#007396',
           emoji: '👦',
           label: 'Menino'
@@ -701,7 +701,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       case 'menina':
         return {
           bg: active ? '#FCE4EC' : 'white',
-          border: active ? '3px solid #F8BBD0' : '3px solid #f0f0f0',
+          border: active ? '2px solid #C2185B' : '1.5px solid #E2E8F0',
           color: '#C2185B',
           emoji: '👧',
           label: 'Menina'
@@ -709,7 +709,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       case 'mulher':
         return {
           bg: active ? '#FFEBEE' : 'white',
-          border: active ? '3px solid #F4C466' : '3px solid #f0f0f0',
+          border: active ? '2px solid #E06A55' : '1.5px solid #E2E8F0',
           color: '#854931',
           emoji: '👩',
           label: 'Mulher'
@@ -717,13 +717,13 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       case 'homem':
         return {
           bg: active ? '#E8F5E9' : 'white',
-          border: active ? '3px solid #A5D6A7' : '3px solid #f0f0f0',
+          border: active ? '2px solid #2C3E50' : '1.5px solid #E2E8F0',
           color: '#2C3E50',
           emoji: '👨',
           label: 'Homem'
         };
       default:
-        return { bg: 'white', border: '3px solid #f0f0f0', color: '#666', emoji: '👣', label: cat };
+        return { bg: 'white', border: '1.5px solid #E2E8F0', color: '#666', emoji: '👣', label: cat };
     }
   };
 
@@ -799,50 +799,51 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
               e.target.style.boxShadow = 'none';
             }}
           >
+            <option value="novidades">Últimas novidades</option>
             <option value="mais-vendidos">Mais vendidos</option>
             <option value="preco-asc">Preço: ascendente</option>
             <option value="preco-desc">Preço: descendente</option>
-            <option value="novidades">Últimas novidades</option>
           </select>
         </div>
       </div>
 
       {/* Category / Gender segment */}
       <div>
-        <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Smile size={18} color="#FF9F1C" /> Quem vai calçar?
         </h4>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
           {['menino', 'menina', 'mulher', 'homem'].map(cat => {
             const styles = getCategoryStyles(cat);
             const isActive = filters.categories.includes(cat);
             return (
               <motion.button
                 key={cat}
-                whileHover={{ scale: 1.02, y: -2 }}
+                whileHover={{ scale: 1.02, y: -1 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => toggleCategory(cat)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
+                  gap: '6px',
                   width: '100%',
-                  padding: '12px 16px',
-                  borderRadius: '18px',
+                  padding: '7px 10px',
+                  borderRadius: '14px',
                   backgroundColor: styles.bg,
                   border: styles.border,
                   cursor: 'pointer',
                   textAlign: 'left',
-                  transition: 'background-color 0.2s, border-color 0.2s'
+                  transition: 'all 0.15s ease',
+                  boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'
                 }}
               >
-                <span style={{ fontSize: '1.1rem' }}>{styles.emoji}</span>
-                <span style={{ fontSize: '0.95rem', fontWeight: '800', color: styles.color, textTransform: 'capitalize', flex: 1 }}>
+                <span style={{ fontSize: '1rem' }}>{styles.emoji}</span>
+                <span style={{ fontSize: '0.84rem', fontWeight: '800', color: styles.color, textTransform: 'capitalize', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {styles.label || cat}
                 </span>
                 {isActive && (
-                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: styles.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                    <Check size={12} strokeWidth={3} />
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: styles.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
+                    <Check size={10} strokeWidth={3} />
                   </div>
                 )}
               </motion.button>
@@ -894,31 +895,37 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
 
       {/* Style Section */}
       <div>
-        <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Footprints size={18} color="#007396" /> Estilo
         </h4>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
           {availableSubcategories.map(sub => {
             const isActive = filters.subcategories.includes(sub);
             return (
               <motion.button
                 key={sub}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03, y: -1 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => toggleSubcategory(sub)}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: '30px',
-                  fontSize: '0.85rem',
+                  padding: '5px 11px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
                   fontWeight: '800',
-                  border: isActive ? '2px solid var(--color-winter-blue)' : '2px solid #eee',
+                  border: isActive ? '2px solid var(--color-winter-blue)' : '1.5px solid #E2E8F0',
                   backgroundColor: isActive ? 'var(--color-winter-blue)' : 'white',
-                  color: isActive ? 'white' : '#555',
+                  color: isActive ? 'white' : '#2C3E50',
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.15s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  lineHeight: 1.2,
+                  boxShadow: isActive ? '0 3px 8px rgba(0, 115, 150, 0.22)' : 'none'
                 }}
               >
-                {sub}
+                <span>{sub}</span>
+                {isActive && <Check size={12} strokeWidth={3} />}
               </motion.button>
             );
           })}
