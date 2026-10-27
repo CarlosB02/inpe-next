@@ -854,48 +854,37 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       {/* Brands Section */}
       {availableBrands.length > 0 && (
         <div>
-          <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#2C3E50', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Tag size={18} color="#FF9F1C" /> Marcas
           </h4>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {availableBrands.map(brand => {
               const isActive = filters.brands.includes(brand);
-              const count = mappedProducts.filter(p => p.brand && p.brand.toLowerCase() === brand.toLowerCase()).length;
               return (
                 <motion.button
                   key={brand}
-                  whileHover={{ scale: 1.05, y: -1 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => toggleBrand(brand)}
                   style={{
-                    padding: '8px 14px',
-                    borderRadius: '30px',
-                    fontSize: '0.85rem',
+                    padding: '5px 11px',
+                    borderRadius: '20px',
+                    fontSize: '0.82rem',
                     fontWeight: '800',
-                    border: isActive ? '2px solid #FF9F1C' : '2px solid #eee',
+                    border: isActive ? '2px solid #FF9F1C' : '1.5px solid #E2E8F0',
                     backgroundColor: isActive ? '#FF9F1C' : 'white',
                     color: isActive ? 'white' : '#2C3E50',
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.15s ease',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '6px',
-                    boxShadow: isActive ? '0 4px 10px rgba(255, 159, 28, 0.25)' : 'none'
+                    gap: '4px',
+                    lineHeight: 1.2,
+                    boxShadow: isActive ? '0 3px 8px rgba(255, 159, 28, 0.22)' : 'none'
                   }}
                 >
                   <span>{brand}</span>
-                  <span style={{
-                    fontSize: '0.72rem',
-                    fontWeight: '700',
-                    opacity: isActive ? 0.95 : 0.65,
-                    backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : '#f0f2f5',
-                    color: isActive ? 'white' : '#64748b',
-                    padding: '2px 6px',
-                    borderRadius: '10px'
-                  }}>
-                    {count}
-                  </span>
-                  {isActive && <Check size={13} strokeWidth={3} />}
+                  {isActive && <Check size={12} strokeWidth={3} />}
                 </motion.button>
               );
             })}

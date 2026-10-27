@@ -40,10 +40,12 @@ const PlayfulBadge = ({ children, color = '#FF9F1C', icon: Icon }) => (
 const HomeClient2 = ({ initialProducts = [] }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [adventureFilter, setAdventureFilter] = useState('school'); // school, park, puddle
+  const [selectedCategoryTab, setSelectedCategoryTab] = useState('para-todos-os-dias');
   const [selectedShoeColor, setSelectedShoeColor] = useState('#F4C466');
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const videoRef = useRef(null);
   const newCollectionRef = useRef(null);
+  const categorySlideRef = useRef(null);
   const adventureRef = useRef(null);
   const parentsRef = useRef(null);
 
@@ -145,6 +147,7 @@ const HomeClient2 = ({ initialProducts = [] }) => {
         image: p.images?.edges ? (p.images.edges[0]?.node?.url || '') : (p.image || ''),
         category,
         subcategory,
+        tags: tagsLower,
         isNew: isNovaColecao,
         isNovaColecao,
         colors: colorsSet.size > 0 ? Array.from(colorsSet) : ['#F4C466'],
@@ -164,11 +167,73 @@ const HomeClient2 = ({ initialProducts = [] }) => {
   }, [mappedProducts]);
 
   // New Collection filtering
-
   const newCollection = useMemo(() => {
     if (mappedProducts.length === 0) return [];
     return mappedProducts.filter(p => p.isNovaColecao);
   }, [mappedProducts]);
+
+  // Category Tabs for the new category slider
+  const categoryTabs = [
+    { id: 'para-todos-os-dias', label: 'Para todos os dias', icon: '👟' },
+    { id: 'botas-galochas', label: 'Botas & Galochas', icon: '🥾' },
+    { id: 'sandalias', label: 'Sandálias', icon: '🩴' },
+    { id: 'lonas', label: 'Lonas', icon: '🧵' },
+    { id: 'primeiros-passos', label: 'Primeiros Passos / Bebé', icon: '👶' },
+  ];
+
+  const categoryProducts = useMemo(() => {
+    if (mappedProducts.length === 0) return [];
+
+    return mappedProducts.filter(p => {
+      const title = (p.name || '').toLowerCase();
+      const sub = (p.subcategory || '').toLowerCase();
+      const tags = p.tags || [];
+
+      if (selectedCategoryTab === 'para-todos-os-dias') {
+        // Desportivos / Sapatilhas / Dia a dia
+        return (
+          sub.includes('sapatilha') ||
+          sub.includes('desportivo') ||
+          tags.some(t => t.includes('sapatilha') || t.includes('tenis') || t.includes('ténis') || t.includes('desportivo') || t.includes('sneaker') || t.includes('desportivos')) ||
+          title.includes('sapatilha') || title.includes('ténis') || title.includes('tenis') || title.includes('desportiv') ||
+          (!sub.includes('bota') && !sub.includes('sand') && !tags.some(t => t.includes('bota') || t.includes('sand') || t.includes('galocha') || t.includes('lona')))
+        );
+      }
+
+      if (selectedCategoryTab === 'botas-galochas') {
+        return (
+          sub.includes('bota') ||
+          tags.some(t => t.includes('bota') || t.includes('galocha') || t.includes('chuva') || t.includes('waterproof') || t.includes('apolo') || t.includes('heray')) ||
+          title.includes('bota') || title.includes('galocha') || title.includes('chuva') || title.includes('apolo') || title.includes('heray')
+        );
+      }
+
+      if (selectedCategoryTab === 'sandalias') {
+        return (
+          sub.includes('sand') ||
+          tags.some(t => t.includes('sand') || t.includes('verao') || t.includes('verão') || t.includes('aberto')) ||
+          title.includes('sand')
+        );
+      }
+
+      if (selectedCategoryTab === 'lonas') {
+        return (
+          sub.includes('lona') ||
+          tags.some(t => t.includes('lona') || t.includes('canvas') || t.includes('igor-lonas')) ||
+          title.includes('lona') || title.includes('canvas')
+        );
+      }
+
+      if (selectedCategoryTab === 'primeiros-passos') {
+        return (
+          tags.some(t => t.includes('bebe') || t.includes('bebé') || t.includes('primeiros passos') || t.includes('primeiro passo') || t.includes('baby') || t.includes('pre-walking') || t.includes('talco')) ||
+          title.includes('bebe') || title.includes('bebé') || title.includes('primeiros passos') || title.includes('talco') || title.includes('londres') || title.includes('milan') || title.includes('milán')
+        );
+      }
+
+      return true;
+    });
+  }, [mappedProducts, selectedCategoryTab]);
 
   // Dynamic filtering based on "Adventure Type"
   const filteredKidsProducts = useMemo(() => {
@@ -456,10 +521,10 @@ const HomeClient2 = ({ initialProducts = [] }) => {
             pointerEvents: 'none'
           }} />
 
-          {/* ÚLTIMA COLEÇÃO — peek carousel (1 card visible + next peeking) */}
+          {/* ROW 1: ÚLTIMA COLEÇÃO — peek carousel (1 card visible + next peeking) */}
           <div style={{
             maxWidth: '1200px',
-            margin: '0 auto',
+            margin: '0 auto 5rem',
             padding: '0 4%',
             position: 'relative',
             zIndex: 1
@@ -595,6 +660,240 @@ const HomeClient2 = ({ initialProducts = [] }) => {
                 )}
               </div>
               {/* Right fade — always visible to hint at scrollable content */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '60px',
+                height: '100%',
+                background: 'linear-gradient(to right, rgba(244,251,247,0) 0%, rgba(244,251,247,0.9) 100%)',
+                pointerEvents: 'none',
+                zIndex: 2,
+              }} />
+            </div>
+          </div>
+
+          {/* ROW 2: CATEGORIAS — peek carousel com abas de categoria */}
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '0 4%',
+            position: 'relative',
+            zIndex: 1
+          }}>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.25rem',
+              marginBottom: '2rem'
+            }}>
+              {/* Header with Title and Arrow Controls */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <div>
+                  <h3 style={{
+                    fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+                    fontWeight: '900',
+                    color: '#2C3E50',
+                    textTransform: 'uppercase',
+                    marginTop: '0.8rem',
+                    lineHeight: '1.1'
+                  }}>
+                    Por Categoria
+                  </h3>
+                </div>
+
+                {/* Arrow controls */}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => scroll(categorySlideRef, 'left')}
+                    aria-label="Anterior"
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'white',
+                      border: '2px solid #B2DFDB',
+                      color: '#007396',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#B2DFDB'; e.currentTarget.style.color = 'white'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#007396'; }}
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={() => scroll(categorySlideRef, 'right')}
+                    aria-label="Seguinte"
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'white',
+                      border: '2px solid #B2DFDB',
+                      color: '#007396',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#B2DFDB'; e.currentTarget.style.color = 'white'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#007396'; }}
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Category Pills (Tabs) — scroll horizontal amigável em mobile */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: isMobile ? '8px' : '10px',
+                  overflowX: 'auto',
+                  padding: '4px 2px 12px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch',
+                }}
+                className="hide-scrollbar"
+              >
+                {categoryTabs.map(tab => {
+                  const isActive = selectedCategoryTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setSelectedCategoryTab(tab.id);
+                        if (categorySlideRef.current) {
+                          categorySlideRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                        }
+                      }}
+                      style={{
+                        padding: isMobile ? '8px 16px' : '10px 22px',
+                        borderRadius: '50px',
+                        border: isActive ? '2px solid #007396' : '2px solid #E2E8F0',
+                        backgroundColor: isActive ? '#007396' : 'white',
+                        color: isActive ? 'white' : '#2C3E50',
+                        fontWeight: '800',
+                        fontSize: isMobile ? '0.85rem' : '0.92rem',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        boxShadow: isActive ? '0 6px 16px rgba(0, 115, 150, 0.22)' : '0 2px 6px rgba(0,0,0,0.03)',
+                        transition: 'all 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        flexShrink: 0
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = '#F0F9FF';
+                          e.currentTarget.style.borderColor = '#B2DFDB';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = 'white';
+                          e.currentTarget.style.borderColor = '#E2E8F0';
+                        }
+                      }}
+                    >
+                      <span style={{ fontSize: isMobile ? '1rem' : '1.15rem' }}>{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Carousel — 4 visíveis em desktop, 1+peek em mobile */}
+            <div style={{ position: 'relative', overflow: 'hidden' }}>
+              <div
+                ref={categorySlideRef}
+                style={{
+                  display: 'flex',
+                  gap: '1.5rem',
+                  overflowX: 'auto',
+                  padding: '10px 0 25px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollSnapType: 'x mandatory',
+                }}
+                className="hide-scrollbar"
+              >
+                {categoryProducts.length > 0 ? (
+                  categoryProducts.map(p => (
+                    <div
+                      key={p.id}
+                      style={{
+                        flex: isMobile
+                          ? '0 0 calc(85% - 0.375rem)'
+                          : '0 0 calc(25% - 1.125rem)',
+                        minWidth: 0,
+                        scrollSnapAlign: 'start',
+                      }}
+                    >
+                      <ProductCard
+                        title={p.name}
+                        price={p.price}
+                        originalPrice={p.originalPrice}
+                        image={p.image}
+                        category={p.subcategory || p.category}
+                        id={p.id}
+                        colors={p.colors}
+                        colorImages={p.colorImages}
+                        images={p.images || p.gallery || [p.image]}
+                        isNew={p.isNew}
+                        compact={true}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    padding: '2.5rem 1rem',
+                    textAlign: 'center',
+                    color: '#5C768D',
+                    fontSize: '1.05rem',
+                    fontWeight: '600',
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    borderRadius: '16px',
+                    border: '1px dashed #B2DFDB'
+                  }}>
+                    <p style={{ margin: '0 0 1rem' }}>Modelos desta categoria disponíveis na nossa loja completa!</p>
+                    <Link
+                      href="/loja"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        backgroundColor: '#007396',
+                        color: 'white',
+                        padding: '10px 24px',
+                        borderRadius: '50px',
+                        textDecoration: 'none',
+                        fontWeight: '700',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      Ver todos na Loja <ArrowRight size={16} />
+                    </Link>
+                  </div>
+                )}
+              </div>
+              {/* Right fade */}
               <div style={{
                 position: 'absolute',
                 top: 0,
