@@ -431,5 +431,52 @@ export const tablesData: TableData[] = [
       { size: '26', length: '15,5', width: '6,3' },
       { size: '27', length: '16,2', width: '6,5' },
     ]
+  },
+  // MUSTANG — Free Kids
+  {
+    id: 'mustang-free-kids',
+    brand: 'Mustang',
+    model: 'Free Kids',
+    data: [
+      { size: '27', length: '17,93', width: '6,65' },
+      { size: '28', length: '18,6', width: '6,8' },
+      { size: '29', length: '19,27', width: '6,95' },
+      { size: '30', length: '19,93', width: '7,1' },
+      { size: '31', length: '20,6', width: '7,25' },
+      { size: '32', length: '21,27', width: '7,4' },
+      { size: '33', length: '21,94', width: '7,55' },
+      { size: '34', length: '22,6', width: '7,7' },
+    ]
+  },
+
+  // MUSTANG — Adulto (Free-Aria)
+  {
+    id: 'mustang-adulto-free-aria',
+    brand: 'Mustang',
+    model: 'Adulto (Free-Aria)',
+    data: [
+      { size: '36', length: '23,33', width: '8,25' },
+      { size: '37', length: '24,0', width: '8,4' },
+      { size: '38', length: '24,67', width: '8,55' },
+      { size: '39', length: '25,33', width: '8,7' },
+      { size: '40', length: '26,0', width: '8,85' },
+      { size: '41', length: '26,67', width: '9,0' },
+    ]
+  },
+
+  // MUSTANG — Adulto (Free-Miami)
+  {
+    id: 'mustang-adulto-free-miami',
+    brand: 'Mustang',
+    model: 'Adulto (Free-Miami)',
+    data: [
+      { size: '40', length: '26,17', width: '8,9' },
+      { size: '41', length: '26,83', width: '9,05' },
+      { size: '42', length: '27,5', width: '9,2' },
+      { size: '43', length: '28,17', width: '9,35' },
+      { size: '44', length: '28,83', width: '9,5' },
+      { size: '45', length: '29,5', width: '9,65' },
+      { size: '46', length: '30,17', width: '9,8' },
+    ]
   }
 ];

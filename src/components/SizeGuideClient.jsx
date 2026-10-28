@@ -13,6 +13,26 @@ const SizeGuideClient = () => {
   // Accordion state (first one open by default)
   const [activeAccordion, setActiveAccordion] = useState('igor-galochas');
 
+  // Brand Filter Tab State
+  const [selectedBrand, setSelectedBrand] = useState('Todas');
+  const brands = ['Todas', ...Array.from(new Set(tablesData.map(t => t.brand)))];
+
+  const filteredTables = selectedBrand === 'Todas'
+    ? tablesData
+    : tablesData.filter(t => t.brand.toLowerCase() === selectedBrand.toLowerCase());
+
+  const handleBrandSelect = (brand) => {
+    setSelectedBrand(brand);
+    if (activeAccordion) {
+      const belongs = brand === 'Todas' || tablesData.some(
+        t => t.id === activeAccordion && t.brand.toLowerCase() === brand.toLowerCase()
+      );
+      if (!belongs) {
+        setActiveAccordion(null);
+      }
+    }
+  };
+
   // How to Measure States
   const [activeStep, setActiveStep] = useState(0);
 
@@ -207,6 +227,24 @@ const SizeGuideClient = () => {
         .step-cta-btn-alt:hover {
           transform: translateY(-2px);
           box-shadow: 0 6px 14px rgba(128, 151, 165, 0.35) !important;
+        }
+        .brand-tabs-scroll {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .brand-tabs-scroll::-webkit-scrollbar {
+          display: none;
+        }
+        .brand-tab-btn:hover {
+          transform: translateY(-1px);
+        }
+        @media (min-width: 768px) {
+          .brand-tabs-scroll {
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+            overflow-x: visible !important;
+            margin-bottom: 2.5rem !important;
+          }
         }
       `}</style>
 
@@ -466,12 +504,76 @@ const SizeGuideClient = () => {
           <h2 style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--color-winter-blue)', marginBottom: '0.5rem', textAlign: 'center' }}>
             Tabelas de Medidas por Marca e Modelo
           </h2>
-          <p style={{ color: 'var(--color-text-light)', fontSize: '0.95rem', marginBottom: '2.5rem', textAlign: 'center', maxWidth: '600px', margin: '0 auto 2.5rem' }}>
+          <p style={{ color: 'var(--color-text-light)', fontSize: '0.95rem', marginBottom: '1.8rem', textAlign: 'center', maxWidth: '600px', margin: '0 auto 1.8rem' }}>
             Seleciona o modelo correspondente abaixo para consultar as medidas exatas da palmilha (comprimento e largura).
           </p>
 
+          {/* Brand Selection Tabs */}
+          <div
+            className="brand-tabs-scroll"
+            style={{
+              display: 'flex',
+              gap: '8px',
+              overflowX: 'auto',
+              padding: '4px 2px 14px',
+              marginBottom: '1.8rem',
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
+            {brands.map((brand) => {
+              const isSelected = selectedBrand.toLowerCase() === brand.toLowerCase();
+
+              let activeBg = 'var(--color-winter-blue)';
+              let activeColor = 'white';
+              const bLower = brand.toLowerCase();
+              if (bLower === 'blanditos') {
+                activeBg = 'var(--color-primary)';
+                activeColor = 'var(--color-text)';
+              } else if (bLower === 'lejan') {
+                activeBg = '#E06A55';
+                activeColor = 'white';
+              } else if (bLower === 'mum') {
+                activeBg = 'var(--color-accent-brown)';
+                activeColor = 'white';
+              } else if (bLower === 'by rora') {
+                activeBg = '#8B5CF6';
+                activeColor = 'white';
+              } else if (bLower === 'mustang') {
+                activeBg = '#E67E22';
+                activeColor = 'white';
+              }
+
+              return (
+                <button
+                  key={brand}
+                  onClick={() => handleBrandSelect(brand)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '8px 20px',
+                    borderRadius: '50px',
+                    fontSize: '0.88rem',
+                    fontWeight: '700',
+                    whiteSpace: 'nowrap',
+                    border: isSelected ? '1px solid transparent' : '1px solid #e2e8f0',
+                    backgroundColor: isSelected ? activeBg : '#f8fafc',
+                    color: isSelected ? activeColor : 'var(--color-text)',
+                    cursor: 'pointer',
+                    boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.12)' : 'none',
+                    transition: 'background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
+                    flexShrink: 0,
+                  }}
+                  className="brand-tab-btn"
+                >
+                  {brand}
+                </button>
+              );
+            })}
+          </div>
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {tablesData.map((table) => {
+            {filteredTables.map((table) => {
               const isOpen = activeAccordion === table.id;
               return (
                 <div
@@ -501,14 +603,15 @@ const SizeGuideClient = () => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <span style={{
-                        backgroundColor: table.brand.toLowerCase() === 'igor' ? 'var(--color-winter-blue)' : table.brand.toLowerCase() === 'lejan' ? '#E06A55' : table.brand.toLowerCase() === 'mum' ? 'var(--color-accent-brown)' : table.brand.toLowerCase() === 'by rora' ? '#8B5CF6' : 'var(--color-primary)',
+                        backgroundColor: table.brand.toLowerCase() === 'igor' ? 'var(--color-winter-blue)' : table.brand.toLowerCase() === 'lejan' ? '#E06A55' : table.brand.toLowerCase() === 'mum' ? 'var(--color-accent-brown)' : table.brand.toLowerCase() === 'by rora' ? '#8B5CF6' : table.brand.toLowerCase() === 'mustang' ? '#E67E22' : 'var(--color-primary)',
                         color: table.brand.toLowerCase() === 'blanditos' ? 'var(--color-text)' : 'white',
                         fontSize: '0.75rem',
                         fontWeight: '900',
                         padding: '4px 10px',
                         borderRadius: '50px',
                         textTransform: 'uppercase',
-                        letterSpacing: '0.5px'
+                        letterSpacing: '0.5px',
+                        flexShrink: 0
                       }}>
                         {table.brand}
                       </span>

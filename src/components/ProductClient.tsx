@@ -529,6 +529,61 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       return 'by-rora-rora';
     }
 
+
+    // MUSTANG
+    const isMustang = vendorLower === 'mustang' ||
+      vendorLower === 'mtng' ||
+      normalizedTags.some(t => t.includes('mustang') || t === 'mtng' || t.includes('mtng')) ||
+      titleLower.includes('mustang') ||
+      titleLower.includes('mtng') ||
+      titleLower.includes('free alask') ||
+      titleLower.includes('free line') ||
+      titleLower.includes('free apolo') ||
+      titleLower.includes('respect play') ||
+      titleLower.includes('respect alask') ||
+      titleLower.includes('respect rivery') ||
+      titleLower.includes('story camel');
+
+    if (isMustang) {
+      if (titleLower.includes('miami') || normalizedTags.includes('free-miami') || normalizedTags.includes('miami')) {
+        return 'mustang-adulto-free-miami';
+      }
+      if (titleLower.includes('aria') || normalizedTags.includes('free-aria') || normalizedTags.includes('aria')) {
+        return 'mustang-adulto-free-aria';
+      }
+      if (hasAdultSizes && !hasChildSizes) {
+        return 'mustang-adulto-free-aria';
+      }
+      // Todos os modelos mustang exceto adulto usam Free Kids
+      return 'mustang-free-kids';
+    }
+
+    if (
+      normalizedTags.includes('mustang-adulto-free-miami') ||
+      normalizedTags.includes('free-miami') ||
+      (titleLower.includes('free miami') || (titleLower.includes('miami') && isAdult))
+    ) {
+      return 'mustang-adulto-free-miami';
+    }
+
+    if (
+      normalizedTags.includes('mustang-adulto-free-aria') ||
+      normalizedTags.includes('free-aria') ||
+      normalizedTags.includes('bota-aria') ||
+      (titleLower.includes('free aria') || (titleLower.includes('aria') && isAdult))
+    ) {
+      return 'mustang-adulto-free-aria';
+    }
+
+    if (
+      normalizedTags.includes('mustang-free-kids') ||
+      normalizedTags.includes('free-kids') ||
+      titleLower.includes('free kids') ||
+      titleLower.includes('mtng kids')
+    ) {
+      return 'mustang-free-kids';
+    }
+
     // 4. BLANDITOS CHICLID, GUPPY, PLATY, XHIPO
     if (
       normalizedTags.includes('blanditos-chiclid-guppy-platy-xhipo') ||
