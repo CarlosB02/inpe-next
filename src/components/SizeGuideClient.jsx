@@ -501,7 +501,7 @@ const SizeGuideClient = () => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <span style={{
-                        backgroundColor: table.brand.toLowerCase() === 'igor' ? 'var(--color-winter-blue)' : table.brand.toLowerCase() === 'lejan' ? '#E06A55' : 'var(--color-primary)',
+                        backgroundColor: table.brand.toLowerCase() === 'igor' ? 'var(--color-winter-blue)' : table.brand.toLowerCase() === 'lejan' ? '#E06A55' : table.brand.toLowerCase() === 'mum' ? 'var(--color-accent-brown)' : table.brand.toLowerCase() === 'by rora' ? '#8B5CF6' : 'var(--color-primary)',
                         color: table.brand.toLowerCase() === 'blanditos' ? 'var(--color-text)' : 'white',
                         fontSize: '0.75rem',
                         fontWeight: '900',

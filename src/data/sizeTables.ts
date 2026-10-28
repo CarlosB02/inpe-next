@@ -12,23 +12,8 @@ export interface TableData {
 }
 
 export const tablesData: TableData[] = [
-  // 1. BLANDITOS — MUM
-  {
-    id: 'blanditos-mum',
-    brand: 'Blanditos',
-    model: 'MUM',
-    data: [
-      { size: '36', length: '24', width: '9,2' },
-      { size: '37', length: '24,8', width: '9,4' },
-      { size: '38', length: '25,4', width: '9,4' },
-      { size: '39', length: '26,1', width: '9,6' },
-      { size: '40', length: '26,7', width: '9,6' },
-      { size: '41', length: '27,5', width: '9,8' },
-      { size: '42', length: '28', width: '9,8' },
-    ]
-  },
 
-  // 2. BLANDITOS — Londres, Lisboa, Atenas, Caicos, Bahamas, Azores, Cairo, Maui, Lima, Ottawa, Doha, Pekín, Kyoto e Zürich
+  // 1. BLANDITOS — Londres, Lisboa, Atenas, Caicos, Bahamas, Azores, Cairo, Maui, Lima, Ottawa, Doha, Pekín, Kyoto e Zürich
   {
     id: 'blanditos-londres-lisboa-atenas',
     brand: 'Blanditos',
@@ -45,7 +30,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 3. BLANDITOS — Torino, Porto y Riga
+  // 2. BLANDITOS — Torino, Porto y Riga
   {
     id: 'blanditos-torino-porto-riga',
     brand: 'Blanditos',
@@ -61,7 +46,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 4. BLANDITOS — Dallas, Quito, Delhi, Troya
+  // 3. BLANDITOS — Dallas, Quito, Delhi, Troya
   {
     id: 'blanditos-dallas-quito-delhi-troya',
     brand: 'Blanditos',
@@ -79,7 +64,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 5. BLANDITOS — Río, Delfín, Kauai, Borneo, Imola, Etna, Génova, Alaska, Chicago, Aspen, Boreal, Bristol, Dakar, Hielo, Quebec, Hadas
+  // 4. BLANDITOS — Río, Delfín, Kauai, Borneo, Imola, Etna, Génova, Alaska, Chicago, Aspen, Boreal, Bristol, Dakar, Hielo, Quebec, Hadas
   {
     id: 'blanditos-rio-delfin-kauai',
     brand: 'Blanditos',
@@ -103,7 +88,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 6. BLANDITOS — Ballet, Eclat, Florencia
+  // 5. BLANDITOS — Ballet, Eclat, Florencia
   {
     id: 'blanditos-ballet-eclat-florencia',
     brand: 'Blanditos',
@@ -129,7 +114,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 7. BLANDITOS — Ares, Aquiles, Poseidón
+  // 6. BLANDITOS — Ares, Aquiles, Poseidón
   {
     id: 'blanditos-ares-aquiles-poseidon',
     brand: 'Blanditos',
@@ -155,7 +140,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 8. BLANDITOS — Heray, Apolo (À prova de água)
+  // 7. BLANDITOS — Heray, Apolo (À prova de água)
   {
     id: 'blanditos-heray-apolo',
     brand: 'Blanditos',
@@ -181,7 +166,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 9. BLANDITOS — Chiclid, Guppy, Platy, Xhipo
+  // 8. BLANDITOS — Chiclid, Guppy, Platy, Xhipo
   {
     id: 'blanditos-chiclid-guppy-platy-xhipo',
     brand: 'Blanditos',
@@ -199,7 +184,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 10. BLANDITOS — Aneto, Heracles, Hércules y Ulises
+  // 9. BLANDITOS — Aneto, Heracles, Hércules y Ulises
   {
     id: 'blanditos-aneto-heracles-hercules-ulises',
     brand: 'Blanditos',
@@ -221,7 +206,7 @@ export const tablesData: TableData[] = [
     ]
   },
 
-  // 11. BLANDITOS — Zeus
+  // 10. BLANDITOS — Zeus
   {
     id: 'blanditos-zeus',
     brand: 'Blanditos',
@@ -382,6 +367,69 @@ export const tablesData: TableData[] = [
       { size: '44', length: '29,6', width: '9,7' },
       { size: '45', length: '30,0', width: '9,8' },
       { size: '46', length: '30,6', width: '10,0' },
+    ]
+  },
+
+  // MUM
+  {
+    id: 'mum',
+    brand: 'MUM',
+    model: 'Ines, Atlas, Eva, Daniela, Carolina',
+    data: [
+      { size: '36', length: '24', width: '9,2' },
+      { size: '37', length: '24,8', width: '9,4' },
+      { size: '38', length: '25,4', width: '9,4' },
+      { size: '39', length: '26,1', width: '9,6' },
+      { size: '40', length: '26,7', width: '9,6' },
+      { size: '41', length: '27,5', width: '9,8' },
+      { size: '42', length: '28', width: '9,8' },
+    ]
+  },
+  // BY RORA — Rora
+  {
+    id: 'by-rora-rora',
+    brand: 'By Rora',
+    model: 'Rora',
+    data: [
+      { size: '18', length: '11,8', width: '5,6' },
+      { size: '19', length: '12,3', width: '5,7' },
+      { size: '20', length: '12,6', width: '5,8' },
+      { size: '21', length: '13,3', width: '5,9' },
+      { size: '21.5', length: '13,8', width: '6,0' },
+      { size: '22', length: '14,4', width: '6,2' },
+      { size: '23', length: '14,9', width: '6,3' },
+    ]
+  },
+
+  // BY RORA — Atenas
+  {
+    id: 'by-rora-atenas',
+    brand: 'By Rora',
+    model: 'Atenas',
+    data: [
+      { size: '21', length: '13,0', width: '5,7' },
+      { size: '22', length: '13,6', width: '5,8' },
+      { size: '23', length: '14,2', width: '6,0' },
+      { size: '24', length: '14,5', width: '6,1' },
+      { size: '25', length: '15,2', width: '6,1' },
+      { size: '26', length: '15,6', width: '6,3' },
+      { size: '27', length: '16,2', width: '6,5' },
+    ]
+  },
+
+  // BY RORA — Salvador
+  {
+    id: 'by-rora-salvador',
+    brand: 'By Rora',
+    model: 'Salvador',
+    data: [
+      { size: '21', length: '13,0', width: '5,7' },
+      { size: '22', length: '13,8', width: '6,0' },
+      { size: '23', length: '14,2', width: '6,1' },
+      { size: '24', length: '14,5', width: '6,1' },
+      { size: '25', length: '15,0', width: '6,1' },
+      { size: '26', length: '15,5', width: '6,3' },
+      { size: '27', length: '16,2', width: '6,5' },
     ]
   }
 ];

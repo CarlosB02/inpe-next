@@ -280,7 +280,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
       // Extract and normalize brand / vendor
       let brand = (p.vendor || '').trim();
       if (!brand) {
-        const knownBrands = ['Igor', 'Blanditos', 'Lejan'];
+        const knownBrands = ['Igor', 'Blanditos', 'Lejan', 'MUM', 'Mustang', 'By Rora'];
         const matchedTag = (p.tags || []).find(t =>
           knownBrands.some(kb => kb.toLowerCase() === t.toLowerCase().trim())
         );
@@ -294,7 +294,7 @@ export const CollectionsClient2: React.FC<CollectionsClientProps> = ({
         }
       }
       if (brand) {
-        const knownBrands = ['Igor', 'Blanditos', 'Lejan'];
+        const knownBrands = ['Igor', 'Blanditos', 'Lejan', 'MUM', 'Mustang', 'By Rora'];
         const matchedKnown = knownBrands.find(kb => kb.toLowerCase() === brand.toLowerCase());
         if (matchedKnown) {
           brand = matchedKnown;

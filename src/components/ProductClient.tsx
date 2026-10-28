@@ -479,13 +479,54 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     ) {
       return 'blanditos-zeus';
     }
-    // 3. BLANDITOS MUM
+    // MUM (Fornecedor)
+    const vendorLower = (product.vendor || '').toLowerCase().trim();
     if (
-      normalizedTags.includes('blanditos-mum') ||
+      vendorLower === 'mum' ||
       normalizedTags.includes('mum') ||
-      titleLower.includes('mum')
+      titleLower.includes('mum') ||
+      titleLower.includes('ines') ||
+      titleLower.includes('inês') ||
+      titleLower.includes('atlas') ||
+      titleLower.includes('eva') ||
+      titleLower.includes('daniela') ||
+      titleLower.includes('carolina')
     ) {
-      return 'blanditos-mum';
+      return 'mum';
+    }
+
+
+    // BY RORA
+    const isByRora = vendorLower === 'by rora' ||
+      vendorLower === 'rora' ||
+      normalizedTags.some(t => t.includes('by-rora') || t === 'rora') ||
+      titleLower.includes('by rora') ||
+      titleLower.includes('byrora');
+
+    if (
+      normalizedTags.includes('atenas-by-rora') ||
+      normalizedTags.includes('by-rora-atenas') ||
+      (isByRora && titleLower.includes('atenas'))
+    ) {
+      return 'by-rora-atenas';
+    }
+
+    if (
+      normalizedTags.includes('salvador-by-rora') ||
+      normalizedTags.includes('by-rora-salvador') ||
+      normalizedTags.includes('salvador') ||
+      titleLower.includes('salvador')
+    ) {
+      return 'by-rora-salvador';
+    }
+
+    if (
+      isByRora ||
+      normalizedTags.includes('by-rora-rora') ||
+      normalizedTags.includes('rora-by-rora') ||
+      titleLower.includes('rora')
+    ) {
+      return 'by-rora-rora';
     }
 
     // 4. BLANDITOS CHICLID, GUPPY, PLATY, XHIPO
