@@ -221,6 +221,25 @@ export const tablesData: TableData[] = [
     ]
   },
 
+  // 11. BLANDITOS — Zeus
+  {
+    id: 'blanditos-zeus',
+    brand: 'Blanditos',
+    model: 'Zeus',
+    data: [
+      { size: '20', length: '13,2', width: '5,8' },
+      { size: '21', length: '13,8', width: '6,0' },
+      { size: '22', length: '14,4', width: '6,2' },
+      { size: '23', length: '15,1', width: '6,3' },
+      { size: '24', length: '15,8', width: '6,4' },
+      { size: '25', length: '16,5', width: '6,5' },
+      { size: '26', length: '17,1', width: '6,7' },
+      { size: '27', length: '17,7', width: '6,8' },
+      { size: '28', length: '18,3', width: '6,9' },
+      { size: '29', length: '19,0', width: '7,2' },
+    ]
+  },
+
   // IGOR
   {
     id: 'igor-galochas',

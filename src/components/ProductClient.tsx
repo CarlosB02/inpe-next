@@ -471,6 +471,14 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       return 'lejan-one-crianca';
     }
 
+    // BLANDITOS ZEUS
+    if (
+      normalizedTags.includes('blanditos-zeus') ||
+      normalizedTags.includes('zeus') ||
+      titleLower.includes('zeus')
+    ) {
+      return 'blanditos-zeus';
+    }
     // 3. BLANDITOS MUM
     if (
       normalizedTags.includes('blanditos-mum') ||
