@@ -288,6 +288,95 @@ export const tablesData: TableData[] = [
     ]
   },
 
+  {
+    id: 'igor-homie-pana',
+    brand: 'Igor',
+    model: 'Homie Pana (Pantufa)',
+    data: [
+      { size: '20', length: '12', width: '' },
+      { size: '21', length: '13', width: '' },
+      { size: '22', length: '13,5', width: '' },
+      { size: '23', length: '14,5', width: '' },
+      { size: '24', length: '15', width: '' },
+      { size: '25', length: '15,5', width: '' },
+      { size: '26', length: '16', width: '' },
+      { size: '27', length: '17', width: '' },
+    ]
+  },
+  {
+    id: 'igor-tennis',
+    brand: 'Igor',
+    model: 'Tennis',
+    data: [
+      { size: '20', length: '12,5', width: '' },
+      { size: '21', length: '13', width: '' },
+      { size: '22', length: '13,5', width: '' },
+      { size: '23', length: '14,5', width: '' },
+      { size: '24', length: '15', width: '' },
+      { size: '25', length: '16', width: '' },
+      { size: '26', length: '16,5', width: '' },
+      { size: '27', length: '17', width: '' },
+      { size: '28', length: '18', width: '' },
+      { size: '29', length: '18,5', width: '' },
+      { size: '30', length: '19', width: '' },
+      { size: '31', length: '19,5', width: '' },
+      { size: '32', length: '20', width: '' },
+    ]
+  },
+  {
+    id: 'igor-tennis-suede',
+    brand: 'Igor',
+    model: 'Ténis Suede',
+    data: [
+      { size: '20', length: '12', width: '' },
+      { size: '21', length: '13', width: '' },
+      { size: '22', length: '13,5', width: '' },
+      { size: '23', length: '14', width: '' },
+      { size: '24', length: '15', width: '' },
+      { size: '25', length: '15,5', width: '' },
+      { size: '26', length: '16', width: '' },
+      { size: '27', length: '17', width: '' },
+      { size: '28', length: '17,5', width: '' },
+      { size: '29', length: '18,5', width: '' },
+      { size: '30', length: '19', width: '' },
+      { size: '31', length: '19,5', width: '' },
+      { size: '32', length: '20,5', width: '' },
+    ]
+  },
+  {
+    id: 'igor-malibu',
+    brand: 'Igor',
+    model: 'Malibu (Sandálias)',
+    data: [
+      { size: '22', length: '13,5', width: '' },
+      { size: '23', length: '14', width: '' },
+      { size: '24', length: '14,5', width: '' },
+      { size: '25', length: '15,5', width: '' },
+      { size: '26', length: '16', width: '' },
+      { size: '27', length: '16,5', width: '' },
+      { size: '28', length: '17,5', width: '' },
+      { size: '29', length: '18', width: '' },
+      { size: '30', length: '18,5', width: '' },
+      { size: '31', length: '19,5', width: '' },
+      { size: '32', length: '20', width: '' },
+      { size: '33', length: '20,5', width: '' },
+      { size: '34', length: '21,5', width: '' },
+    ]
+  },
+  {
+    id: 'igor-ura',
+    brand: 'Igor',
+    model: 'Ura (Adulto)',
+    data: [
+      { size: '36', length: '23,2', width: '8,9' },
+      { size: '37', length: '23,8', width: '9,0' },
+      { size: '38', length: '24,5', width: '9,2' },
+      { size: '39', length: '25,1', width: '9,3' },
+      { size: '40', length: '25,8', width: '9,5' },
+      { size: '41', length: '26,4', width: '9,6' },
+    ]
+  },
+
   // LEJAN
   {
     id: 'lejan-melrose-crianca',

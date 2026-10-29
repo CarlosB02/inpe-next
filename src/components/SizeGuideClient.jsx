@@ -663,7 +663,7 @@ const SizeGuideClient = () => {
                                       {row.length} cm
                                     </td>
                                     <td style={{ padding: '12px 16px', textAlign: 'center', color: '#555' }}>
-                                      {row.width} cm
+                                      {row.width ? `${row.width} cm` : '-'}
                                     </td>
                                   </tr>
                                 ))}

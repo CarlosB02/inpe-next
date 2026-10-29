@@ -800,6 +800,53 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     }
 
     // 13. IGOR
+    if (
+      normalizedTags.includes('igor-homie-pana') ||
+      normalizedTags.includes('homie-pana') ||
+      normalizedTags.includes('homie') ||
+      titleLower.includes('homie') ||
+      titleLower.includes('homie pana')
+    ) {
+      return 'igor-homie-pana';
+    }
+
+    if (
+      normalizedTags.includes('igor-tennis-suede') ||
+      normalizedTags.includes('tennis-suede') ||
+      normalizedTags.includes('tenis-suede') ||
+      (titleLower.includes('suede') && (titleLower.includes('tennis') || titleLower.includes('ténis') || titleLower.includes('tenis') || vendorLower === 'igor'))
+    ) {
+      return 'igor-tennis-suede';
+    }
+
+    if (
+      normalizedTags.includes('igor-tennis') ||
+      normalizedTags.includes('tennis') ||
+      normalizedTags.includes('tenis-blanco') ||
+      normalizedTags.includes('tennis-blanco') ||
+      (vendorLower === 'igor' && (titleLower.includes('tennis') || titleLower.includes('ténis') || titleLower.includes('tenis'))) ||
+      titleLower.includes('tennis blanco') ||
+      titleLower.includes('ténis blanco')
+    ) {
+      return 'igor-tennis';
+    }
+
+    if (
+      normalizedTags.includes('igor-malibu') ||
+      normalizedTags.includes('malibu') ||
+      titleLower.includes('malibu')
+    ) {
+      return 'igor-malibu';
+    }
+
+    if (
+      normalizedTags.includes('igor-ura') ||
+      normalizedTags.includes('ura') ||
+      titleLower.includes('ura')
+    ) {
+      return 'igor-ura';
+    }
+
     if (normalizedTags.includes('igor-galochas') || normalizedTags.includes('igor-galocha') || titleLower.includes('galocha')) {
       return 'igor-galochas';
     }
@@ -831,7 +878,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
       const parsedData = matchedTable.data.map(item => ({
         size: item.size,
         length: parseFloat(item.length.toString().replace(',', '.')),
-        width: parseFloat(item.width.toString().replace(',', '.'))
+        width: item.width ? parseFloat(item.width.toString().replace(',', '.')) : 0
       }));
 
       // Find candidates where wiggle room is at least 0.5 cm
