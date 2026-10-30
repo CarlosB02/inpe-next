@@ -225,6 +225,25 @@ export const tablesData: TableData[] = [
     ]
   },
 
+  // 11. BLANDITOS — Flash
+  {
+    id: 'blanditos-flash',
+    brand: 'Blanditos',
+    model: 'Flash',
+    data: [
+      { size: '20', length: '13,1', width: '5,8' },
+      { size: '21', length: '13,7', width: '6' },
+      { size: '22', length: '14,5', width: '6,1' },
+      { size: '23', length: '15', width: '6,2' },
+      { size: '24', length: '15,8', width: '6,4' },
+      { size: '25', length: '16,3', width: '6,5' },
+      { size: '26', length: '17', width: '6,7' },
+      { size: '27', length: '17,6', width: '6,8' },
+      { size: '28', length: '18,2', width: '7' },
+      { size: '29', length: '18,9', width: '7,2' },
+    ]
+  },
+
   // IGOR
   {
     id: 'igor-galochas',

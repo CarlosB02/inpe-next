@@ -479,6 +479,15 @@ export const ProductClient: React.FC<ProductClientProps> = ({ product, relatedPr
     ) {
       return 'blanditos-zeus';
     }
+
+    // BLANDITOS FLASH
+    if (
+      normalizedTags.includes('blanditos-flash') ||
+      normalizedTags.includes('flash') ||
+      titleLower.includes('flash')
+    ) {
+      return 'blanditos-flash';
+    }
     // MUM (Fornecedor)
     const vendorLower = (product.vendor || '').toLowerCase().trim();
     if (
